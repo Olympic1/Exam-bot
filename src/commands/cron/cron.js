@@ -1,4 +1,6 @@
-const cronJob = require('./job');
+const fs = require('fs');
+const filePath = '../../../config.json';
+const configFile = require(filePath);
 
 module.exports = {
   name: 'cron',
@@ -13,28 +15,40 @@ module.exports = {
   async execute(message, args, client, discord, profileData) {
     if (!args.length) return message.reply('Voer de actie in die u wilt uitvoeren');
 
-    if (args[0] === 'status') {
-      return message.channel.send(`CronJob wordt uitgevoerd: ${cronJob.running}.`);
-    }
+    switch (args[0]) {
+      case 'start':
+        message.channel.send(`CronJob starten...`);
+        return client.job.start();
 
-    if (args[0] === 'stop') {
-      message.channel.send(`CronJob stoppen...`);
-      cronJob.stop();
-      return;
-    }
+      case 'stop':
+        message.channel.send(`CronJob stoppen...`);
+        return client.job.stop();
 
-    if (args[0] === 'start') {
-      message.channel.send(`CronJob starten...`);
-      cronJob.start();
-      return;
-    }
+      case 'status':
+        return message.channel.send(`CronJob wordt uitgevoerd: ${client.job.running}.`);
 
-    if (args[0] === 'last') {
-      return message.channel.send(`CronJob laatste uitvoering: ${cronJob.lastDate()}`);
-    }
+      case 'last':
+        return message.channel.send(`CronJob laatste uitvoering: ${client.job.lastDate()}`);
 
-    if (args[0] === 'next') {
-      return message.channel.send(`CronJob volgende uitvoering: ${cronJob.nextDate()}`);
+      case 'next':
+        return message.channel.send(`CronJob volgende uitvoering: ${client.job.nextDate()}`);
+
+      case 'channel':
+        if (!args[1]) return message.reply('Voer het ID van het kanaal in waar u de succes berichten wilt laten zien.');
+
+        // Change the examChannel in the config file and bot
+        const newChannel = args[1];
+        configFile.examChannel = newChannel;
+        client.config.examChannel = newChannel;
+
+        // Write changes to the config file
+        fs.writeFile(filePath, JSON.stringify(configFile, null, 2), function (err) {
+          if (err) return console.log(err);
+        });
+        return;
+
+      default:
+        return message.reply('Voer een geldige actie in. Geldige acties zijn: start, stop, status, last, next, channel of timer')
     }
   }
 }

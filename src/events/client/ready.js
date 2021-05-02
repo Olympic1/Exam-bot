@@ -1,5 +1,3 @@
-const cronJob = require('../../commands/cron/job');
-
 module.exports = (client, discord) => {
   // Set the bot status
   const prefix = client.config.prefix;
@@ -14,7 +12,7 @@ module.exports = (client, discord) => {
   });
 
   // Start CronJob
-  cronJob.execute(client, discord);
+  client.job = require('../../commands/cron/job')(client);
 
   // Show if the bot is logged in and ready to use
   console.info(`Logged in as ${client.user.tag}!`);
