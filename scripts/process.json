@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "exam-bot",
+      "script": "src/index.js",
+      "log_date_format": "DD-MM-YYYY HH:mm:ss",
+      "restart_delay": 10000
+    }
+  ]
+}

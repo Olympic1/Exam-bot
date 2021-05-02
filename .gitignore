@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Compiler directories
+.idea/
+
+# Lock files
+package-lock.json
