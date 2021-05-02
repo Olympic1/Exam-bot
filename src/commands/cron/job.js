@@ -10,7 +10,7 @@ const profileModel = require('../../models/profileModel');
 // day of week: 0-6 (0 = sunday)
 
 // Current setup is every day at 8:00
-const job = (client) => new cron.CronJob('*/20 * * * * *', async function () {
+const job = (client) => new cron.CronJob(client.config.cronTimer, async function () {
   let profile = await profileModel.find(
     {
       "exams.date": {
