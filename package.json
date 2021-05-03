@@ -25,6 +25,7 @@
   "homepage": "https://github.com/Olympic1/Exam-bot#readme",
   "dependencies": {
     "cron": "^1.8.2",
+    "cron-validate": "^1.4.3",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
     "luxon": "^1.26.0",

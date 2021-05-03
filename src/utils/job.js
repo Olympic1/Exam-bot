@@ -1,15 +1,6 @@
 const cron = require('cron');
-const profileModel = require('../../models/profileModel');
+const profileModel = require('../models/profileModel');
 
-// Format of CronJob:
-// seconds (optional): 0-59
-// minute: 0-59
-// hour: 0-23
-// day of month: 1-31
-// month: 1-12
-// day of week: 0-6 (0 = sunday)
-
-// Current setup is every day at 8:00
 const job = (client) => new cron.CronJob(client.config.cronTimer, async function () {
   let profile = await profileModel.find(
     {

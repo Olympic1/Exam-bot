@@ -23,7 +23,7 @@ module.exports = {
       .addFields(
         {
           name: 'Version',
-          value: process.env.npm_package_version,
+          value: client.config.version,
           inline: true
         },
         {
@@ -55,17 +55,7 @@ module.exports = {
           name: 'Invite',
           value: `[exam-bot.gg/invite](${client.config.invite})`,
           inline: true
-        },
-        // {
-        //   name: 'Discord',
-        //   value: '[mnm.be/discord](https://discord.gg/Mb4nXQD)',
-        //   inline: true
-        // },
-        // {
-        //   name: 'Donate',
-        //   value: '[mnm.be/donate](https://www.patreon.com/_pjf)',
-        //   inline: true
-        // }
+        }
       )
       .setFooter(footer);
 

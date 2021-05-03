@@ -19,7 +19,7 @@ module.exports = {
       }
     }).catch((error) => {
       console.error(`An error occurred when trying to set the status of the bot after changing the status.\n${error}`);
-      message.channel.send(`Er is een fout opgetreden bij het instellen van de nieuwe status.`);
+      return message.channel.send('Er is een fout opgetreden bij het instellen van de nieuwe status.');
     });
   }
 }

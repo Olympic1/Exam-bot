@@ -12,7 +12,7 @@ module.exports = (client, discord) => {
   });
 
   // Start CronJob
-  client.job = require('../../commands/cron/job')(client);
+  client.job = require('../../utils/job')(client);
 
   // Show if the bot is logged in and ready to use
   console.info(`Logged in as ${client.user.tag}!`);

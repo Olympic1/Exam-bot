@@ -6,7 +6,7 @@ module.exports = (client, discord) => {
 
   for (const folder of commandFolders) {
     // Get all the JavaScript files in the folder
-    const commandFiles = fs.readdirSync(`./src/commands/${folder}`).filter(file => file.endsWith('.js') && !file.includes('job'));
+    const commandFiles = fs.readdirSync(`./src/commands/${folder}`).filter(file => file.endsWith('.js'));
 
     // Add all the found commands
     for (const file of commandFiles) {

@@ -6,7 +6,7 @@ module.exports = {
   info: {
     description: `Toont al mijn commando's met nuttige informatie.`,
     usage: 'help [commando]',
-    examples: ['help ping', 'help exam']
+    examples: ['help prefix', 'help exam']
   },
   async execute(message, args, client, discord, profileData) {
     const prefix = client.config.prefix;
