@@ -13,7 +13,7 @@ module.exports = {
     examples: ['channel 838084030062264320']
   },
   execute(message, args, client, discord, profileData) {
-    if (!args.length) return message.reply('voer het ID van het kanaal in waar u de brichten wil laten zien.');
+    if (!args.length) return message.reply('voer het ID van het kanaal in waar u de berichten wil laten zien.');
     if (client.config.examChannel === args[0]) return message.reply('dat kanaal gebruik ik nu al.');
 
     // Change the examChannel in the config file and bot
