@@ -8,13 +8,13 @@ module.exports = {
   cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   info: {
-    description: `Verander de prefix van de bot.`,
+    description: 'Verander de prefix van de bot.',
     usage: 'prefix <nieuwe prefix>',
     examples: ['prefix ?', 'prefix -']
   },
   execute(message, args, client, discord, profileData) {
-    if (!args.length) return message.reply('Voer de prefix in dat u wilt instellen.');
-    if (client.config.prefix === args[0]) return message.reply('Die prefix gebruik ik nu al.');
+    if (!args.length) return message.reply('voer de prefix in die u wilt gebruiken.');
+    if (client.config.prefix === args[0]) return message.reply('die prefix gebruik ik nu al.');
 
     // Change the prefix in the config file and bot
     const newPrefix = args[0];
@@ -43,6 +43,6 @@ module.exports = {
       return message.channel.send('Er is een fout opgetreden bij het instellen van de status met de nieuwe prefix.');
     });
 
-    return message.reply(`Prefix succesvol veranderd naar \`${newPrefix}\`.`);
+    return message.channel.send(`De prefix is succesvol veranderd naar \`${newPrefix}\`.`);
   }
 }

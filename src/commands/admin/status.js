@@ -6,10 +6,10 @@ module.exports = {
   info: {
     description: `Stel de status van de bot in. De status begint altijd met 'Luistert naar'`,
     usage: 'status <bericht>',
-    examples: ['status jullie gevoelens']
+    examples: ['status jullie examens']
   },
   execute(message, args, client, discord, profileData) {
-    if (!args.length) return message.reply('Voer de status in die u wilt instellen.');
+    if (!args.length) return message.reply('voer de status in die u wilt instellen.');
 
     const content = args.join(' ');
     client.user.setPresence({

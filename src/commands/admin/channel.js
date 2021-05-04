@@ -8,13 +8,13 @@ module.exports = {
   cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   info: {
-    description: `Verander het kanaal waarin de bot de succes-berichten stuurt.`,
+    description: 'Verander het kanaal waarin de bot de succes-berichten stuurt.',
     usage: 'channel <nieuw kanaalID>',
     examples: ['channel 838084030062264320']
   },
   execute(message, args, client, discord, profileData) {
-    if (!args.length) return message.reply('Voer het ID van het kanaal in dat u wilt instellen.');
-    if (client.config.examChannel === args[0]) return message.reply('Dat kanaal gebruik ik nu al.');
+    if (!args.length) return message.reply('voer het ID van het kanaal in waar u de brichten wil laten zien.');
+    if (client.config.examChannel === args[0]) return message.reply('dat kanaal gebruik ik nu al.');
 
     // Change the examChannel in the config file and bot
     const newChannel = args[0];
@@ -32,6 +32,6 @@ module.exports = {
     });
 
     const channelID = message.guild.channels.cache.get(newChannel);
-    return message.reply(`Kanaal succesvol veranderd naar ${channelID.toString()}.`);
+    return message.channel.send(`Het kanaal is succesvol veranderd naar ${channelID.toString()}.`);
   }
 }

@@ -8,12 +8,12 @@ module.exports = {
   info: {
     description: 'Voegt een examen toe aan uw naam en wenst u succes op de dag van je examen.',
     usage: 'exam <datum> <examens>',
-    examples: ['exam 12/5 Biologie', 'examen 19-5 Frans', 'ex 17/5 Wiskunde']
+    examples: ['exam 12/5 Biologie', 'examen 19-5 Frans', 'ex 17/5 Wiskunde en Nederlands']
   },
   async execute(message, args, client, discord, profileData) {
-    if (!args.length) return message.reply('Voer de datum en het examen(s) in.');
-    if (!client.utils.isValidDate(args[0])) return message.reply('Ongeldige datum ingevoerd.')
-    if (!args[1]) return message.reply('Voer uw examen(s) in.')
+    if (!args.length) return message.reply('voer de datum en het examen(s) in.');
+    if (!client.utils.isValidDate(args[0])) return message.reply('ongeldige datum ingevoerd.')
+    if (!args[1]) return message.reply('voer uw examen(s) in.')
 
     // Convert date into an ISO format
     const dateISO = client.utils.convertToISO(args[0]);

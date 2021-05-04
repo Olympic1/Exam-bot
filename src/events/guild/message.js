@@ -20,16 +20,15 @@ module.exports = async (client, discord, message) => {
         cooldowns: [],
         exams: []
       });
-      profile.save()
-        .then(profileData = await profileModel.findOne({ userID: message.author.id }))
-        .catch((error) => {
-          console.error(`An error occurred when trying to create a database profile.\n${error}`)
-        });
 
-      if (!profileData) return message.reply('Er is iets fout gegaan. Voer uw commando opnieuw in.');
+      profile.save()
+        .then(profileData = await profileModel.findOne({ userID: message.author.id }));
+
+      // Check if we can find the new profile
+      if (!profileData) return message.channel.send('Er is iets fout gegaan. Voer uw commando opnieuw in.');
     }
   } catch (error) {
-    console.error(`An error occurred when trying to search for an user in the database.\n${error}`);
+    console.error(`An error occurred when trying to create a database profile for an existing user.\n${error}`);
   }
 
   // Remove the prefix and put the arguments into an array
@@ -42,7 +41,7 @@ module.exports = async (client, discord, message) => {
   const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
 
   // Check if the command exist
-  if (!command) return message.reply(`Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
+  if (!command) return message.reply(`er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
 
   // All Discord permissions
   const permissionList = [
@@ -88,15 +87,16 @@ module.exports = async (client, discord, message) => {
       // Check if there is an invalid permission in the command
       if (!permissionList.includes(perm)) return console.warn(`The command '${command.name}' has an invalid permission set: ${perm}`);
 
-      // Check if user has the correct permissions
-      if (!message.member.hasPermission(perm)) invalidUserPerms.push(perm);
+      // Check if user has the correct permissions, unless it's the owner
+      const isBotOwner = message.author.id === client.config.owner;
+      if (!isBotOwner && !message.member.hasPermission(perm)) invalidUserPerms.push(perm);
 
       // Check if the bot has the correct permissions with exception of 'ADMINISTRATOR'
       if (perm !== 'ADMINISTRATOR' && !message.guild.me.hasPermission(perm)) invalidBotPerms.push(perm);
     }
 
     // Send a message if the user lacks a permission
-    if (invalidUserPerms.length) return message.reply(`Je mist de volgende permissies: \`${invalidUserPerms}\`.`);
+    if (invalidUserPerms.length) return message.reply(`je mist de volgende permissies: \`${invalidUserPerms}\`.`);
 
     // Send a message if the bot lacks a permission
     if (invalidBotPerms.length) return message.channel.send(`Ik mis de volgende permissies: \`${invalidBotPerms}\`. Neem contact op met de serverbeheerders.`);
@@ -123,7 +123,7 @@ module.exports = async (client, discord, message) => {
     } else {
       if ((command.cooldown * 1000) - (Date.now() - cooldown.time) > 0) {
         const time = (command.cooldown * 1000) - (Date.now() - cooldown.time);
-        return message.reply(`Je moet nog ${time} wachten voordat je dit commando weer kunt gebruiken.`);
+        return message.reply(`je moet nog ${time} wachten voordat je dit commando weer kunt gebruiken.`);
       }
 
       await profileModel.findOneAndUpdate(
@@ -160,7 +160,7 @@ module.exports = async (client, discord, message) => {
     command.execute(message, args, client, discord, profileData);
   } catch (error) {
     console.error(`An error occurred when trying to execute a command.\n${error}`);
-    message.reply(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.config.owner}>.`);
+    message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.config.owner}>.`);
     throw error;
   }
 }

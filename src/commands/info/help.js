@@ -16,13 +16,13 @@ module.exports = {
     const HELP_EMBED = new discord.MessageEmbed()
       .setColor('#338333')
       .setTitle('Help')
-      .setFooter(`Gebruik  ${prefix}  prefix voor elk commando.`);
+      .setFooter(`Gebruik  ${prefix}  prefix vóór elk commando.`);
 
-    let description = `Voor meer informatie over elk commando, typ \`${prefix}help <commando>\`.\n\n`;
+    let description = `Voor meer informatie over elk commando, typ \`${prefix}help <commando>\`.\n`;
 
     for (const cmd of client.commands) {
       const command = client.commands.get(cmd[0]) || client.commands.find((c) => c.aliases && c.aliases.includes(cmd[0]));
-      description += `\`${command.name}\` - ${command.info.description}\n`;
+      description += `\n\`${command.name}\` - ${command.info.description}`;
     }
 
     HELP_EMBED.setDescription(description);
@@ -35,8 +35,8 @@ module.exports = {
     const commandName = args[0].toLowerCase();
     const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
 
-    if (!command) return message.reply(`Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${client.config.prefix}help\` voor meer informatie over mijn commando's.`);
-    if (!command.info.description || !command.info.usage || !command.info.examples) return message.channel.send(`**Code Error**, neem contact op met <@${client.config.owner}>`);
+    if (!command) return message.reply(`er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
+    if (!command.info.description || !command.info.usage || !command.info.examples) return message.channel.send(`**Coding Error**, neem contact op met <@${client.config.owner}>.`);
 
     let aliases;
 

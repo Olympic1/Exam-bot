@@ -9,13 +9,13 @@ module.exports = {
   cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   info: {
-    description: `Verander de timing wanneer de bot de succes-berichten stuurt.`,
+    description: 'Verander de timing wanneer de bot de succes-berichten stuurt.',
     usage: 'timer <nieuwe timing>',
     examples: ['timer 0 8 * * *', 'timer 30 6 * * *']
   },
   execute(message, args, client, discord, profileData) {
-    if (!args.length) return message.reply('Voer de timing in dat u wilt instellen.');
-    if (client.config.cronTimer === args[0]) return message.reply('Die timing gebruik ik nu al.');
+    if (!args.length) return message.reply('voer de timing in dat u wilt instellen.');
+    if (client.config.cronTimer === args[0]) return message.reply('die timing gebruik ik nu al.');
 
     // Setup validation
     const newTimer = args.join(' ');
@@ -32,10 +32,10 @@ module.exports = {
 
       const tmp = [];
       errors.forEach((error) => {
-        tmp.push(`\n${error}`);
+        tmp.push(error);
       });
 
-      return message.reply(`Ongeldige timing ingevoerd. ${tmp}`)
+      return message.reply(`ongeldige timing ingevoerd.\n${tmp.join('\n')}`)
     }
 
     // Change the cronTimer in the config file and bot
@@ -52,6 +52,6 @@ module.exports = {
       console.info(`Timer successfully changed to \`${newTimer}\`.`)
     });
 
-    return message.reply(`Timing succesvol veranderd naar \`${newTimer}\`.`);
+    return message.channel.send(`De timing is succesvol veranderd naar \`${newTimer}\`.`);
   }
 }

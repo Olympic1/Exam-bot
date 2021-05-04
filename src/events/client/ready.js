@@ -1,6 +1,7 @@
 module.exports = (client, discord) => {
-  // Set the bot status
   const prefix = client.config.prefix;
+
+  // Set the bot status
   client.user.setPresence({
     status: 'online',
     activity: {
