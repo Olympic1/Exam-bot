@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "22:00"
+    timezone: Europe/Brussels
+  open-pull-requests-limit: 10
+  reviewers:
+  - Olympic1
+  labels:
+  - Pull request
+  - Dependencies
