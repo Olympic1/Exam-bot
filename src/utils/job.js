@@ -15,20 +15,25 @@ const job = (client) => new cron.CronJob(client.config.cronTimer, async function
 
   if (profile) {
     profile.forEach((user) => {
-      const tmp = [];
+      const allExams = [];
       user.exams.forEach((exam) => {
-        if (exam.date.toString() === new Date(date).toString()) tmp.push(exam.exam);
+        if (exam.date.toString() === new Date(date).toString()) allExams.push(exam.exam);
       });
 
-      let allExams;
-      if (tmp.length > 1) {
-        const all = tmp.slice(0, -1).join(', ') + ' en ' + tmp.slice(-1);
-        allExams = `examens ${all}`;
+      // Remove any duplicates.
+      const exams = allExams.filter((dub, index) => {
+        return allExams.indexOf(dub) === index;
+      });
+
+      let successString;
+      if (exams.length > 1) {
+        const tmp = exams.slice(0, -1).join(', ') + ' en ' + exams.slice(-1);
+        successString = `examens ${tmp}`;
       } else {
-        allExams = `examen ${tmp}`;
+        successString = `examen ${exams}`;
       }
 
-      const msg = `Goeiemorgen <@${user.userID}>, wij wensen je veel succes met je ${allExams} vandaag.`;
+      const msg = `Goeiemorgen <@${user.userID}>, wij wensen je veel succes met je ${successString} vandaag.`;
       const channel = client.channels.cache.get(client.config.examChannel);
       channel.send(msg);
     });

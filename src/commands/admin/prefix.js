@@ -31,18 +31,6 @@ module.exports = {
       console.info(`Prefix successfully changed to \`${newPrefix}\`.`);
     });
 
-    // Update activity with the new prefix
-    client.user.setPresence({
-      status: 'online',
-      activity: {
-        name: `${newPrefix}help`,
-        type: 'LISTENING',
-      },
-    }).catch((error) => {
-      console.error(`An error occurred when trying to set the status of the bot after changing the prefix.\n${error}`);
-      return message.channel.send('Er is een fout opgetreden bij het instellen van de status met de nieuwe prefix.');
-    });
-
     return message.channel.send(`De prefix is succesvol veranderd naar \`${newPrefix}\`.`);
   },
 };

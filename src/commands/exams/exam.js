@@ -36,5 +36,7 @@ module.exports = {
       console.error(`An error occurred when trying to add an exam into the database.\n${error}`);
       return message.channel.send('Er is een fout opgetreden bij het toevoegen van een examen in de database.');
     }
+
+    return message.reply('Jouw examen(s) zijn succesvol toegevoegd. Veel succes met studeren!');
   },
 };

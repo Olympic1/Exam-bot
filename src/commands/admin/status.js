@@ -21,5 +21,7 @@ module.exports = {
       console.error(`An error occurred when trying to set the status of the bot after changing the status.\n${error}`);
       return message.channel.send('Er is een fout opgetreden bij het instellen van de nieuwe status.');
     });
+
+    return message.channel.send(`Mijn status is succesvol veranderd naar \`${content}\`.`);
   },
 };

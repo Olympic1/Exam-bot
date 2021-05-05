@@ -1,11 +1,9 @@
 module.exports = (client, discord) => {
-  const prefix = client.config.prefix;
-
   // Set the bot status
   client.user.setPresence({
     status: 'online',
     activity: {
-      name: `${prefix}help`,
+      name: 'MNM Marathonradio',
       type: 'LISTENING',
     },
   }).catch((error) => {
