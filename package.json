@@ -27,7 +27,7 @@
     "cron": "^1.8.2",
     "cron-validate": "^1.4.3",
     "discord.js": "^12.5.3",
-    "dotenv": "^8.2.0",
+    "dotenv": "^9.0.0",
     "eslint": "^7.25.0",
     "luxon": "^1.26.0",
     "mongoose": "^5.12.7",
