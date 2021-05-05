@@ -6,7 +6,7 @@ module.exports = {
   info: {
     description: 'Krijg wat informatie over de bot.',
     usage: 'info',
-    examples: ['info']
+    examples: ['info'],
   },
   execute(message, args, client, discord, profileData) {
     const uptime = process.uptime();
@@ -24,41 +24,41 @@ module.exports = {
         {
           name: 'Version',
           value: client.config.version,
-          inline: true
+          inline: true,
         },
         {
           name: 'Library',
           value: 'discord.js',
-          inline: true
+          inline: true,
         },
         {
           name: 'Creator',
           value: 'Olympic1#6758',
-          inline: true
+          inline: true,
         },
         {
           name: 'Servers',
           value: guildCount,
-          inline: true
+          inline: true,
         },
         {
           name: 'Users',
           value: memberCount,
-          inline: true
+          inline: true,
         },
         {
           name: 'Website',
           value: `[exam-bot.gg](${website})`,
-          inline: true
+          inline: true,
         },
         {
           name: 'Invite',
           value: `[exam-bot.gg/invite](${client.config.invite})`,
-          inline: true
-        }
+          inline: true,
+        },
       )
       .setFooter(footer);
 
     return message.channel.send(INFO_EMBED);
-  }
-}
+  },
+};

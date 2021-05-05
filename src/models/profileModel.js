@@ -6,15 +6,15 @@ const profileSchema = new mongoose.Schema({
   cooldowns: [
     {
       name: String,
-      time: Date
-    }
+      time: Date,
+    },
   ],
   exams: [
     {
       date: Date,
-      exam: String
-    }
-  ]
+      exam: String,
+    },
+  ],
 });
 
 const model = mongoose.model('ProfileModels', profileSchema);

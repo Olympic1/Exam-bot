@@ -2,15 +2,15 @@ const cron = require('cron');
 const { DateTime } = require('luxon');
 const profileModel = require('../models/profileModel');
 
-const job = (client) => new cron.CronJob(client.config.cronTimer, async function () {
+const job = (client) => new cron.CronJob(client.config.cronTimer, async function() {
   const date = DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO();
 
-  let profile = await profileModel.find(
+  const profile = await profileModel.find(
     {
-      "exams.date": {
-        "$eq": new Date(date)
-      }
-    }
+      'exams.date': {
+        '$eq': new Date(date),
+      },
+    },
   );
 
   if (profile) {

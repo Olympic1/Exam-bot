@@ -7,4 +7,4 @@ module.exports = async (client, discord, guildMember) => {
   } catch (error) {
     console.error(`An error occurred when trying to delete a database profile.\n${error}`);
   }
-}
+};

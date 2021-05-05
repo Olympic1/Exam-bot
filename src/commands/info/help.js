@@ -4,9 +4,9 @@ module.exports = {
   cooldown: 0,
   permissions: [],
   info: {
-    description: `Toont al mijn commando's met nuttige informatie.`,
+    description: 'Toont al mijn commando\'s met nuttige informatie.',
     usage: 'help [commando]',
-    examples: ['help prefix', 'help exam']
+    examples: ['help prefix', 'help exam'],
   },
   async execute(message, args, client, discord, profileData) {
     const prefix = client.config.prefix;
@@ -49,22 +49,22 @@ module.exports = {
       .addFields(
         {
           name: 'Beschrijving',
-          value: command.info.description
+          value: command.info.description,
         },
         {
           name: 'Aliassen',
-          value: `\`${aliases}\``
+          value: `\`${aliases}\``,
         },
         {
           name: 'Gerbuik',
-          value: `\`${prefix}${command.info.usage}\``
+          value: `\`${prefix}${command.info.usage}\``,
         },
         {
           name: 'Voorbeelden',
-          value: `\`${prefix}${command.info.examples.join(`\`\n\`${prefix}`)}\``
-        }
+          value: `\`${prefix}${command.info.examples.join(`\`\n\`${prefix}`)}\``,
+        },
       );
 
     return await message.channel.send(COMMAND_EMBED);
-  }
-}
+  },
+};

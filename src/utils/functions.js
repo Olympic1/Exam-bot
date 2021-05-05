@@ -73,19 +73,15 @@ module.exports = {
     let tmp;
 
     // Converts date with /
-    if (DateTime.fromFormat(date, 'd/M').isValid)
-      tmp = DateTime.fromFormat(date, 'd/M');
+    if (DateTime.fromFormat(date, 'd/M').isValid) tmp = DateTime.fromFormat(date, 'd/M');
 
-    if (DateTime.fromFormat(date, 'd/M/y').isValid)
-      tmp = DateTime.fromFormat(date, 'd/M/y');
+    if (DateTime.fromFormat(date, 'd/M/y').isValid) tmp = DateTime.fromFormat(date, 'd/M/y');
 
     // Converts date with -
-    if (DateTime.fromFormat(date, 'd-M').isValid)
-      tmp = DateTime.fromFormat(date, 'd-M');
+    if (DateTime.fromFormat(date, 'd-M').isValid) tmp = DateTime.fromFormat(date, 'd-M');
 
-    if (DateTime.fromFormat(date, 'd-M-y').isValid)
-      tmp = DateTime.fromFormat(date, 'd-M-y');
+    if (DateTime.fromFormat(date, 'd-M-y').isValid) tmp = DateTime.fromFormat(date, 'd-M-y');
 
     return tmp.setZone('utc', { keepLocalTime: true }).toISO();
-  }
-}
+  },
+};

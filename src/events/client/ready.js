@@ -6,8 +6,8 @@ module.exports = (client, discord) => {
     status: 'online',
     activity: {
       name: `${prefix}help`,
-      type: 'LISTENING'
-    }
+      type: 'LISTENING',
+    },
   }).catch((error) => {
     console.error(`An error occurred when trying to set the status of the bot after logging in.\n${error}`);
   });
@@ -17,4 +17,4 @@ module.exports = (client, discord) => {
 
   // Show if the bot is logged in and ready to use
   console.info(`Logged in as ${client.user.tag}!`);
-}
+};

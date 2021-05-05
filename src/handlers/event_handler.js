@@ -15,4 +15,4 @@ module.exports = (client, discord) => {
       client.on(eventName, event.bind(null, client, discord));
     }
   }
-}
+};

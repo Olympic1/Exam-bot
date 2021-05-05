@@ -18,7 +18,7 @@ module.exports = async (client, discord, message) => {
         userID: message.author.id,
         serverID: message.guild.id,
         cooldowns: [],
-        exams: []
+        exams: [],
       });
 
       profile.save()
@@ -75,7 +75,7 @@ module.exports = async (client, discord, message) => {
     'PRIORITY_SPEAKER',
     'MUTE_MEMBERS',
     'DEAFEN_MEMBERS',
-    'MOVE_MEMBERS'
+    'MOVE_MEMBERS',
   ];
 
   // Check if the command has permissions
@@ -109,16 +109,16 @@ module.exports = async (client, discord, message) => {
     if (!cooldown) {
       await profileModel.findOneAndUpdate(
         {
-          userID: message.author.id
+          userID: message.author.id,
         },
         {
           $push: {
             cooldowns: {
               name: command.name,
-              time: Date.now()
-            }
-          }
-        }
+              time: Date.now(),
+            },
+          },
+        },
       );
     } else {
       if ((command.cooldown * 1000) - (Date.now() - cooldown.time) > 0) {
@@ -128,29 +128,29 @@ module.exports = async (client, discord, message) => {
 
       await profileModel.findOneAndUpdate(
         {
-          userID: message.author.id
+          userID: message.author.id,
         },
         {
           $pull: {
             cooldowns: {
-              name: command.name
-            }
-          }
-        }
+              name: command.name,
+            },
+          },
+        },
       );
 
       await profileModel.findOneAndUpdate(
         {
-          userID: message.author.id
+          userID: message.author.id,
         },
         {
           $push: {
             cooldowns: {
               name: command.name,
-              time: Date.now()
-            }
-          }
-        }
+              time: Date.now(),
+            },
+          },
+        },
       );
     }
   }
@@ -163,4 +163,4 @@ module.exports = async (client, discord, message) => {
     message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.config.owner}>.`);
     throw error;
   }
-}
+};

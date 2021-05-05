@@ -14,4 +14,4 @@ module.exports = (client, discord) => {
       client.commands.set(command.name, command);
     }
   }
-}
+};

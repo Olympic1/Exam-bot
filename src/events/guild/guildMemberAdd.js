@@ -7,11 +7,11 @@ module.exports = async (client, discord, guildMember) => {
       userID: guildMember.id,
       serverID: guildMember.guild.id,
       cooldowns: [],
-      exams: []
+      exams: [],
     });
 
     profile.save();
   } catch (error) {
     console.error(`An error occurred when trying to create a database profile for a new user.\n${error}`);
   }
-}
+};

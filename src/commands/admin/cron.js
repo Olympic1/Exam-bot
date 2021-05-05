@@ -6,7 +6,7 @@ module.exports = {
   info: {
     description: 'Voer allerlei acties uit met betrekking tot CronJob.',
     usage: 'cron <actie>',
-    examples: ['cron start', 'cron stop', 'cron status', 'cron last', 'cron next']
+    examples: ['cron start', 'cron stop', 'cron status', 'cron last', 'cron next'],
   },
   async execute(message, args, client, discord, profileData) {
     if (!args.length) return message.reply('voer de actie in die u wilt uitvoeren');
@@ -27,8 +27,7 @@ module.exports = {
         return client.job.stop();
 
       case 'status':
-        const status = running ? 'Ja' : 'Nee';
-        return message.channel.send(`CronJob wordt uitgevoerd: ${status}.`);
+        return message.channel.send(`CronJob wordt uitgevoerd: ${running ? 'Ja' : 'Nee'}.`);
 
       case 'last':
         if (!running) return message.channel.send('Start eerst CronJob.');
@@ -45,5 +44,5 @@ module.exports = {
       default:
         return message.reply('voer een geldige actie uit. Geldige acties zijn: start, stop, status, last, next');
     }
-  }
-}
+  },
+};

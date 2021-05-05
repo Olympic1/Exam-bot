@@ -11,7 +11,7 @@ module.exports = {
   info: {
     description: 'Verander de timing wanneer de bot de succes-berichten stuurt.',
     usage: 'timer <nieuwe timing>',
-    examples: ['timer 0 8 * * *', 'timer 30 6 * * *']
+    examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
   },
   execute(message, args, client, discord, profileData) {
     if (!args.length) return message.reply('voer de timing in dat u wilt instellen.');
@@ -22,8 +22,8 @@ module.exports = {
     const cronResult = validator(newTimer, {
       preset: 'npm-node-cron',
       override: {
-        useSeconds: false
-      }
+        useSeconds: false,
+      },
     });
 
     // Validate the new timing
@@ -35,7 +35,7 @@ module.exports = {
         tmp.push(error);
       });
 
-      return message.reply(`ongeldige timing ingevoerd.\n${tmp.join('\n')}`)
+      return message.reply(`ongeldige timing ingevoerd.\n${tmp.join('\n')}`);
     }
 
     // Change the cronTimer in the config file and bot
@@ -43,15 +43,15 @@ module.exports = {
     client.config.cronTimer = newTimer;
 
     // Write changes to the config file
-    fs.writeFile(filePath, JSON.stringify(configFile, null, 2), function (error) {
+    fs.writeFile(filePath, JSON.stringify(configFile, null, 2), function(error) {
       if (error) {
         console.error(`An error occurred when trying to write the timer to the config file.\n${error}`);
         return message.channel.send('Er is een fout opgetreden bij het bewerken van het config bestand.');
       }
 
-      console.info(`Timer successfully changed to \`${newTimer}\`.`)
+      console.info(`Timer successfully changed to \`${newTimer}\`.`);
     });
 
     return message.channel.send(`De timing is succesvol veranderd naar \`${newTimer}\`.`);
-  }
-}
+  },
+};
