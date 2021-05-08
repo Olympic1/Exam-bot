@@ -22,12 +22,12 @@ mongoose.connect(process.env.MONGODB_SRV, {
   useUnifiedTopology: true,
   useFindAndModify: false,
 }).then(() => {
-  console.info('Connected to database!');
+  console.info('Verbonden met database!');
 }).catch((error) => {
-  console.error(`An error occurred when trying to connect to our database.\n${error}`);
+  console.error(`Er is een fout opgetreden bij het verbinden met onze database.\n${error}`);
 });
 
 // Log the bot in to Discord
 client.login(process.env.DISCORD_TOKEN).catch((error) => {
-  console.error(`An error occurred when trying to log in to Discord.\n${error}`);
+  console.error(`Er is een fout opgetreden bij het inloggen op Discord.\n${error}`);
 });
