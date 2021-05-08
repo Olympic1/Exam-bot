@@ -6,7 +6,7 @@ module.exports = {
   info: {
     description: 'Toont al mijn commando\'s met nuttige informatie.',
     usage: 'help [commando]',
-    examples: ['help prefix', 'help exam'],
+    examples: ['help prefix', 'help examen'],
   },
   async execute(message, args, client, discord, profileData) {
     const prefix = client.config.prefix;
@@ -18,13 +18,18 @@ module.exports = {
       .setTitle('Help')
       .setFooter(`Gebruik  ${prefix}  prefix vóór elk commando.`);
 
-    let description = `Voor meer informatie over elk commando, typ \`${prefix}help <commando>\`.\n`;
+    let preCommands = `Voor meer informatie over elk commando, typ \`${prefix}help <commando>\`.\n`;
+    let userCommands = '';
+    let adminCommands = '\n\n**Admin commando\'s:**\n';
 
     for (const cmd of client.commands) {
       const command = client.commands.get(cmd[0]) || client.commands.find((c) => c.aliases && c.aliases.includes(cmd[0]));
-      description += `\n\`${command.name}\` - ${command.info.description}`;
+
+      if (command.permissions.includes('ADMINISTRATOR')) adminCommands += `\n\`${command.name}\` - ${command.info.description}`;
+      else userCommands += `\n\`${command.name}\` - ${command.info.description}`;
     }
 
+    const description = preCommands += userCommands += adminCommands;
     HELP_EMBED.setDescription(description);
 
     if (!args[0]) return await message.channel.send(HELP_EMBED);
@@ -38,14 +43,14 @@ module.exports = {
     if (!command) return message.reply(`er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
     if (!command.info.description || !command.info.usage || !command.info.examples) return message.channel.send(`**Coding Error**, neem contact op met <@${client.config.owner}>.`);
 
-    let aliases;
+    let aliases = 'geen', admin = '';
 
     if (command.aliases.length) aliases = command.aliases.join('`, `');
-    else aliases = 'geen';
+    if (command.permissions.includes('ADMINISTRATOR')) admin = '(enkel voor admins)';
 
     const COMMAND_EMBED = new discord.MessageEmbed()
       .setColor('#338333')
-      .setTitle(`\`${command.name}\` commando`)
+      .setTitle(`\`${command.name}\` commando ${admin}`)
       .addFields(
         {
           name: 'Beschrijving',
@@ -56,7 +61,7 @@ module.exports = {
           value: `\`${aliases}\``,
         },
         {
-          name: 'Gerbuik',
+          name: 'Gebruik',
           value: `\`${prefix}${command.info.usage}\``,
         },
         {

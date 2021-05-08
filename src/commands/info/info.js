@@ -4,7 +4,7 @@ module.exports = {
   cooldown: 60,
   permissions: [],
   info: {
-    description: 'Krijg wat informatie over de bot.',
+    description: 'Toont informatie over de bot.',
     usage: 'info',
     examples: ['info'],
   },
@@ -19,20 +19,20 @@ module.exports = {
 
     const INFO_EMBED = new discord.MessageEmbed()
       .setColor('#117ea6')
-      .setAuthor('Exam bot', 'https://raw.githubusercontent.com/Olympic1/Exam-bot/master/ExamBot.png', website)
+      .setAuthor('Examen bot', 'https://raw.githubusercontent.com/Olympic1/Exam-bot/master/icoon/ExamenBot.png', website)
       .addFields(
         {
-          name: 'Version',
+          name: 'Versie',
           value: client.config.version,
           inline: true,
         },
         {
-          name: 'Library',
+          name: 'Bibliotheek',
           value: 'discord.js',
           inline: true,
         },
         {
-          name: 'Creator',
+          name: 'Maker',
           value: 'Olympic1#6758',
           inline: true,
         },
@@ -42,18 +42,18 @@ module.exports = {
           inline: true,
         },
         {
-          name: 'Users',
+          name: 'Gebruikers',
           value: memberCount,
           inline: true,
         },
         {
           name: 'Website',
-          value: `[exam-bot.gg](${website})`,
+          value: `[examen-bot.gg](${website})`,
           inline: true,
         },
         {
-          name: 'Invite',
-          value: `[exam-bot.gg/invite](${client.config.invite})`,
+          name: 'Uitnodigen',
+          value: `[examen-bot.gg/invite](${client.config.invite})`,
           inline: true,
         },
       )

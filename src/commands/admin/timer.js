@@ -9,13 +9,13 @@ module.exports = {
   cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   info: {
-    description: 'Verander de timing wanneer de bot de succes-berichten stuurt.',
-    usage: 'timer <nieuwe timing>',
+    description: 'Verander het tijdschema wanneer de bot de succes-berichten stuurt.',
+    usage: 'timer <timing>',
     examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
   },
   execute(message, args, client, discord, profileData) {
-    if (!args.length) return message.reply('voer de timing in dat u wilt instellen.');
-    if (client.config.cronTimer === args[0]) return message.reply('die timing gebruik ik nu al.');
+    if (!args.length) return message.reply('voer het tijdschema in wanneer u wilt dat de berichten worden verzonden.');
+    if (client.config.cronTimer === args[0]) return message.reply('dat tijdschema gebruik ik nu al.');
 
     // Setup validation
     const newTimer = args.join(' ');
@@ -45,13 +45,13 @@ module.exports = {
     // Write changes to the config file
     fs.writeFile(filePath, JSON.stringify(configFile, null, 2), function(error) {
       if (error) {
-        console.error(`An error occurred when trying to write the timer to the config file.\n${error}`);
-        return message.channel.send('Er is een fout opgetreden bij het bewerken van het config bestand.');
+        console.error(`Er is een fout opgetreden bij het bewerken van het tijdschema in het configuratiebestand.\n${error}`);
+        return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');
       }
 
-      console.info(`Timer successfully changed to \`${newTimer}\`.`);
+      console.info(`Tijdschema succesvol veranderd naar \`${newTimer}\`.`);
     });
 
-    return message.channel.send(`De timing is succesvol veranderd naar \`${newTimer}\`.`);
+    return message.channel.send(`Het tijdschema is succesvol veranderd naar \`${newTimer}\`.`);
   },
 };

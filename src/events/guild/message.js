@@ -28,7 +28,7 @@ module.exports = async (client, discord, message) => {
       if (!profileData) return message.channel.send('Er is iets fout gegaan. Voer uw commando opnieuw in.');
     }
   } catch (error) {
-    console.error(`An error occurred when trying to create a database profile for an existing user.\n${error}`);
+    console.error(`Er is een fout opgetreden bij het aanmaken van een databaseprofiel voor een bestaande gebruiker.\n${error}`);
   }
 
   // Remove the prefix and put the arguments into an array
@@ -85,7 +85,7 @@ module.exports = async (client, discord, message) => {
 
     for (const perm of command.permissions) {
       // Check if there is an invalid permission in the command
-      if (!permissionList.includes(perm)) return console.warn(`The command '${command.name}' has an invalid permission set: ${perm}`);
+      if (!permissionList.includes(perm)) return console.warn(`Het commando '${command.name}' heeft een ongeldige permissie ingesteld: ${perm}`);
 
       // Check if user has the correct permissions, unless it's the owner
       const isBotOwner = message.author.id === client.config.owner;
@@ -107,6 +107,7 @@ module.exports = async (client, discord, message) => {
     const cooldown = profileData.cooldowns.find((x) => x.name === command.name);
 
     if (!cooldown) {
+      // Add the cooldown
       await profileModel.findOneAndUpdate(
         {
           userID: message.author.id,
@@ -126,6 +127,7 @@ module.exports = async (client, discord, message) => {
         return message.reply(`je moet nog ${time} wachten voordat je dit commando weer kunt gebruiken.`);
       }
 
+      // Remove the expired cooldown
       await profileModel.findOneAndUpdate(
         {
           userID: message.author.id,
@@ -139,6 +141,7 @@ module.exports = async (client, discord, message) => {
         },
       );
 
+      // Add the new cooldown
       await profileModel.findOneAndUpdate(
         {
           userID: message.author.id,
@@ -159,7 +162,7 @@ module.exports = async (client, discord, message) => {
   try {
     command.execute(message, args, client, discord, profileData);
   } catch (error) {
-    console.error(`An error occurred when trying to execute a command.\n${error}`);
+    console.error(`Er is een fout opgetreden bij het uitvoeren van een commando.\n${error}`);
     message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.config.owner}>.`);
     throw error;
   }

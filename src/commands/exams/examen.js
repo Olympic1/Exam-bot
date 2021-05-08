@@ -1,23 +1,24 @@
 const profileModel = require('../../models/profileModel');
 
 module.exports = {
-  name: 'exam',
-  aliases: ['examen', 'ex'],
+  name: 'examen',
+  aliases: ['exam', 'ex'],
   cooldown: 0,
   permissions: [],
   info: {
-    description: 'Voegt een examen toe aan uw naam en wenst u succes op de dag van je examen.',
-    usage: 'exam <datum> <examens>',
-    examples: ['exam 12/5 Biologie', 'examen 19-5 Frans', 'ex 17/5 Wiskunde en Nederlands'],
+    description: 'Voegt een examen toe en wenst u succes op de dag van je examen.',
+    usage: 'examen <datum> <examens>',
+    examples: ['examen 12/5 Biologie', 'exam 19-5 Frans', 'ex 17/5 Wiskunde en Nederlands'],
   },
   async execute(message, args, client, discord, profileData) {
-    if (!args.length) return message.reply('voer de datum en het examen(s) in.');
+    if (!args.length) return message.reply('voer de datum en het examen in.');
     if (!client.utils.isValidDate(args[0])) return message.reply('ongeldige datum ingevoerd.');
     if (!args[1]) return message.reply('voer uw examen(s) in.');
 
     // Convert date into an ISO format
     const dateISO = client.utils.convertToISO(args[0]);
 
+    // Add the date and exams
     try {
       await profileModel.findOneAndUpdate(
         {
@@ -33,10 +34,10 @@ module.exports = {
         },
       );
     } catch (error) {
-      console.error(`An error occurred when trying to add an exam into the database.\n${error}`);
-      return message.channel.send('Er is een fout opgetreden bij het toevoegen van een examen in de database.');
+      console.error(`Er is een fout opgetreden bij het toevoegen van een examen aan de database.\n${error}`);
+      return message.channel.send('Er is een fout opgetreden bij het toevoegen van een examen aan de database.');
     }
 
-    return message.reply('Jouw examen(s) zijn succesvol toegevoegd. Veel succes met studeren!');
+    return message.reply('jouw examen(s) zijn succesvol toegevoegd. Veel succes met studeren!');
   },
 };
