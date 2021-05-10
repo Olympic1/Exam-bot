@@ -15,7 +15,7 @@ const job = (client) => new cron.CronJob(client.config.cronTimer, async function
   );
 
   // Message all users
-  if (profile) {
+  if (profile.length) {
     const allUsers = [];
 
     profile.forEach((user) => {

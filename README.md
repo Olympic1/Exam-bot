@@ -12,20 +12,22 @@ Een Discord bot voor de MNM server om mensen geluk te wensen met hun examens die
 ## Commando's
 De examen bot heeft enkele commando's:
 * Server beheerders:
-  * `-prefix`  - Verander de prefix van de bot.
-  * `-status`  - Stel de status van de bot in.
-  * `-kanaal`  - Verander het kanaal waarin de bot de succes-berichten stuurt.
-  * `-timer`   - Verander het tijdschema wanneer de bot de succes-berichten stuurt.
-  * `-cron`    - Voer allerlei acties uit met betrekking tot CronJob (tijdschema).
+    * `-prefix`  - Verander de prefix van de bot.
+    * `-status`  - Stel de status van de bot in.
+    * `-kanaal`  - Verander het kanaal waarin de bot de succes-berichten stuurt.
+    * `-timer`   - Verander het tijdschema wanneer de bot de succes-berichten stuurt.
+    * `-cron`    - Voer allerlei acties uit met betrekking tot CronJob (tijdschema).
 * Informatief:
-  * `-help`    - Toont al mijn commando's met nuttige informatie.
-  * `-info`    - Toont informatie over de bot.
+    * `-help`    - Toont al mijn commando's met nuttige informatie.
+    * `-info`    - Toont informatie over de bot.
 * Examens:
-  * `-examen`  - Voegt een examen toe en wenst u succes op de dag van je examen.
+    * `-examen`  - Voegt een examen toe en wenst u succes op de dag van je examen.
 
 ## Licentie
 ### Applicatie
-Exam-bot is gelicenseerd onder de GNU AGPL 3.0 licentie. Zie het bestand [LICENSE](https://github.com/Olympic1/Exam-bot/blob/master/LICENSE) voor meer informatie.
+Exam-bot is gelicenseerd onder de GNU AGPL 3.0 licentie.  
+Zie het bestand [LICENSE](https://github.com/Olympic1/Exam-bot/blob/master/LICENSE) voor meer informatie.
 
 ### Icoon
-De afbeelding die gebruikt wordt door deze applicatie is gecreëerd door een medewerker van de VRT en valt dus volledig onder de licentierechten van de VRT. Zie het bestand [licentie icoon](https://github.com/Olympic1/Exam-bot/blob/master/icoon/LICENSE.txt) voor meer informatie.
+De afbeelding die gebruikt wordt door deze applicatie is gecreëerd door een medewerker van de VRT en valt dus volledig onder de licentierechten van de VRT.  
+Zie het bestand [licentie icoon](https://github.com/Olympic1/Exam-bot/blob/master/icoon/LICENSE.txt) voor meer informatie.
