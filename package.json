@@ -7,6 +7,7 @@
     "start": "node src/index.js",
     "start:pm2": "npm run pm2:start",
     "pm2:start": "pm2 start scripts/process.json",
+    "pm2:restart": "pm2 restart scripts/process.json",
     "pm2:stop": "pm2 stop scripts/process.json",
     "pm2:delete": "pm2 delete scripts/process.json"
   },
@@ -30,7 +31,6 @@
     "dotenv": "^9.0.0",
     "eslint": "^7.25.0",
     "luxon": "^1.26.0",
-    "mongoose": "^5.12.7",
-    "pm2": "^4.5.6"
+    "mongoose": "^5.12.7"
   }
 }

@@ -1,6 +1,9 @@
 const profileModel = require('../../models/profileModel');
 
 module.exports = async (client, discord, guildMember) => {
+  // If user is a bot, don't create a profile
+  if (guildMember.bot) return;
+
   // Create a database profile when a user joins the server
   try {
     const profile = await profileModel.create({
