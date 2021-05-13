@@ -1,6 +1,4 @@
 const fs = require('fs');
-const filePath = '../../../config.json';
-const configFile = require(filePath);
 const validator = require('cron-validate');
 
 module.exports = {
@@ -39,11 +37,10 @@ module.exports = {
     }
 
     // Change the cronTimer in the config file and bot
-    configFile.cronTimer = newTimer;
     client.config.cronTimer = newTimer;
 
     // Write changes to the config file
-    fs.writeFile(filePath, JSON.stringify(configFile, null, 2), function(error) {
+    fs.writeFile('./config.json', JSON.stringify(client.config, null, 2), function(error) {
       if (error) {
         console.error(`Er is een fout opgetreden bij het bewerken van het tijdschema in het configuratiebestand.\n${error}`);
         return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');

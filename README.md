@@ -25,7 +25,7 @@ De examen bot heeft enkele commando's:
 
 ## Licentie
 ### Applicatie
-Exam-bot is gelicenseerd onder de GNU AGPL 3.0 licentie.  
+Examen-bot is gelicenseerd onder de GNU AGPL 3.0 licentie.  
 Zie het bestand [LICENSE](https://github.com/Olympic1/Exam-bot/blob/master/LICENSE) voor meer informatie.
 
 ### Icoon

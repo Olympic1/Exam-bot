@@ -1,6 +1,4 @@
 const fs = require('fs');
-const filePath = '../../../config.json';
-const configFile = require(filePath);
 
 module.exports = {
   name: 'kanaal',
@@ -15,14 +13,14 @@ module.exports = {
   execute(message, args, client, discord, profileData) {
     if (!args.length) return message.reply('voer het ID in van het kanaal waarin u de berichten wilt versturen.');
     if (client.config.examChannel === args[0]) return message.reply('dat kanaal gebruik ik nu al.');
+    if (!client.utils.getChannel(message.guild, args[0])) return message.reply('dat is geen geldig kanaal.');
 
     // Change the examChannel in the config file and bot
     const newChannel = args[0];
-    configFile.examChannel = newChannel;
     client.config.examChannel = newChannel;
 
     // Write changes to the config file
-    fs.writeFile(filePath, JSON.stringify(configFile, null, 2), function(error) {
+    fs.writeFile('./config.json', JSON.stringify(client.config, null, 2), function(error) {
       if (error) {
         console.error(`Er is een fout opgetreden bij het bewerken van het kanaal in het configuratiebestand.\n${error}`);
         return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');

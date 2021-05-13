@@ -1,6 +1,4 @@
 const fs = require('fs');
-const filePath = '../../../config.json';
-const configFile = require(filePath);
 
 module.exports = {
   name: 'prefix',
@@ -18,11 +16,10 @@ module.exports = {
 
     // Change the prefix in the config file and bot
     const newPrefix = args[0];
-    configFile.prefix = newPrefix;
     client.config.prefix = newPrefix;
 
     // Write changes to the config file
-    fs.writeFile(filePath, JSON.stringify(configFile, null, 2), function(error) {
+    fs.writeFile('./config.json', JSON.stringify(client.config, null, 2), function(error) {
       if (error) {
         console.error(`Er is een fout opgetreden bij het bewerken van de prefix in het configuratiebestand.\n${error}`);
         return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');

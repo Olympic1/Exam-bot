@@ -23,30 +23,6 @@ const job = (client) => new cron.CronJob(client.config.cronTimer, async function
       user.exams.forEach((exam) => {
         if (exam.date.toString() === date.toString()) allUsers.push(user.userID);
       });
-
-      // Find all the exams the user has today
-      // const allExams = [];
-      // user.exams.forEach((exam) => {
-      //   if (exam.date.toString() === date.toString()) allExams.push(exam.exam);
-      // });
-
-      // Remove any duplicates
-      // const exams = allExams.filter((dub, index) => {
-      //   return allExams.indexOf(dub) === index;
-      // });
-
-      // Construct message
-      // let successString;
-      // if (exams.length > 1) {
-      //   const tmp = exams.slice(0, -1).join(', ') + ' en ' + exams.slice(-1);
-      //   successString = `examens ${tmp}`;
-      // } else {
-      //   successString = `examen ${exams}`;
-      // }
-
-      // const msg = `Goeiemorgen <@${user.userID}>, wij wensen je veel succes met je ${successString} vandaag.`;
-      // const channel = client.channels.cache.get(client.config.examChannel);
-      // channel.send(msg);
     });
 
     // Construct message
