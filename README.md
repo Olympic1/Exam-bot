@@ -4,6 +4,7 @@
 [![GitHub](https://img.shields.io/github/license/Olympic1/Exam-bot)](https://github.com/Olympic1/Exam-bot/blob/master/LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/95e821d7e0c044ac851f5bf194a40e68)](https://www.codacy.com/gh/Olympic1/Exam-bot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Olympic1/Exam-bot&amp;utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/olympic1/exam-bot/badge)](https://www.codefactor.io/repository/github/olympic1/exam-bot)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FOlympic1%2FExam-bot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FOlympic1%2FExam-bot?ref=badge_shield)
 
 -------------------------------------------------------------------------------
 
@@ -31,3 +32,7 @@ Zie het bestand [LICENSE](https://github.com/Olympic1/Exam-bot/blob/master/LICEN
 ### Icoon
 De afbeelding die gebruikt wordt door deze applicatie is gecreëerd door een medewerker van de VRT en valt dus volledig onder de licentierechten van de VRT.  
 Zie het bestand [licentie icoon](https://github.com/Olympic1/Exam-bot/blob/master/icoon/LICENSE.txt) voor meer informatie.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FOlympic1%2FExam-bot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FOlympic1%2FExam-bot?ref=badge_large)
