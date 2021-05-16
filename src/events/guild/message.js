@@ -122,9 +122,11 @@ module.exports = async (client, discord, message) => {
         },
       );
     } else {
-      if ((command.cooldown * 1000) - (Date.now() - cooldown.time) > 0) {
-        const time = (command.cooldown * 1000) - (Date.now() - cooldown.time);
-        return message.reply(`je moet nog ${time} wachten voordat je dit commando weer kunt gebruiken.`);
+      const left = (command.cooldown * 1000) - (Date.now() - cooldown.time);
+
+      if (left > 0) {
+        const time = Math.ceil(left / 1000);
+        return message.reply(`je moet nog ${time}s wachten voordat je dit commando weer kunt gebruiken.`);
       }
 
       // Remove the expired cooldown

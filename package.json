@@ -1,19 +1,15 @@
 {
   "name": "examen-bot",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Een Discord bot voor de MNM server om mensen geluk te wensen met hun examens die dag.",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "start:pm2": "npm run pm2:start",
-    "pm2:start": "pm2 start scripts/process.json",
-    "pm2:restart": "pm2 restart scripts/process.json",
-    "pm2:stop": "pm2 stop scripts/process.json",
-    "pm2:delete": "pm2 delete scripts/process.json"
+    "lint": "eslint .",
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Olympic1/Exam-bot.git"
+    "url": "https://github.com/Olympic1/Exam-bot.git"
   },
   "author": {
     "name": "Arne Peirs",
@@ -29,8 +25,10 @@
     "cron-validate": "^1.4.3",
     "discord.js": "^12.5.3",
     "dotenv": "^9.0.0",
-    "eslint": "^7.25.0",
     "luxon": "^1.26.0",
     "mongoose": "^5.12.7"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0"
   }
 }

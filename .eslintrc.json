@@ -2,10 +2,11 @@
 	"extends": "eslint:recommended",
 	"env": {
 		"node": true,
+		"mongo": true,
 		"es6": true
 	},
 	"parserOptions": {
-		"ecmaVersion": 2019
+		"ecmaVersion": 2021
 	},
 	"rules": {
 		"brace-style": ["error", "1tbs", { "allowSingleLine": true }],
