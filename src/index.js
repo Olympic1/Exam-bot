@@ -21,8 +21,6 @@ const logger = winston.createLogger({
 const client = new discord.Client({ partials: ['MESSAGE', 'REACTION'] });
 client.commands = new discord.Collection();
 client.events = new discord.Collection();
-client.config = require('../config.json');
-client.utils = require('./utils/functions');
 client.log = logger;
 
 // Register the handlers

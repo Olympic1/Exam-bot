@@ -1,4 +1,6 @@
 const fs = require('fs');
+const config = require('../../../config.json');
+const utils = require('../../utils/functions');
 
 module.exports = {
   name: 'kanaal',
@@ -13,16 +15,16 @@ module.exports = {
   execute(message, args, client, discord, profileData) {
     if (!args.length) return message.reply('voer het ID of naam in van het kanaal waarin u de berichten wilt versturen.');
 
-    const newChannel = client.utils.getChannel(message.guild, args[0]);
+    const newChannel = utils.getChannel(message.guild, args[0]);
 
     if (!newChannel) return message.reply('dat is geen geldig kanaal.');
-    if (client.config.examChannel === newChannel.id) return message.reply('dat kanaal gebruik ik nu al.');
+    if (config.examChannel === newChannel.id) return message.reply('dat kanaal gebruik ik nu al.');
 
     // Change the examChannel in the config file and bot
-    client.config.examChannel = newChannel.id;
+    config.examChannel = newChannel.id;
 
     // Write changes to the config file
-    fs.writeFile('./config.json', JSON.stringify(client.config, null, 2), function(error) {
+    fs.writeFile('./config.json', JSON.stringify(config, null, 2), function(error) {
       if (error) {
         client.log.error(`Er is een fout opgetreden bij het bewerken van het kanaal in het configuratiebestand.\n${error}`);
         return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');
@@ -31,6 +33,6 @@ module.exports = {
       client.log.info(`Kanaal succesvol veranderd naar \`${newChannel.id}\`.`);
     });
 
-    return message.channel.send(`Het kanaal is succesvol veranderd naar ${newChannel.name}.`);
+    return message.channel.send(`Het kanaal is succesvol veranderd naar ${newChannel.toString()}.`);
   },
 };

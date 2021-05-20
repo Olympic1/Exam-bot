@@ -1,3 +1,4 @@
+const utils = require('../../utils/functions');
 const profileModel = require('../../models/profileModel');
 
 module.exports = {
@@ -12,11 +13,11 @@ module.exports = {
   },
   async execute(message, args, client, discord, profileData) {
     if (!args.length) return message.reply('voer de datum en het examen in.');
-    if (!client.utils.isValidDate(args[0])) return message.reply('ongeldige datum ingevoerd.');
+    if (!utils.isValidDate(args[0])) return message.reply('ongeldige datum ingevoerd.');
     if (!args[1]) return message.reply('voer uw examen(s) in.');
 
     // Convert date into an ISO format
-    const dateISO = client.utils.convertToISO(args[0]);
+    const dateISO = utils.convertToISO(args[0]);
 
     // Add the date and exams
     try {

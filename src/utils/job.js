@@ -1,8 +1,9 @@
 const cron = require('cron');
 const { DateTime } = require('luxon');
+const config = require('../../config.json');
 const profileModel = require('../models/profileModel');
 
-const job = (client) => new cron.CronJob(client.config.cronTimer, async function() {
+const job = (client) => new cron.CronJob(config.cronTimer, async function() {
   const date = new Date(DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO());
 
   // Search all users who have exams today
@@ -35,7 +36,7 @@ const job = (client) => new cron.CronJob(client.config.cronTimer, async function
     }
 
     const msg = `Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${userList} `;
-    const channel = client.channels.cache.get(client.config.examChannel);
+    const channel = client.channels.cache.get(config.examChannel);
     channel.send(msg);
   }
 }, null, true, 'Europe/Brussels');

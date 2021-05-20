@@ -1,5 +1,6 @@
 const fs = require('fs');
 const validator = require('cron-validate');
+const config = require('../../../config.json');
 
 module.exports = {
   name: 'timer',
@@ -13,7 +14,7 @@ module.exports = {
   },
   execute(message, args, client, discord, profileData) {
     if (!args.length) return message.reply('voer het tijdschema in wanneer u wilt dat de berichten worden verzonden.');
-    if (client.config.cronTimer === args[0]) return message.reply('dat tijdschema gebruik ik nu al.');
+    if (config.cronTimer === args[0]) return message.reply('dat tijdschema gebruik ik nu al.');
 
     // Setup validation
     const newTimer = args.join(' ');
@@ -37,10 +38,10 @@ module.exports = {
     }
 
     // Change the cronTimer in the config file and bot
-    client.config.cronTimer = newTimer;
+    config.cronTimer = newTimer;
 
     // Write changes to the config file
-    fs.writeFile('./config.json', JSON.stringify(client.config, null, 2), function(error) {
+    fs.writeFile('./config.json', JSON.stringify(config, null, 2), function(error) {
       if (error) {
         client.log.error(`Er is een fout opgetreden bij het bewerken van het tijdschema in het configuratiebestand.\n${error}`);
         return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');

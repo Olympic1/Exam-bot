@@ -1,3 +1,6 @@
+const config = require('../../../config.json');
+const utils = require('../../utils/functions');
+
 module.exports = {
   name: 'info',
   aliases: [],
@@ -9,12 +12,13 @@ module.exports = {
     examples: ['info'],
   },
   async execute(message, args, client, discord, profileData) {
+    const owner = config.owner;
     const uptime = process.uptime();
-    const uptimeText = client.utils.formatToTime(uptime);
+    const uptimeText = utils.formatToTime(uptime);
     const footer = `Enceladus | Gehost door Heroku | Uptime: ${uptimeText}`;
 
-    let creator = await client.utils.getUser(message.guild, 'Olympic1#6758');
-    if (!creator) creator = 'Olympic1#6758';
+    let creator = await utils.getUser(message.guild, owner);
+    if (!creator) creator = owner;
 
     const guildCount = client.guilds.cache.size;
     const memberCount = client.guilds.cache.map((guilds) => guilds.memberCount).reduce((a, b) => a + b, 0);
@@ -26,7 +30,7 @@ module.exports = {
       .addFields(
         {
           name: 'Versie',
-          value: client.config.version,
+          value: config.version,
           inline: true,
         },
         {
@@ -56,7 +60,7 @@ module.exports = {
         },
         {
           name: 'Uitnodigen',
-          value: `[examen-bot.gg/invite](${client.config.invite})`,
+          value: `[examen-bot.gg/invite](${config.invite})`,
           inline: true,
         },
       )

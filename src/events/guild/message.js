@@ -1,8 +1,9 @@
+const config = require('../../../config.json');
 const profileModel = require('../../models/profileModel');
 
 module.exports = async (client, discord, message) => {
   // Get the prefix
-  const prefix = client.config.prefix;
+  const prefix = config.prefix;
 
   // Check if the command begins with the prefix and was send by an user inside a server
   if (!message.content.startsWith(prefix) || message.author.bot || !message.guild) return;
@@ -88,7 +89,7 @@ module.exports = async (client, discord, message) => {
       if (!permissionList.includes(perm)) return client.log.warn(`Het commando '${command.name}' heeft een ongeldige permissie ingesteld: ${perm}`);
 
       // Check if user has the correct permissions, unless it's the owner
-      const isBotOwner = message.author.id === client.config.owner;
+      const isBotOwner = message.author.id === config.owner;
       if (!isBotOwner && !message.member.hasPermission(perm)) invalidUserPerms.push(perm);
 
       // Check if the bot has the correct permissions with exception of 'ADMINISTRATOR'
@@ -165,7 +166,7 @@ module.exports = async (client, discord, message) => {
     command.execute(message, args, client, discord, profileData);
   } catch (error) {
     client.log.error(`Er is een fout opgetreden bij het uitvoeren van een commando.\n${error}`);
-    message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.config.owner}>.`);
+    message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${config.owner}>.`);
     throw error;
   }
 };

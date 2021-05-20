@@ -1,3 +1,5 @@
+const config = require('../../../config.json');
+
 module.exports = {
   name: 'help',
   aliases: ['h'],
@@ -9,7 +11,7 @@ module.exports = {
     examples: ['help prefix', 'help examen'],
   },
   async execute(message, args, client, discord, profileData) {
-    const prefix = client.config.prefix;
+    const prefix = config.prefix;
 
     // HELP_EMBED will be sent only if the user didn't pass any arguments.
     // This is the main help embed that displays each command.
@@ -41,7 +43,7 @@ module.exports = {
     const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return message.reply(`er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
-    if (!command.info.description || !command.info.usage || !command.info.examples) return message.channel.send(`**Coding Error**, neem contact op met <@${client.config.owner}>.`);
+    if (!command.info.description || !command.info.usage || !command.info.examples) return message.channel.send(`**Coding Error**, neem contact op met <@${config.owner}>.`);
 
     let aliases = 'geen', admin = '';
 
