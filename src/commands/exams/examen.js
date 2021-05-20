@@ -34,7 +34,7 @@ module.exports = {
         },
       );
     } catch (error) {
-      console.error(`Er is een fout opgetreden bij het toevoegen van een examen aan de database.\n${error}`);
+      client.log.error(`Er is een fout opgetreden bij het toevoegen van een examen aan de database.\n${error}`);
       return message.channel.send('Er is een fout opgetreden bij het toevoegen van een examen aan de database.');
     }
 

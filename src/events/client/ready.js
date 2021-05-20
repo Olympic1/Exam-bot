@@ -7,12 +7,12 @@ module.exports = (client, discord) => {
       type: 'LISTENING',
     },
   }).catch((error) => {
-    console.error(`Er is een fout opgetreden bij het instellen van de status van de bot na het inloggen.\n${error}`);
+    client.log.error(`Er is een fout opgetreden bij het instellen van de status van de bot na het inloggen.\n${error}`);
   });
 
   // Start CronJob
   client.job = require('../../utils/job')(client);
 
   // Show if the bot is logged in and ready to use
-  console.info(`Ingelogd als ${client.user.tag}!`);
+  client.log.info(`Ingelogd als ${client.user.username}!`);
 };

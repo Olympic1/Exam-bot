@@ -5,6 +5,6 @@ module.exports = async (client, discord, guildMember) => {
   try {
     await profileModel.findOneAndDelete(guildMember.id);
   } catch (error) {
-    console.error(`Er is een fout opgetreden bij het verwijderen van een databaseprofiel.\n${error}`);
+    client.log.error(`Er is een fout opgetreden bij het verwijderen van een databaseprofiel.\n${error}`);
   }
 };

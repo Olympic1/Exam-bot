@@ -21,11 +21,11 @@ module.exports = {
     // Write changes to the config file
     fs.writeFile('./config.json', JSON.stringify(client.config, null, 2), function(error) {
       if (error) {
-        console.error(`Er is een fout opgetreden bij het bewerken van de prefix in het configuratiebestand.\n${error}`);
+        client.log.error(`Er is een fout opgetreden bij het bewerken van de prefix in het configuratiebestand.\n${error}`);
         return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');
       }
 
-      console.info(`Prefix succesvol veranderd naar \`${newPrefix}\`.`);
+      client.log.info(`Prefix succesvol veranderd naar \`${newPrefix}\`.`);
     });
 
     return message.channel.send(`De prefix is succesvol veranderd naar \`${newPrefix}\`.`);

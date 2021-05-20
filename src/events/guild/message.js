@@ -28,7 +28,7 @@ module.exports = async (client, discord, message) => {
       if (!profileData) return message.channel.send('Er is iets fout gegaan. Voer uw commando opnieuw in.');
     }
   } catch (error) {
-    console.error(`Er is een fout opgetreden bij het aanmaken van een databaseprofiel voor een bestaande gebruiker.\n${error}`);
+    client.log.error(`Er is een fout opgetreden bij het aanmaken van een databaseprofiel voor een bestaande gebruiker.\n${error}`);
   }
 
   // Remove the prefix and put the arguments into an array
@@ -85,7 +85,7 @@ module.exports = async (client, discord, message) => {
 
     for (const perm of command.permissions) {
       // Check if there is an invalid permission in the command
-      if (!permissionList.includes(perm)) return console.warn(`Het commando '${command.name}' heeft een ongeldige permissie ingesteld: ${perm}`);
+      if (!permissionList.includes(perm)) return client.log.warn(`Het commando '${command.name}' heeft een ongeldige permissie ingesteld: ${perm}`);
 
       // Check if user has the correct permissions, unless it's the owner
       const isBotOwner = message.author.id === client.config.owner;
@@ -164,7 +164,7 @@ module.exports = async (client, discord, message) => {
   try {
     command.execute(message, args, client, discord, profileData);
   } catch (error) {
-    console.error(`Er is een fout opgetreden bij het uitvoeren van een commando.\n${error}`);
+    client.log.error(`Er is een fout opgetreden bij het uitvoeren van een commando.\n${error}`);
     message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.config.owner}>.`);
     throw error;
   }

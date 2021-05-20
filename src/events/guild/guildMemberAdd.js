@@ -15,6 +15,6 @@ module.exports = async (client, discord, guildMember) => {
 
     profile.save();
   } catch (error) {
-    console.error(`Er is een fout opgetreden bij het aanmaken van een databaseprofiel voor een nieuwe gebruiker.\n${error}`);
+    client.log.error(`Er is een fout opgetreden bij het aanmaken van een databaseprofiel voor een nieuwe gebruiker.\n${error}`);
   }
 };

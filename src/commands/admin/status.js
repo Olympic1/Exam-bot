@@ -19,7 +19,7 @@ module.exports = {
         type: 'LISTENING',
       },
     }).catch((error) => {
-      console.error(`Er is een fout opgetreden bij het instellen van de status van de bot.\n${error}`);
+      client.log.error(`Er is een fout opgetreden bij het instellen van de status van de bot.\n${error}`);
       return message.channel.send('Er is een fout opgetreden bij het instellen van de nieuwe status.');
     });
 

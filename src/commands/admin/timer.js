@@ -42,11 +42,11 @@ module.exports = {
     // Write changes to the config file
     fs.writeFile('./config.json', JSON.stringify(client.config, null, 2), function(error) {
       if (error) {
-        console.error(`Er is een fout opgetreden bij het bewerken van het tijdschema in het configuratiebestand.\n${error}`);
+        client.log.error(`Er is een fout opgetreden bij het bewerken van het tijdschema in het configuratiebestand.\n${error}`);
         return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');
       }
 
-      console.info(`Tijdschema succesvol veranderd naar \`${newTimer}\`.`);
+      client.log.info(`Tijdschema succesvol veranderd naar \`${newTimer}\`.`);
     });
 
     return message.channel.send(`Het tijdschema is succesvol veranderd naar \`${newTimer}\`.`);
