@@ -1,5 +1,4 @@
-const fs = require('fs');
-const config = require('../../../config.json');
+const guildModel = require('../../models/guildModel');
 
 module.exports = {
   name: 'prefix',
@@ -11,24 +10,35 @@ module.exports = {
     usage: 'prefix <prefix>',
     examples: ['prefix ?', 'prefix -'],
   },
-  execute(message, args, client, discord, profileData) {
+  async execute(message, args, client) {
     if (!args.length) return message.reply('voer de prefix in die u wilt gebruiken.');
-    if (config.prefix === args[0]) return message.reply('die prefix gebruik ik nu al.');
 
-    // Change the prefix in the config file and bot
+    let data = client.guildInfo.get(message.guild.id);
     const newPrefix = args[0];
-    config.prefix = newPrefix;
 
-    // Write changes to the config file
-    fs.writeFile('./config.json', JSON.stringify(config, null, 2), function(error) {
-      if (error) {
-        client.log.error(`Er is een fout opgetreden bij het bewerken van de prefix in het configuratiebestand.\n${error}`);
-        return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');
-      }
+    if (data.prefix === newPrefix) return message.reply('die prefix gebruik ik nu al.');
 
-      client.log.info(`Prefix succesvol veranderd naar \`${newPrefix}\`.`);
-    });
+    try {
+      // Change prefix in the database
+      data = await guildModel.findOneAndUpdate(
+        {
+          _id: message.guild.id,
+        },
+        {
+          prefix: newPrefix,
+        },
+        {
+          new: true,
+        },
+      );
 
-    return message.channel.send(`De prefix is succesvol veranderd naar \`${newPrefix}\`.`);
+      // Change prefix in the cache
+      client.guildInfo.set(message.guild.id, data);
+
+      return message.channel.send(`De prefix is succesvol veranderd naar \`${newPrefix}\`.`);
+    } catch (error) {
+      client.log.error('Er is een fout opgetreden bij het bewerken van de prefix.', error);
+      return message.channel.send('Er is een fout opgetreden bij het bewerken van de prefix.');
+    }
   },
 };

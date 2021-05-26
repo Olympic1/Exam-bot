@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-module.exports = (client, discord) => {
+module.exports = (client) => {
   // Get all the folders in 'commands/'
   const commandFolders = fs.readdirSync('./src/commands');
 

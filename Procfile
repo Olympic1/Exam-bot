@@ -1,1 +1,1 @@
-worker: node src/index.js
+worker: npm run start:prod

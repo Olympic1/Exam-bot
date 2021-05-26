@@ -1,11 +1,16 @@
 {
   "name": "examen-bot",
-  "version": "1.0.6",
-  "description": "Een Discord bot voor de MNM server om mensen geluk te wensen met hun examens die dag.",
+  "version": "1.1.0",
+  "description": "Een Discord bot voor de MNM-server om mensen geluk te wensen met hun examens die dag.",
   "main": "src/index.js",
   "scripts": {
-    "lint": "eslint .",
-    "start": "node src/index.js"
+    "lint": "eslint src",
+    "start": "npm run dev",
+    "start:prod": "npm run prod",
+    "env:dev": "cross-env NODE_ENV=development",
+    "env:prod": "cross-env NODE_ENV=production",
+    "dev": "npm run env:dev node src/index.js",
+    "prod": "npm run env:prod node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,13 +28,15 @@
   "dependencies": {
     "cron": "^1.8.2",
     "cron-validate": "^1.4.3",
+    "cross-env": "^7.0.3",
     "discord.js": "^12.5.3",
-    "dotenv": "^9.0.0",
-    "luxon": "^1.26.0",
-    "mongoose": "^5.12.7",
+    "dotenv": "^10.0.0",
+    "luxon": "^1.27.0",
+    "mongoose": "^5.12.10",
+    "node-fetch": "^2.6.1",
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "eslint": "^7.25.0"
+    "eslint": "^7.27.0"
   }
 }

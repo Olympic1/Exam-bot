@@ -1,44 +1,79 @@
-const cron = require('cron');
+const { CronJob } = require('cron');
 const { DateTime } = require('luxon');
-const config = require('../../config.json');
+const discord = require('discord.js');
 const profileModel = require('../models/profileModel');
 
-const job = (client) => new cron.CronJob(config.cronTimer, async function() {
-  const date = new Date(DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO());
+module.exports = (client, data) => {
+  return new CronJob(data.cronTimer, async function() {
+    const date = new Date(DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO());
 
-  // Search all users who have exams today
-  const profile = await profileModel.find(
-    {
-      'exams.date': {
-        '$eq': date,
+    // Find all users that have at least 1 exam today
+    const profiles = await profileModel.find(
+      {
+        'exams.date': {
+          '$eq': date,
+        },
       },
-    },
-  );
+    );
 
-  // Message all users
-  if (profile.length) {
-    const allUsers = [];
+    // Check if we found any user(s)
+    if (profiles.length) {
+      const allUsers = new discord.Collection();
 
-    profile.forEach((user) => {
-      // Find all users who have exams today
-      user.exams.forEach((exam) => {
-        if (exam.date.toString() === date.toString()) allUsers.push(user.userID);
+      profiles.forEach(user => {
+        const allExams = [];
+
+        user.exams.forEach(exam => {
+          // Check if the exam is registered in this guild. User can have registered exams in other guilds.
+          const examInGuild = exam.guildId === data._id;
+
+          // Check if the exam is today. User can have registered future exams.
+          const examIsToday = exam.date.toString() === date.toString();
+
+          // Check if the exam is already in the list. User can have registered duplicate exams.
+          const examInArray = allExams.includes(exam.name);
+
+          // If all checks pass, add the exam to the list
+          if (examInGuild && examIsToday && !examInArray) allExams.push(exam.name);
+        });
+
+        // Check if we have at least 1 exam in the list
+        if (allExams.length > 0) allUsers.set(user._id, allExams);
       });
-    });
 
-    // Construct message
-    let userList;
-    if (allUsers.length > 1) {
-      const tmp = allUsers.slice(0, -1).join('>, <@') + '> en <@' + allUsers.slice(-1);
-      userList = `<@${tmp}>`;
-    } else {
-      userList = `<@${allUsers}>`;
+      // Construct mentions
+      let mentions = '';
+      if (allUsers) {
+        allUsers.forEach((exam, id) => {
+          const str = `<@${id}> (${exam.join(', ')})`;
+
+          if (id === allUsers.firstKey()) {
+            mentions = `${str}`;
+          } else if (id === allUsers.lastKey()) {
+            mentions += ` en ${str}`;
+          } else {
+            mentions += `, ${str}`;
+          }
+        });
+      }
+
+      const guild = client.guilds.cache.get(data._id);
+      const channel = client.channels.cache.get(data.examChannel);
+
+      // Check if the guild has a channel set
+      if (channel) {
+        const canViewChannel = channel.permissionsFor(client.user.id).has('VIEW_CHANNEL');
+        const canSendMessages = channel.permissionsFor(client.user.id).has('SEND_MESSAGES');
+
+        // Check if we can send messages to the channel
+        if (canViewChannel && canSendMessages) {
+          await channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`);
+        } else {
+          await guild.owner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
+        }
+      } else {
+        await guild.owner.send(`Ik heb geprobeerd een bericht te sturen in ${guild.name}, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
+      }
     }
-
-    const msg = `Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${userList} `;
-    const channel = client.channels.cache.get(config.examChannel);
-    channel.send(msg);
-  }
-}, null, true, 'Europe/Brussels');
-
-module.exports = job;
+  }, null, true, 'Europe/Brussels');
+};

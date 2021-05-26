@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-module.exports = (client, discord) => {
+module.exports = (client) => {
   // Get all the folders in 'events/'
   const eventFolders = fs.readdirSync('./src/events');
 
@@ -12,7 +12,7 @@ module.exports = (client, discord) => {
     for (const file of eventFiles) {
       const event = require(`../events/${folder}/${file}`);
       const eventName = file.split('.')[0];
-      client.on(eventName, event.bind(null, client, discord));
+      client.on(eventName, event.bind(null, client));
     }
   }
 };

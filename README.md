@@ -7,21 +7,20 @@
 
 -------------------------------------------------------------------------------
 
-Een Discord bot voor de MNM server om mensen geluk te wensen met hun examens die dag.
+Een Discord bot voor de MNM-server om mensen geluk te wensen met hun examens die dag.
 
 ## Commando's
 De examen bot heeft enkele commando's:
 * Server beheerders:
-    * `-prefix`  - Verander de prefix van de bot.
-    * `-status`  - Stel de status van de bot in.
-    * `-kanaal`  - Verander het kanaal waarin de bot de succes-berichten stuurt.
-    * `-timer`   - Verander het tijdschema wanneer de bot de succes-berichten stuurt.
-    * `-cron`    - Voer allerlei acties uit met betrekking tot CronJob (tijdschema).
+    * `$prefix`  - Verander de prefix van de bot.
+    * `$kanaal`  - Verander het kanaal waarin de bot de succes-berichten stuurt.
+    * `$timer`   - Verander het tijdschema wanneer de bot de succes-berichten stuurt.
+    * `$cron`    - Voer allerlei acties uit met betrekking tot cronjob (tijdschema).
 * Informatief:
-    * `-help`    - Toont al mijn commando's met nuttige informatie.
-    * `-info`    - Toont informatie over de bot.
+    * `$help`    - Toont al mijn commando's met nuttige informatie.
+    * `$info`    - Toont informatie over de bot.
 * Examens:
-    * `-examen`  - Voegt een examen toe en wenst u succes op de dag van je examen.
+    * `$examen`  - Voegt een examen toe en wenst u succes op de dag van uw examen.
 
 ## Licentie
 ### Applicatie

@@ -1,35 +1,27 @@
-const config = require('../../../config.json');
 const profileModel = require('../../models/profileModel');
 
-module.exports = async (client, discord, message) => {
-  // Get the prefix
-  const prefix = config.prefix;
+module.exports = async (client, message) => {
+  // Check if the message was sent by a user inside a server
+  if (message.author.bot || !message.guild) return;
 
-  // Check if the command begins with the prefix and was send by an user inside a server
-  if (!message.content.startsWith(prefix) || message.author.bot || !message.guild) return;
+  // Get the prefix from our cache
+  const prefix = client.guildInfo.get(message.guild.id).prefix;
+
+  // Check if the command begins with the prefix
+  if (!message.content.startsWith(prefix)) return;
 
   // Check if the user already has a profile in our database
   let profileData;
   try {
-    profileData = await profileModel.findOne({ userID: message.author.id });
-
-    // Create a database profile for the existing user
-    if (!profileData) {
-      const profile = await profileModel.create({
-        userID: message.author.id,
-        serverID: message.guild.id,
-        cooldowns: [],
-        exams: [],
-      });
-
-      profile.save()
-        .then(profileData = await profileModel.findOne({ userID: message.author.id }));
-
-      // Check if we can find the new profile
-      if (!profileData) return message.channel.send('Er is iets fout gegaan. Voer uw commando opnieuw in.');
-    }
+    // Search the user in our database. If we didn't find the user, create a profile for him.
+    profileData = await profileModel.findOne({ _id: message.author.id }) ?? await profileModel.create({
+      _id: message.author.id,
+      cooldowns: [],
+      exams: [],
+    });
   } catch (error) {
-    client.log.error(`Er is een fout opgetreden bij het aanmaken van een databaseprofiel voor een bestaande gebruiker.\n${error}`);
+    client.log.error('Er is een fout opgetreden bij het aanmaken van een database profiel voor een bestaande gebruiker.', error);
+    return message.channel.send('Er is iets fout gegaan. Voer uw commando opnieuw in.');
   }
 
   // Remove the prefix and put the arguments into an array
@@ -38,11 +30,15 @@ module.exports = async (client, discord, message) => {
   // Get the command name and remove it from the array
   const commandName = args.shift().toLowerCase();
 
-  // Check for the command name or its aliases
-  const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+  // Get the command via its name or alias
+  const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-  // Check if the command exist
+  // Check if the command or alias exist
   if (!command) return message.reply(`er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
+
+  // If the command is only for the bot owner, check if the user is the owner
+  const isBotOwner = message.author.id === client.config.owner;
+  if (command.ownerOnly && !isBotOwner) return message.reply('dit commando kan enkel worden uitgevoerd door de bot eigenaar.');
 
   // All Discord permissions
   const permissionList = [
@@ -89,10 +85,9 @@ module.exports = async (client, discord, message) => {
       if (!permissionList.includes(perm)) return client.log.warn(`Het commando '${command.name}' heeft een ongeldige permissie ingesteld: ${perm}`);
 
       // Check if user has the correct permissions, unless it's the owner
-      const isBotOwner = message.author.id === config.owner;
       if (!isBotOwner && !message.member.hasPermission(perm)) invalidUserPerms.push(perm);
 
-      // Check if the bot has the correct permissions with exception of 'ADMINISTRATOR'
+      // Check if the bot has the correct permissions with exception to 'ADMINISTRATOR'
       if (perm !== 'ADMINISTRATOR' && !message.guild.me.hasPermission(perm)) invalidBotPerms.push(perm);
     }
 
@@ -105,68 +100,58 @@ module.exports = async (client, discord, message) => {
 
   // Check if the command has a cooldown
   if (command.cooldown) {
-    const cooldown = profileData.cooldowns.find((x) => x.name === command.name);
+    const cooldown = profileData.cooldowns.find(cd => cd.guildId === message.guild.id && cd.name === command.name);
 
-    if (!cooldown) {
-      // Add the cooldown
-      await profileModel.findOneAndUpdate(
-        {
-          userID: message.author.id,
-        },
-        {
-          $push: {
-            cooldowns: {
-              name: command.name,
-              time: Date.now(),
-            },
-          },
-        },
-      );
-    } else {
+    // Check if the user already has a cooldown for this command
+    if (cooldown) {
       const left = (command.cooldown * 1000) - (Date.now() - cooldown.time);
 
+      // Check if the command is still on cooldown
       if (left > 0) {
-        const time = Math.ceil(left / 1000);
-        return message.reply(`je moet nog ${time}s wachten voordat je dit commando weer kunt gebruiken.`);
+        const seconds = Math.ceil(left / 1000);
+        const time = client.utils.formatToTime(seconds);
+        return message.reply(`je moet nog ${time} wachten voordat je dit commando opnieuw kunt gebruiken.`);
       }
 
-      // Remove the expired cooldown
+      // Remove the expired cooldown for the user
       await profileModel.findOneAndUpdate(
         {
-          userID: message.author.id,
+          _id: message.author.id,
         },
         {
           $pull: {
             cooldowns: {
+              guildId: message.guild.id,
               name: command.name,
-            },
-          },
-        },
-      );
-
-      // Add the new cooldown
-      await profileModel.findOneAndUpdate(
-        {
-          userID: message.author.id,
-        },
-        {
-          $push: {
-            cooldowns: {
-              name: command.name,
-              time: Date.now(),
             },
           },
         },
       );
     }
+
+    // Add a cooldown for the user
+    await profileModel.findOneAndUpdate(
+      {
+        _id: message.author.id,
+      },
+      {
+        $push: {
+          cooldowns: {
+            guildId: message.guild.id,
+            name: command.name,
+            time: Date.now(),
+          },
+        },
+      },
+    );
   }
 
   // Execute the command
   try {
-    command.execute(message, args, client, discord, profileData);
+    command.execute(message, args, client);
   } catch (error) {
-    client.log.error(`Er is een fout opgetreden bij het uitvoeren van een commando.\n${error}`);
-    message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${config.owner}>.`);
+    client.log.error(`Er is een fout opgetreden bij het uitvoeren van het commando '${command.name}'.`, error);
+    message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.config.owner}>.`);
     throw error;
   }
 };

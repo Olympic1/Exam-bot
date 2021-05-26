@@ -1,22 +1,26 @@
 const mongoose = require('mongoose');
 
 const profileSchema = new mongoose.Schema({
-  userID: { type: String, required: true, unique: true },
-  serverID: { type: String, required: true },
+  _id: {
+    type: String,
+    required: true,
+  },
   cooldowns: [
     {
+      guildId: String,
       name: String,
       time: Date,
     },
   ],
   exams: [
     {
+      guildId: String,
+      name: String,
       date: Date,
-      exam: String,
     },
   ],
 });
 
-const model = mongoose.model('ProfileModels', profileSchema);
+const model = mongoose.model('Profiles', profileSchema);
 
 module.exports = model;

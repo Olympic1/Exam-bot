@@ -1,5 +1,4 @@
-const config = require('../../../config.json');
-const utils = require('../../utils/functions');
+const discord = require('discord.js');
 
 module.exports = {
   name: 'info',
@@ -11,26 +10,25 @@ module.exports = {
     usage: 'info',
     examples: ['info'],
   },
-  async execute(message, args, client, discord, profileData) {
-    const owner = config.owner;
+  async execute(message, args, client) {
     const uptime = process.uptime();
-    const uptimeText = utils.formatToTime(uptime);
+    const uptimeText = client.utils.formatToTime(uptime);
     const footer = `Enceladus | Gehost door Heroku | Uptime: ${uptimeText}`;
 
-    let creator = await utils.getUser(message.guild, owner);
-    if (!creator) creator = owner;
-
     const guildCount = client.guilds.cache.size;
-    const memberCount = client.guilds.cache.map((guilds) => guilds.memberCount).reduce((a, b) => a + b, 0);
+    const memberCount = client.guilds.cache.map(guilds => guilds.memberCount).reduce((a, b) => a + b, 0);
+    const owner = await client.utils.getUser(message.guild, client.config.owner) || 'Olympic1#6758';
+
+    const avatar = 'https://raw.githubusercontent.com/Olympic1/Exam-bot/master/icoon/ExamenBot.png';
     const website = 'https://github.com/Olympic1/Exam-bot/';
 
     const INFO_EMBED = new discord.MessageEmbed()
       .setColor('#117ea6')
-      .setAuthor('Examen bot', 'https://raw.githubusercontent.com/Olympic1/Exam-bot/master/icoon/ExamenBot.png', website)
+      .setAuthor(client.user.username, avatar, website)
       .addFields(
         {
           name: 'Versie',
-          value: config.version,
+          value: client.config.version,
           inline: true,
         },
         {
@@ -40,7 +38,7 @@ module.exports = {
         },
         {
           name: 'Maker',
-          value: creator,
+          value: owner,
           inline: true,
         },
         {
@@ -60,7 +58,7 @@ module.exports = {
         },
         {
           name: 'Uitnodigen',
-          value: `[examen-bot.gg/invite](${config.invite})`,
+          value: `[examen-bot.gg/invite](${client.config.invite})`,
           inline: true,
         },
       )

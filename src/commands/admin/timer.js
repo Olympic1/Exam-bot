@@ -1,6 +1,5 @@
-const fs = require('fs');
-const validator = require('cron-validate');
-const config = require('../../../config.json');
+const validate = require('cron-validate');
+const guildModel = require('../../models/guildModel');
 
 module.exports = {
   name: 'timer',
@@ -12,16 +11,19 @@ module.exports = {
     usage: 'timer <timing>',
     examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
   },
-  execute(message, args, client, discord, profileData) {
+  async execute(message, args, client) {
     if (!args.length) return message.reply('voer het tijdschema in wanneer u wilt dat de berichten worden verzonden.');
-    if (config.cronTimer === args[0]) return message.reply('dat tijdschema gebruik ik nu al.');
+
+    let data = client.guildInfo.get(message.guild.id);
+    const newTimer = args.join(' ');
+
+    if (data.cronTimer === newTimer) return message.reply('dat tijdschema gebruik ik nu al.');
 
     // Setup validation
-    const newTimer = args.join(' ');
-    const cronResult = validator(newTimer, {
+    const cronResult = validate(newTimer, {
       preset: 'npm-node-cron',
       override: {
-        useSeconds: false,
+        useSeconds: args.length === 6,
       },
     });
 
@@ -30,26 +32,32 @@ module.exports = {
       const errors = cronResult.getError();
 
       const tmp = [];
-      errors.forEach((error) => {
-        tmp.push(error);
-      });
+      errors.forEach(error => tmp.push(error));
 
       return message.reply(`ongeldige timing ingevoerd.\n${tmp.join('\n')}`);
     }
 
-    // Change the cronTimer in the config file and bot
-    config.cronTimer = newTimer;
+    try {
+      // Change cronTimer in the database
+      data = await guildModel.findOneAndUpdate(
+        {
+          _id: message.guild.id,
+        },
+        {
+          cronTimer: newTimer,
+        },
+        {
+          new: true,
+        },
+      );
 
-    // Write changes to the config file
-    fs.writeFile('./config.json', JSON.stringify(config, null, 2), function(error) {
-      if (error) {
-        client.log.error(`Er is een fout opgetreden bij het bewerken van het tijdschema in het configuratiebestand.\n${error}`);
-        return message.channel.send('Er is een fout opgetreden bij het bewerken van het configuratiebestand.');
-      }
+      // Start cronjob and cache the guild data
+      client.utils.updateCronjob(client, message.guild.id, data);
 
-      client.log.info(`Tijdschema succesvol veranderd naar \`${newTimer}\`.`);
-    });
-
-    return message.channel.send(`Het tijdschema is succesvol veranderd naar \`${newTimer}\`.`);
+      return message.channel.send(`Het tijdschema is succesvol veranderd naar \`${newTimer}\`.`);
+    } catch (error) {
+      client.log.error('Er is een fout opgetreden bij het bewerken van het tijdschema.', error);
+      return message.channel.send('Er is een fout opgetreden bij het bewerken van het tijdschema.');
+    }
   },
 };
