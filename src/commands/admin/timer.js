@@ -32,7 +32,9 @@ module.exports = {
       const errors = cronResult.getError();
 
       const tmp = [];
-      errors.forEach(error => tmp.push(error));
+      for (const error of errors) {
+        tmp.push(error);
+      }
 
       return message.reply(`ongeldige timing ingevoerd.\n${tmp.join('\n')}`);
     }

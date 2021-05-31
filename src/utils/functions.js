@@ -49,10 +49,9 @@ module.exports = {
       year: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
+      second: showSeconds ? 'numeric' : undefined,
+      timeZone: 'Europe/Brussels',
     };
-
-    // Check if we need to display seconds
-    if (showSeconds) options.second = 'numeric';
 
     return date.toLocaleString('nl-BE', options);
   },
@@ -278,11 +277,8 @@ module.exports = {
   updateCronjob: (client, guildId, data) => {
     // If we already have a job running, stop it before we change the data
     try {
-      console.log('Getting data');
-      const job = client.guildInfo.get(guildId, data).job;
-      console.log('Stopping cronjob');
+      const job = client.guildInfo.get(guildId).job;
       job.stop();
-      console.log('Cronjob stopped');
     } catch (error) {
       // Ignore
     }

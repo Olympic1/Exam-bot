@@ -11,21 +11,22 @@ module.exports = {
     usage: 'herstart [time]',
     examples: ['herstart'],
   },
-  async execute(message, args, client, discord, profileData) {
+  async execute(message, args, client) {
     // Get the provided time in seconds. Defaults to 1 minute.
     const limit = client.utils.parseTimeLimit(args[0]) || 60;
     const timeText = client.utils.formatToTime(limit);
 
     // Message all the possible guilds about restarting the bot
     let channel;
-    client.guildInfo.forEach(guild => {
-      channel = client.channels.cache.get(guild.examChannel);
+    for (const info of client.guildInfo) {
+      const guild = client.guilds.cache.get(info[0]);
+      channel = guild.channels.cache.get(info[1].examChannel);
 
       // Check if the guild has a channel set, otherwise message the guild owner
-      if (!channel) channel = client.guilds.cache.get(guild._id).owner;
+      if (!channel) channel = guild.owner;
 
       channel.send(`Attentie! Over ${timeText} zal ik mezelf opnieuw opstarten.`);
-    });
+    }
 
     // Send a request to Heroku to restart the bot
     setTimeout(async () => {

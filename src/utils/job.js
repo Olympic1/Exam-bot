@@ -20,10 +20,10 @@ module.exports = (client, data) => {
     if (profiles.length) {
       const allUsers = new discord.Collection();
 
-      profiles.forEach(user => {
+      for (const user of profiles) {
         const allExams = [];
 
-        user.exams.forEach(exam => {
+        for (const exam of user.exams) {
           // Check if the exam is registered in this guild. User can have registered exams in other guilds.
           const examInGuild = exam.guildId === data._id;
 
@@ -35,16 +35,16 @@ module.exports = (client, data) => {
 
           // If all checks pass, add the exam to the list
           if (examInGuild && examIsToday && !examInArray) allExams.push(exam.name);
-        });
+        }
 
         // Check if we have at least 1 exam in the list
         if (allExams.length > 0) allUsers.set(user._id, allExams);
-      });
+      }
 
       // Construct mentions
       let mentions = '';
       if (allUsers) {
-        allUsers.forEach((exam, id) => {
+        for (const [id, exam] of allUsers.entries()) {
           const str = `<@${id}> (${exam.join(', ')})`;
 
           if (id === allUsers.firstKey()) {
@@ -54,11 +54,11 @@ module.exports = (client, data) => {
           } else {
             mentions += `, ${str}`;
           }
-        });
+        }
       }
 
       const guild = client.guilds.cache.get(data._id);
-      const channel = client.channels.cache.get(data.examChannel);
+      const channel = guild.channels.cache.get(data.examChannel);
 
       // Check if the guild has a channel set
       if (channel) {
