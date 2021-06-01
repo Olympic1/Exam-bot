@@ -25,7 +25,7 @@ module.exports = {
       // Check if the guild has a channel set, otherwise message the guild owner
       if (!channel) channel = guild.owner;
 
-      channel.send(`Attentie! Over ${timeText} zal ik mezelf opnieuw opstarten.`);
+      await channel.send(`Attentie! Over ${timeText} zal ik mezelf opnieuw opstarten.`);
     }
 
     // Send a request to Heroku to restart the bot

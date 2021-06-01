@@ -57,6 +57,9 @@ module.exports = (client, data) => {
         }
       }
 
+      // Check if we have a mention
+      if (!mentions) return;
+
       const guild = client.guilds.cache.get(data._id);
       const channel = guild.channels.cache.get(data.examChannel);
 

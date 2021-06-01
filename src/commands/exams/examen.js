@@ -16,9 +16,14 @@ module.exports = {
     if (!args[1]) return message.reply('voer uw examen(s) in.');
 
     // Join all the arguments into a message, so we can search for the exams per day
-    // Searches for the format "12/6 exam" or "12/6 multiple exams"
     const joinArgs = args.join(' ');
-    const matches = joinArgs.matchAll(/(\d+[/-]\d+) (.*?)(?:(?= \d)|$)/gm);
+    const regex = /(\d+[/-]\d+) (\D*?)(?:(?= \d)|$)/gm;
+
+    // Check if we found a date and an exam
+    if (!joinArgs.match(regex)) return message.reply('geen examens ingevoerd. Voer na elke datum minstens één examen in. (vb: `2/6 Frans` of `2/6 Frans 3/6 Engels`)');
+
+    // Searches for the format "12/6 exam" or "12/6 multiple exams"
+    const matches = joinArgs.matchAll(regex);
 
     for (const match of matches) {
       // Convert date into an ISO format
