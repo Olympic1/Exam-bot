@@ -17,7 +17,7 @@ module.exports = {
 
     // Join all the arguments into a message, so we can search for the exams per day
     const joinArgs = args.join(' ');
-    const regex = /(\d+[/-]\d+) (\D*?)(?:(?= \d)|$)/gm;
+    const regex = /(\d+[/-]\d+) ([\w ]*)(?:(?= \d)|$)/gm;
 
     // Check if we found a date and an exam
     if (!joinArgs.match(regex)) return message.reply('geen examens ingevoerd. Voer na elke datum minstens één examen in. (vb: `2/6 Frans` of `2/6 Frans 3/6 Engels`)');

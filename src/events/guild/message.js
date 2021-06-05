@@ -40,50 +40,12 @@ module.exports = async (client, message) => {
   const isBotOwner = message.author.id === client.config.owner;
   if (command.ownerOnly && !isBotOwner) return message.reply('dit commando kan enkel worden uitgevoerd door de bot eigenaar.');
 
-  // All Discord permissions
-  const permissionList = [
-    'ADMINISTRATOR',
-    'VIEW_CHANNEL',
-    'MANAGE_CHANNELS',
-    'MANAGE_ROLES',
-    'MANAGE_EMOJIS',
-    'VIEW_AUDIT_LOG',
-    'VIEW_GUILD_INSIGHTS',
-    'MANAGE_WEBHOOKS',
-    'MANAGE_GUILD',
-    'CREATE_INSTANT_INVITE',
-    'CHANGE_NICKNAME',
-    'MANAGE_NICKNAMES',
-    'KICK_MEMBERS',
-    'BAN_MEMBERS',
-    'SEND_MESSAGES',
-    'EMBED_LINKS',
-    'ATTACH_FILES',
-    'ADD_REACTIONS',
-    'USE_EXTERNAL_EMOJIS',
-    'MENTION_EVERYONE',
-    'MANAGE_MESSAGES',
-    'READ_MESSAGE_HISTORY',
-    'SEND_TTS_MESSAGES',
-    'CONNECT',
-    'SPEAK',
-    'STREAM',
-    'USE_VAD',
-    'PRIORITY_SPEAKER',
-    'MUTE_MEMBERS',
-    'DEAFEN_MEMBERS',
-    'MOVE_MEMBERS',
-  ];
-
   // Check if the command has permissions
   if (command.permissions.length) {
     const invalidUserPerms = [];
     const invalidBotPerms = [];
 
     for (const perm of command.permissions) {
-      // Check if there is an invalid permission in the command
-      if (!permissionList.includes(perm)) return client.log.warn(`Het commando '${command.name}' heeft een ongeldige permissie ingesteld: ${perm}`);
-
       // Check if user has the correct permissions, unless it's the owner
       if (!isBotOwner && !message.member.hasPermission(perm)) invalidUserPerms.push(perm);
 
