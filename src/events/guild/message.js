@@ -27,6 +27,9 @@ module.exports = async (client, message) => {
   // Remove the prefix and put the arguments into an array
   const args = message.content.slice(prefix.length).split(/ +/);
 
+  // Don't allow a space after the prefix
+  if (args[0] === '') return message.reply(`Plaats geen spatie na de \`${prefix}\`.`);
+
   // Get the command name and remove it from the array
   const commandName = args.shift().toLowerCase();
 

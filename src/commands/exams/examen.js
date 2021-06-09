@@ -17,15 +17,18 @@ module.exports = {
 
     // Join all the arguments into a message, so we can search for the exams per day
     const joinArgs = args.join(' ');
-    const regex = /(\d+[/-]\d+) (.*?)(?:(?= \d+[/-])|$)/gm;
+    const regex = /(\d+[/-]\d+) (.*?)(?:(?= -ex| \d+[/-])|$)/gm;
 
     // Check if we found a date and an exam
     if (!joinArgs.match(regex)) return message.reply('geen examens ingevoerd. Voer na elke datum minstens één examen in. (vb: `2/6 Frans` of `2/6 Frans 3/6 Engels`)');
 
     // Searches for the format "12/6 exam" or "12/6 multiple exams"
     const matches = joinArgs.matchAll(regex);
+    let exams = 0;
 
     for (const match of matches) {
+      exams++;
+
       // Convert date into an ISO format
       const dateISO = client.utils.convertToISO(match[1]);
 
@@ -51,6 +54,6 @@ module.exports = {
       }
     }
 
-    return message.reply('jouw examen(s) zijn succesvol toegevoegd. Veel succes met studeren!');
+    return message.reply(`Jouw examen${exams > 1 ? 's zijn' : ' is'} succesvol toegevoegd. Veel succes met studeren!`);
   },
 };
