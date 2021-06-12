@@ -70,7 +70,7 @@ module.exports = (client, data) => {
 
         // Check if we can send messages to the channel
         if (canViewChannel && canSendMessages) {
-          await channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`);
+          await channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { split: true });
         } else {
           await guild.owner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
         }
