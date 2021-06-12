@@ -29,7 +29,7 @@
     "cron": "^1.8.2",
     "cron-validate": "^1.4.3",
     "cross-env": "^7.0.3",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.0.0-dev.99ff7151379fe03a1cfd52f252c0e6fc892d7776",
     "dotenv": "^10.0.0",
     "luxon": "^1.27.0",
     "mongoose": "^5.12.13",

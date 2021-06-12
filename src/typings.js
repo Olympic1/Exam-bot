@@ -42,7 +42,6 @@ const { Logger } = require('winston');
  * @typedef ExtendedClient
  * @property {Collection<string, ICommand>} [commands]
  * @property {Collection<Snowflake, IGuild>} [guildInfo]
- * @property {object} [config]
  * @property {Logger} [log]
  */
 

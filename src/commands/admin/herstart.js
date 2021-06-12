@@ -26,7 +26,7 @@ module.exports = {
       channel = guild.channels.cache.get(info[1].examChannel);
 
       // Check if the guild has a channel set, otherwise message the guild owner
-      if (!channel) channel = guild.owner;
+      if (!channel) channel = await guild.fetchOwner();
 
       // @ts-ignore
       await channel.send(`Attentie! Over ${timeText} zal ik mezelf opnieuw opstarten.`);

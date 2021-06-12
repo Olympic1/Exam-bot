@@ -19,5 +19,6 @@ module.exports = async (client, oldChannel, newChannel) => {
   if (canViewChannel && canSendMessages) return;
 
   // Message the guild owner that the updated channel was needed for the bot
-  return newChannel.guild.owner.send(`Het kanaal ${newChannel.toString()} dat ik gebruik om berichten in te versturen, is zojuist aangepast en nu kan ik hier geen berichten meer in versturen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
+  const guildOwner = await newChannel.guild.fetchOwner();
+  return guildOwner.send(`Het kanaal ${newChannel.toString()} dat ik gebruik om berichten in te versturen, is zojuist aangepast en nu kan ik hier geen berichten meer in versturen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
 };

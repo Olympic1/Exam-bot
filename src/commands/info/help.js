@@ -22,33 +22,42 @@ module.exports = {
         .setColor('#338333')
         .setTitle('Help');
 
-      let description = `Voor meer informatie over elk commando, typ \`${prefix}help <commando>\`.`;
+      let desc = `Voor meer informatie over elk commando, typ \`${prefix}help <commando>\`.`;
       const userCommands = [];
       const modCommands = [];
       const adminCommands = [];
 
-      client.commands.each(command => {
-        const commandInfo = `\`${prefix}${command.name}\` - ${command.info.description}`;
+      for (const command of client.commands) {
+        const { name, permissions, ownerOnly, info } = command[1];
+        const { description } = info;
+
+        const commandInfo = `\`${prefix}${name}\`${description ? ` - ${description}` : ''}`;
 
         // Check if the command is only for the bot owner
-        if (command.ownerOnly) return;
+        if (ownerOnly) continue;
 
         // Check if the command is only for moderators
-        if (command.permissions.includes('KICK_MEMBERS') || command.permissions.includes('BAN_MEMBERS')) return modCommands.push(commandInfo);
+        if (permissions.includes('KICK_MEMBERS') || permissions.includes('BAN_MEMBERS')) {
+          modCommands.push(commandInfo);
+          continue;
+        }
 
         // Check if the command is only for administrators
-        if (command.permissions.includes('ADMINISTRATOR')) return adminCommands.push(commandInfo);
+        if (permissions.includes('ADMINISTRATOR')) {
+          adminCommands.push(commandInfo);
+          continue;
+        }
 
-        return userCommands.push(commandInfo);
-      });
+        userCommands.push(commandInfo);
+      }
 
-      if (userCommands.length) description += `\n\n${userCommands.join('\n')}`;
-      if (modCommands.length) description += `\n\n**Moderator commando's:**\n\n${modCommands.join('\n')}`;
-      if (adminCommands.length) description += `\n\n**Administrator commando's:**\n\n${adminCommands.join('\n')}`;
+      if (userCommands.length) desc += `\n\n${userCommands.join('\n')}`;
+      if (modCommands.length) desc += `\n\n**Moderator commando's:**\n\n${modCommands.join('\n')}`;
+      if (adminCommands.length) desc += `\n\n**Administrator commando's:**\n\n${adminCommands.join('\n')}`;
 
-      HELP_EMBED.setDescription(description);
+      HELP_EMBED.setDescription(desc);
 
-      return await message.channel.send(HELP_EMBED);
+      return await message.channel.send({ embeds: [HELP_EMBED] });
     }
 
     // When a user sends a second argument, this means they require more information on a specific command.
@@ -57,24 +66,27 @@ module.exports = {
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     // Check if the command or alias exist
-    if (!command || command.ownerOnly) return message.reply(`er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
+    if (!command || command.ownerOnly) return message.reply(`Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
+
+    const { name, aliases, permissions, info } = command;
+    const { description, usage, examples } = info;
 
     // Check if the command has an 'info' object for us to send information about the command
-    if (!command.info.description || !command.info.usage || !command.info.examples) return message.channel.send(`**Coding Error**, neem contact op met <@${client.application.owner}>.`);
+    if (!description || !usage || !examples) return message.channel.send(`**Coding Error**, neem contact op met <@${client.application.owner.id}>.`);
 
-    const isAdmin = command.permissions.includes('ADMINISTRATOR') ? '(enkel voor administrators)' : '';
-    const isMod = command.permissions.includes('KICK_MEMBERS') || command.permissions.includes('BAN_MEMBERS') ? '(enkel voor moderators)' : '';
+    const isAdmin = permissions.includes('ADMINISTRATOR') ? '(enkel voor administrators)' : '';
+    const isMod = permissions.includes('KICK_MEMBERS') || permissions.includes('BAN_MEMBERS') ? '(enkel voor moderators)' : '';
 
-    const aliasList = command.aliases.length ? command.aliases.join('`, `') : 'geen';
-    const exampleList = command.info.examples.length ? `${prefix}${command.info.examples.join(`\`\n\`${prefix}`)}` : 'geen';
+    const aliasList = aliases.length ? aliases.join('`, `') : 'geen';
+    const exampleList = examples.length ? `${prefix}${examples.join(`\`\n\`${prefix}`)}` : 'geen';
 
     const COMMAND_EMBED = new MessageEmbed()
       .setColor('#338333')
-      .setTitle(`\`${command.name}\` commando ${isAdmin || isMod}`)
+      .setTitle(`\`${name}\` commando ${isAdmin || isMod}`)
       .addFields(
         {
           name: 'Beschrijving',
-          value: command.info.description,
+          value: description,
         },
         {
           name: 'Aliassen',
@@ -82,7 +94,7 @@ module.exports = {
         },
         {
           name: 'Gebruik',
-          value: `\`${prefix}${command.info.usage}\``,
+          value: `\`${prefix}${usage}\``,
         },
         {
           name: 'Voorbeelden',
@@ -90,6 +102,6 @@ module.exports = {
         },
       );
 
-    return await message.channel.send(COMMAND_EMBED);
+    return await message.channel.send({ embeds: [COMMAND_EMBED] });
   },
 };

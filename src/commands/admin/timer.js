@@ -15,12 +15,12 @@ module.exports = {
     examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
   },
   async execute(message, args, client) {
-    if (!args.length) return message.reply('voer het tijdschema in wanneer u wilt dat de berichten worden verzonden.');
+    if (!args.length) return message.reply('Voer het tijdschema in wanneer u wilt dat de berichten worden verzonden.');
 
     let data = client.guildInfo.get(message.guild.id);
     const newTimer = args.join(' ');
 
-    if (data.cronTimer === newTimer) return message.reply('dat tijdschema gebruik ik nu al.');
+    if (data.cronTimer === newTimer) return message.reply('Dat tijdschema gebruik ik nu al.');
 
     // Setup validation
     const cronResult = validate(newTimer, {
@@ -39,7 +39,7 @@ module.exports = {
         tmp.push(error);
       }
 
-      return message.reply(`ongeldige timing ingevoerd.\n${tmp.join('\n')}`);
+      return message.reply(`Ongeldige timing ingevoerd.\n${tmp.join('\n')}`);
     }
 
     try {

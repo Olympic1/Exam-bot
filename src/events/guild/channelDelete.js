@@ -34,5 +34,6 @@ module.exports = async (client, channel) => {
   }
 
   // Message the guild owner that the deleted channel was needed for the bot
-  return channel.guild.owner.send(`Het kanaal \`${channel.name}\` in \`${channel.guild}\` dat ik gebruik om berichten in te versturen, is zojuist verwijderd. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een nieuw kanaal toe te wijzen.`);
+  const guildOwner = await channel.guild.fetchOwner();
+  return guildOwner.send(`Het kanaal \`${channel.name}\` in \`${channel.guild}\` dat ik gebruik om berichten in te versturen, is zojuist verwijderd. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een nieuw kanaal toe te wijzen.`);
 };

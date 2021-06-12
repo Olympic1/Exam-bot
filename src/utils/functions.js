@@ -1,4 +1,4 @@
-const { ActivityType, Guild, GuildChannel, GuildMember, Presence, Role, Snowflake } = require('discord.js');
+const { ActivityType, Guild, GuildChannel, GuildMember, Role, Snowflake } = require('discord.js');
 const { DateTime } = require('luxon');
 const { BotClient, IGuild } = require('../typings');
 
@@ -259,15 +259,14 @@ module.exports = {
    * @param {BotClient} client The bot that will have the activity set.
    * @param {string} status The activity to set the bot to.
    * @param {ActivityType} [type] The type of activity for the bot's presence. Defaults to `PLAYING`.
-   * @return {Promise<Presence>} The promise of `client.user.setPresence()`.
    */
   setBotStatus(client, status, type) {
-    return client.user.setPresence({
+    client.user.setPresence({
       status: 'online',
-      activity: {
+      activities: [{
         name: status,
         type: type || 'PLAYING',
-      },
+      }],
     });
   },
 

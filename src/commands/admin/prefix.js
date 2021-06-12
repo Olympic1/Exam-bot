@@ -13,12 +13,12 @@ module.exports = {
     examples: ['prefix ?', 'prefix -'],
   },
   async execute(message, args, client) {
-    if (!args.length) return message.reply('voer de prefix in die u wilt gebruiken.');
+    if (!args.length) return message.reply('Voer de prefix in die u wilt gebruiken.');
 
     let data = client.guildInfo.get(message.guild.id);
     const newPrefix = args[0];
 
-    if (data.prefix === newPrefix) return message.reply('die prefix gebruik ik nu al.');
+    if (data.prefix === newPrefix) return message.reply('Die prefix gebruik ik nu al.');
 
     try {
       // Change prefix in the database

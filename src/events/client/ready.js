@@ -11,8 +11,7 @@ module.exports = async (client) => {
   const status = process.env.NODE_ENV !== 'production' ? 'Testing' : 'Marathonradio';
   const type = process.env.NODE_ENV !== 'production' ? 'PLAYING' : 'LISTENING';
 
-  utils.setBotStatus(client, status, type)
-    .catch(error => client.log.error('Er is een fout opgetreden bij het instellen van de status van de bot.', error));
+  utils.setBotStatus(client, status, type);
 
   // Get all the guilds from our database and cache it, so we don't have to query it each time
   for (const guild of client.guilds.cache) {

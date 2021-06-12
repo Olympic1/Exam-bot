@@ -13,7 +13,7 @@ module.exports = {
     examples: ['cron start', 'cron stop', 'cron status', 'cron laatste', 'cron volgende'],
   },
   async execute(message, args, client) {
-    if (!args.length) return message.reply('voer de actie in die u wilt uitvoeren. Acties: start, stop, status, laatste, volgende.');
+    if (!args.length) return message.reply('Voer de actie in die u wilt uitvoeren. Acties: start, stop, status, laatste, volgende.');
 
     const job = client.guildInfo.get(message.guild.id).job;
     const isRunning = job.running;
@@ -50,10 +50,10 @@ module.exports = {
         if (!isRunning) return message.channel.send('Start eerst cronjob.');
         if (job.nextDate() === undefined) return message.channel.send('Kan de volgende uitvoering niet vinden.');
 
-        return message.channel.send(`Cronjob wordt uitgevoerd op: ${utils.formatToDate(Date.parse(job.nextDate().toString()))}`);
+        return message.channel.send(`Cronjob zal worden uitgevoerd op: ${utils.formatToDate(Date.parse(job.nextDate().toString()))}`);
 
       default:
-        return message.reply('voer een geldige actie in. Geldige acties zijn: start, stop, status, laatste, volgende.');
+        return message.reply('Voer een geldige actie in. Geldige acties zijn: start, stop, status, laatste, volgende.');
     }
   },
 };

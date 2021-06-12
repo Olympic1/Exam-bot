@@ -67,6 +67,7 @@ module.exports = (client, data) => {
 
       const guild = client.guilds.cache.get(data._id);
       const channel = guild.channels.cache.get(data.examChannel);
+      const guildOwner = await guild.fetchOwner();
 
       // Check if the guild has a channel set
       if (channel) {
@@ -78,10 +79,10 @@ module.exports = (client, data) => {
           // @ts-ignore
           await channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { split: true });
         } else {
-          await guild.owner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
+          await guildOwner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
         }
       } else {
-        await guild.owner.send(`Ik heb geprobeerd een bericht te sturen in \`${guild.name}\`, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
+        await guildOwner.send(`Ik heb geprobeerd een bericht te sturen in \`${guild.name}\`, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
       }
     }
   }, null, true, 'Europe/Brussels');

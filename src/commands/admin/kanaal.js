@@ -14,16 +14,16 @@ module.exports = {
     examples: ['kanaal 838084030062264320', 'kanaal #algemeen'],
   },
   async execute(message, args, client) {
-    if (!args.length) return message.reply('voer het ID of naam in van het kanaal waarin u de berichten wilt versturen.');
+    if (!args.length) return message.reply('Voer het ID of naam in van het kanaal waarin u de berichten wilt versturen.');
 
     let data = client.guildInfo.get(message.guild.id);
     const newChannel = utils.getChannel(message.guild, args[0]);
 
-    if (!newChannel) return message.reply('dat is geen geldig kanaal.');
-    if (!newChannel.isText()) return message.reply('dat is geen geldig tekstkanaal.');
-    if (!newChannel.permissionsFor(client.user.id).has('VIEW_CHANNEL')) return message.reply('ik kan dat kanaal niet bekijken.');
-    if (!newChannel.permissionsFor(client.user.id).has('SEND_MESSAGES')) return message.reply('ik kan geen berichten sturen in dat kanaal.');
-    if (data.examChannel === newChannel.id) return message.reply('dat kanaal gebruik ik nu al.');
+    if (!newChannel) return message.reply('Dat is geen geldig kanaal.');
+    if (!newChannel.isText()) return message.reply('Dat is geen geldig tekstkanaal.');
+    if (!newChannel.permissionsFor(client.user.id).has('VIEW_CHANNEL')) return message.reply('Ik kan dat kanaal niet bekijken.');
+    if (!newChannel.permissionsFor(client.user.id).has('SEND_MESSAGES')) return message.reply('Ik kan geen berichten sturen in dat kanaal.');
+    if (data.examChannel === newChannel.id) return message.reply('Dat kanaal gebruik ik nu al.');
 
     try {
       // Change examChannel in the database

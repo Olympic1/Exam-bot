@@ -8,6 +8,8 @@ const utils = require('../../utils/functions');
  * @param {Message} message
  */
 module.exports = async (client, message) => {
+  if (!client.application?.owner) await client.application?.fetch();
+
   // Check if the message was sent by a user inside a server
   if (message.author.bot || !message.guild) return;
 
@@ -44,11 +46,11 @@ module.exports = async (client, message) => {
   const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
   // Check if the command or alias exist
-  if (!command) return message.reply(`er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
+  if (!command) return message.reply(`Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
 
   // If the command is only for the bot owner, check if the user is the owner
-  const isBotOwner = message.author.id === client.config.owner;
-  if (command.ownerOnly && !isBotOwner) return message.reply('dit commando kan enkel worden uitgevoerd door de bot eigenaar.');
+  const isBotOwner = message.author.id === client.application.owner.id;
+  if (command.ownerOnly && !isBotOwner) return message.reply('Dit commando kan enkel worden uitgevoerd door de bot eigenaar.');
 
   // Check if the command has permissions
   if (command.permissions.length) {
@@ -57,14 +59,14 @@ module.exports = async (client, message) => {
 
     for (const perm of command.permissions) {
       // Check if user has the correct permissions, unless it's the owner
-      if (!isBotOwner && !message.member.hasPermission(perm)) invalidUserPerms.push(perm);
+      if (!isBotOwner && !message.member.permissions.has(perm)) invalidUserPerms.push(perm);
 
       // Check if the bot has the correct permissions with exception to 'ADMINISTRATOR'
-      if (perm !== 'ADMINISTRATOR' && !message.guild.me.hasPermission(perm)) invalidBotPerms.push(perm);
+      if (perm !== 'ADMINISTRATOR' && !message.guild.me.permissions.has(perm)) invalidBotPerms.push(perm);
     }
 
     // Send a message if the user lacks a permission
-    if (invalidUserPerms.length) return message.reply(`je mist de volgende permissies: \`${invalidUserPerms}\`.`);
+    if (invalidUserPerms.length) return message.reply(`Je mist de volgende permissies: \`${invalidUserPerms}\`.`);
 
     // Send a message if the bot lacks a permission
     if (invalidBotPerms.length) return message.channel.send(`Ik mis de volgende permissies: \`${invalidBotPerms}\`. Neem contact op met de serverbeheerders.`);
@@ -82,7 +84,7 @@ module.exports = async (client, message) => {
       if (left > 0) {
         const seconds = Math.ceil(left / 1000);
         const time = utils.formatToTime(seconds);
-        return message.reply(`je moet nog ${time} wachten voordat je dit commando opnieuw kunt gebruiken.`);
+        return message.reply(`Je moet nog ${time} wachten voordat je dit commando opnieuw kunt gebruiken.`);
       }
 
       // Remove the expired cooldown for the user
@@ -123,7 +125,7 @@ module.exports = async (client, message) => {
     command.execute(message, args, client);
   } catch (error) {
     client.log.error(`Er is een fout opgetreden bij het uitvoeren van het commando '${command.name}'.`, error);
-    message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.config.owner}>.`);
+    message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.application.owner.id}>.`);
     throw error;
   }
 };

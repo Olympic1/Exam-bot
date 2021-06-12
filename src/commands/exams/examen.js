@@ -14,16 +14,16 @@ module.exports = {
     examples: ['examen 12/6 Biologie', 'exam 19-6 Frans', 'ex 17/6 Wiskunde en Nederlands'],
   },
   async execute(message, args, client) {
-    if (!args.length) return message.reply('voer de datum en het examen in.');
-    if (!utils.isValidDate(args[0])) return message.reply('ongeldige datum ingevoerd. Gelieve een geldige datum in te voeren (vb: 12/6 of 12-6).');
-    if (!args[1]) return message.reply('voer uw examen(s) in.');
+    if (!args.length) return message.reply('Voer de datum en het examen in.');
+    if (!utils.isValidDate(args[0])) return message.reply('Ongeldige datum ingevoerd. Gelieve een geldige datum in te voeren (vb: 12/6 of 12-6).');
+    if (!args[1]) return message.reply('Voer uw examen(s) in.');
 
     // Join all the arguments into a message, so we can search for the exams per day
     const joinArgs = args.join(' ');
     const regex = /(\d+[/-]\d+) (.*?)(?:(?= -ex| \d+[/-])|$)/gm;
 
     // Check if we found a date and an exam
-    if (!joinArgs.match(regex)) return message.reply('geen examens ingevoerd. Voer na elke datum minstens één examen in. (vb: `2/6 Frans` of `2/6 Frans 3/6 Engels`)');
+    if (!joinArgs.match(regex)) return message.reply('Geen examens ingevoerd. Voer na elke datum minstens één examen in. (vb: `2/6 Frans` of `2/6 Frans 3/6 Engels`)');
 
     // Searches for the format "12/6 exam" or "12/6 multiple exams"
     const matches = joinArgs.matchAll(regex);
