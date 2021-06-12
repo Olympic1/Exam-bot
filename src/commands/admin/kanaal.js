@@ -1,5 +1,8 @@
+const { ICommand } = require('../../typings');
 const guildModel = require('../../models/guildModel');
+const utils = require('../../utils/functions');
 
+/** @type {ICommand} */
 module.exports = {
   name: 'kanaal',
   aliases: ['channel'],
@@ -14,7 +17,7 @@ module.exports = {
     if (!args.length) return message.reply('voer het ID of naam in van het kanaal waarin u de berichten wilt versturen.');
 
     let data = client.guildInfo.get(message.guild.id);
-    const newChannel = client.utils.getChannel(message.guild, args[0]);
+    const newChannel = utils.getChannel(message.guild, args[0]);
 
     if (!newChannel) return message.reply('dat is geen geldig kanaal.');
     if (!newChannel.isText()) return message.reply('dat is geen geldig tekstkanaal.');
@@ -37,7 +40,7 @@ module.exports = {
       );
 
       // Start cronjob and cache the guild data
-      client.utils.updateCronjob(client, message.guild.id, data);
+      utils.updateCronjob(client, message.guild.id, data);
 
       return message.channel.send(`Het kanaal is succesvol veranderd naar ${newChannel.toString()}.`);
     } catch (error) {

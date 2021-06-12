@@ -1,5 +1,12 @@
+const { GuildChannel } = require('discord.js');
+const { BotClient } = require('../../typings');
 const guildModel = require('../../models/guildModel');
+const utils = require('../../utils/functions');
 
+/**
+ * @param {BotClient} client
+ * @param {GuildChannel} channel
+ */
 module.exports = async (client, channel) => {
   let data = client.guildInfo.get(channel.guild.id);
 
@@ -21,11 +28,11 @@ module.exports = async (client, channel) => {
     );
 
     // Start cronjob and cache the guild data
-    client.utils.updateCronjob(client, channel.guild.id, data);
-
-    // Message the guild owner that the deleted channel was needed for the bot
-    return channel.guild.owner.send(`Het kanaal in ${channel.guild} dat ik gebruik om berichten in te versturen, is zojuist verwijderd. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een nieuw kanaal toe te wijzen.`);
+    utils.updateCronjob(client, channel.guild.id, data);
   } catch (error) {
     client.log.error('Er is een fout opgetreden bij het aanpassen van een database profiel voor een server.', error);
   }
+
+  // Message the guild owner that the deleted channel was needed for the bot
+  return channel.guild.owner.send(`Het kanaal \`${channel.name}\` in \`${channel.guild}\` dat ik gebruik om berichten in te versturen, is zojuist verwijderd. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een nieuw kanaal toe te wijzen.`);
 };

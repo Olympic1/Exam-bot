@@ -1,3 +1,7 @@
+const { ICommand } = require('../../typings');
+const utils = require('../../utils/functions');
+
+/** @type {ICommand} */
 module.exports = {
   name: 'cron',
   aliases: [],
@@ -38,7 +42,7 @@ module.exports = {
         if (!isRunning) return message.channel.send('Start eerst cronjob.');
         if (job.lastDate() === undefined) return message.channel.send('Kan de laatste uitvoering niet vinden.');
 
-        return message.channel.send(`Cronjob werd laatst uitgevoerd op: ${client.utils.formatToDate(Date.parse(job.lastDate()))}`);
+        return message.channel.send(`Cronjob werd laatst uitgevoerd op: ${utils.formatToDate(Date.parse(job.lastDate().toString()))}`);
 
       case 'next':
       case 'volgende':
@@ -46,7 +50,7 @@ module.exports = {
         if (!isRunning) return message.channel.send('Start eerst cronjob.');
         if (job.nextDate() === undefined) return message.channel.send('Kan de volgende uitvoering niet vinden.');
 
-        return message.channel.send(`Cronjob wordt uitgevoerd op: ${client.utils.formatToDate(Date.parse(job.nextDate()))}`);
+        return message.channel.send(`Cronjob wordt uitgevoerd op: ${utils.formatToDate(Date.parse(job.nextDate().toString()))}`);
 
       default:
         return message.reply('voer een geldige actie in. Geldige acties zijn: start, stop, status, laatste, volgende.');

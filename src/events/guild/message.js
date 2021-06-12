@@ -1,5 +1,12 @@
+const { Message } = require('discord.js');
+const { BotClient } = require('../../typings');
 const profileModel = require('../../models/profileModel');
+const utils = require('../../utils/functions');
 
+/**
+ * @param {BotClient} client
+ * @param {Message} message
+ */
 module.exports = async (client, message) => {
   // Check if the message was sent by a user inside a server
   if (message.author.bot || !message.guild) return;
@@ -69,12 +76,12 @@ module.exports = async (client, message) => {
 
     // Check if the user already has a cooldown for this command
     if (cooldown) {
-      const left = (command.cooldown * 1000) - (Date.now() - cooldown.time);
+      const left = command.cooldown * 1000 - (Date.now() - cooldown.time);
 
       // Check if the command is still on cooldown
       if (left > 0) {
         const seconds = Math.ceil(left / 1000);
-        const time = client.utils.formatToTime(seconds);
+        const time = utils.formatToTime(seconds);
         return message.reply(`je moet nog ${time} wachten voordat je dit commando opnieuw kunt gebruiken.`);
       }
 

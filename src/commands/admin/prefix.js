@@ -1,5 +1,7 @@
+const { ICommand } = require('../../typings');
 const guildModel = require('../../models/guildModel');
 
+/** @type {ICommand} */
 module.exports = {
   name: 'prefix',
   aliases: [],

@@ -32,11 +32,11 @@
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
     "luxon": "^1.27.0",
-    "mongoose": "^5.12.10",
+    "mongoose": "^5.12.13",
     "node-fetch": "^2.6.1",
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "eslint": "^7.27.0"
+    "eslint": "^7.28.0"
   }
 }

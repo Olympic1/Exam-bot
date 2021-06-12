@@ -1,5 +1,9 @@
-const discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
+const { ICommand } = require('../../typings');
+const { version, invite } = require('../../config.json');
+const utils = require('../../utils/functions');
 
+/** @type {ICommand} */
 module.exports = {
   name: 'info',
   aliases: [],
@@ -12,23 +16,23 @@ module.exports = {
   },
   async execute(message, args, client) {
     const uptime = process.uptime();
-    const uptimeText = client.utils.formatToTime(uptime);
+    const uptimeText = utils.formatToTime(uptime);
     const footer = `Enceladus | Gehost door Heroku | Uptime: ${uptimeText}`;
 
     const guildCount = client.guilds.cache.size;
     const memberCount = client.guilds.cache.map(guilds => guilds.memberCount).reduce((a, b) => a + b, 0);
-    const owner = await client.utils.getUser(message.guild, client.config.owner) || 'Olympic1#6758';
+    const owner = await utils.getUser(message.guild, client.config.owner) || 'Olympic1#6758';
 
     const avatar = 'https://raw.githubusercontent.com/Olympic1/Exam-bot/master/icoon/ExamenBot.png';
     const website = 'https://github.com/Olympic1/Exam-bot/';
 
-    const INFO_EMBED = new discord.MessageEmbed()
+    const INFO_EMBED = new MessageEmbed()
       .setColor('#117ea6')
       .setAuthor(client.user.username, avatar, website)
       .addFields(
         {
           name: 'Versie',
-          value: client.config.version,
+          value: version,
           inline: true,
         },
         {
@@ -58,7 +62,7 @@ module.exports = {
         },
         {
           name: 'Uitnodigen',
-          value: `[examen-bot.gg/invite](${client.config.invite})`,
+          value: `[examen-bot.gg/invite](${invite})`,
           inline: true,
         },
       )

@@ -1,0 +1,51 @@
+const { CronJob } = require('cron');
+const { Client, Collection, Message, PermissionString, Snowflake } = require('discord.js');
+const { Logger } = require('winston');
+
+/**
+ * @typedef ICommand
+ * @property {string} name
+ * @property {string[]} [aliases]
+ * @property {number} [cooldown]
+ * @property {PermissionString[]} [permissions]
+ * @property {boolean} [ownerOnly]
+ * @property {boolean | 'both'} [slash]
+ * @property {ICommandInfo} [info]
+ * @property {execute} execute
+ */
+
+/**
+ * @typedef ICommandInfo
+ * @property {string} [category]
+ * @property {string} [description]
+ * @property {string} [usage]
+ * @property {string[]} [examples]
+ */
+
+/**
+ * @callback execute
+ * @param {Message} message
+ * @param {string[]} args
+ * @param {BotClient} client
+ */
+
+/**
+ * @typedef IGuild
+ * @property {Snowflake} _id
+ * @property {string} prefix
+ * @property {Snowflake} examChannel
+ * @property {string} cronTimer
+ * @property {CronJob} [job]
+ */
+
+/**
+ * @typedef ExtendedClient
+ * @property {Collection<string, ICommand>} [commands]
+ * @property {Collection<Snowflake, IGuild>} [guildInfo]
+ * @property {object} [config]
+ * @property {Logger} [log]
+ */
+
+/**
+ * @typedef {Client & ExtendedClient} BotClient
+ */

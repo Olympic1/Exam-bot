@@ -1,8 +1,13 @@
 const { CronJob } = require('cron');
+const { Collection } = require('discord.js');
 const { DateTime } = require('luxon');
-const discord = require('discord.js');
+const { BotClient, IGuild } = require('../typings');
 const profileModel = require('../models/profileModel');
 
+/**
+ * @param {BotClient} client
+ * @param {IGuild} data
+ */
 module.exports = (client, data) => {
   return new CronJob(data.cronTimer, async function() {
     const date = new Date(DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO());
@@ -18,7 +23,7 @@ module.exports = (client, data) => {
 
     // Check if we found any user(s)
     if (profiles.length) {
-      const allUsers = new discord.Collection();
+      const allUsers = new Collection();
 
       for (const user of profiles) {
         const allExams = [];
@@ -70,12 +75,13 @@ module.exports = (client, data) => {
 
         // Check if we can send messages to the channel
         if (canViewChannel && canSendMessages) {
+          // @ts-ignore
           await channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { split: true });
         } else {
           await guild.owner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
         }
       } else {
-        await guild.owner.send(`Ik heb geprobeerd een bericht te sturen in ${guild.name}, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
+        await guild.owner.send(`Ik heb geprobeerd een bericht te sturen in \`${guild.name}\`, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
       }
     }
   }, null, true, 'Europe/Brussels');

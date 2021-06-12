@@ -1,5 +1,8 @@
+const { ICommand } = require('../../typings');
 const profileModel = require('../../models/profileModel');
+const utils = require('../../utils/functions');
 
+/** @type {ICommand} */
 module.exports = {
   name: 'examen',
   aliases: ['exam', 'ex'],
@@ -12,7 +15,7 @@ module.exports = {
   },
   async execute(message, args, client) {
     if (!args.length) return message.reply('voer de datum en het examen in.');
-    if (!client.utils.isValidDate(args[0])) return message.reply('ongeldige datum ingevoerd. Gelieve een geldige datum in te voeren (vb: 12/6 of 12-6).');
+    if (!utils.isValidDate(args[0])) return message.reply('ongeldige datum ingevoerd. Gelieve een geldige datum in te voeren (vb: 12/6 of 12-6).');
     if (!args[1]) return message.reply('voer uw examen(s) in.');
 
     // Join all the arguments into a message, so we can search for the exams per day
@@ -30,7 +33,7 @@ module.exports = {
       exams++;
 
       // Convert date into an ISO format
-      const dateISO = client.utils.convertToISO(match[1]);
+      const dateISO = utils.convertToISO(match[1]);
 
       // Add the exams to the database
       try {

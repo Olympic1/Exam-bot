@@ -1,3 +1,7 @@
+const { ICommand } = require('../../typings');
+const utils = require('../../utils/functions');
+
+/** @type {ICommand} */
 module.exports = {
   name: 'status',
   aliases: [],

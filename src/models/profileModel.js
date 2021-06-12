@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const profileSchema = new mongoose.Schema({
+  // User ID
   _id: {
     type: String,
     required: true,
@@ -21,6 +22,4 @@ const profileSchema = new mongoose.Schema({
   ],
 });
 
-const model = mongoose.model('Profiles', profileSchema);
-
-module.exports = model;
+module.exports = mongoose.model('profiles', profileSchema);

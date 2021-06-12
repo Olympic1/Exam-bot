@@ -1,5 +1,8 @@
+const { BotClient } = require('../../typings');
 const guildModel = require('../../models/guildModel');
+const utils = require('../../utils/functions');
 
+/** @param {BotClient} client */
 module.exports = async (client) => {
   // Show that the bot is logged in and ready to use
   client.log.info(`Ingelogd als ${client.user.username}.`);
@@ -8,7 +11,7 @@ module.exports = async (client) => {
   const status = process.env.NODE_ENV !== 'production' ? 'Testing' : 'Marathonradio';
   const type = process.env.NODE_ENV !== 'production' ? 'PLAYING' : 'LISTENING';
 
-  client.utils.setBotStatus(client, status, type)
+  utils.setBotStatus(client, status, type)
     .catch(error => client.log.error('Er is een fout opgetreden bij het instellen van de status van de bot.', error));
 
   // Get all the guilds from our database and cache it, so we don't have to query it each time

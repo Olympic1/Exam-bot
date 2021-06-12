@@ -4,7 +4,7 @@ const discord = require('discord.js');
 const mongoose = require('mongoose');
 const winston = require('winston');
 const config = require('./config.json');
-const utils = require('./utils/functions');
+const { BotClient } = require('./typings');
 
 // Create logger
 const logger = winston.createLogger({
@@ -14,11 +14,11 @@ const logger = winston.createLogger({
 });
 
 // Create the bot
+/** @type {BotClient} */
 const client = new discord.Client({ partials: ['MESSAGE', 'REACTION'] });
 client.commands = new discord.Collection();
 client.guildInfo = new discord.Collection();
 client.config = config;
-client.utils = utils;
 client.log = logger;
 
 // Register the handlers

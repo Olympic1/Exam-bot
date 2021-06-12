@@ -1,5 +1,8 @@
-const fetch = require('node-fetch');
+const { default: fetch } = require('node-fetch');
+const { ICommand } = require('../../typings');
+const utils = require('../../utils/functions');
 
+/** @type {ICommand} */
 module.exports = {
   name: 'herstart',
   aliases: ['restart'],
@@ -13,8 +16,8 @@ module.exports = {
   },
   async execute(message, args, client) {
     // Get the provided time in seconds. Defaults to 1 minute.
-    const limit = client.utils.parseTimeLimit(args[0]) || 60;
-    const timeText = client.utils.formatToTime(limit);
+    const limit = utils.parseTimeLimit(args[0]) || 60;
+    const timeText = utils.formatToTime(limit);
 
     // Message all the possible guilds about restarting the bot
     let channel;
@@ -25,6 +28,7 @@ module.exports = {
       // Check if the guild has a channel set, otherwise message the guild owner
       if (!channel) channel = guild.owner;
 
+      // @ts-ignore
       await channel.send(`Attentie! Over ${timeText} zal ik mezelf opnieuw opstarten.`);
     }
 

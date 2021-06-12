@@ -1,6 +1,9 @@
-const validate = require('cron-validate');
+const { default: validate } = require('cron-validate');
+const { ICommand } = require('../../typings');
 const guildModel = require('../../models/guildModel');
+const utils = require('../../utils/functions');
 
+/** @type {ICommand} */
 module.exports = {
   name: 'timer',
   aliases: [],
@@ -54,7 +57,7 @@ module.exports = {
       );
 
       // Start cronjob and cache the guild data
-      client.utils.updateCronjob(client, message.guild.id, data);
+      utils.updateCronjob(client, message.guild.id, data);
 
       return message.channel.send(`Het tijdschema is succesvol veranderd naar \`${newTimer}\`.`);
     } catch (error) {

@@ -1,4 +1,6 @@
+const { ActivityType, Guild, GuildChannel, GuildMember, Presence, Role, Snowflake } = require('discord.js');
 const { DateTime } = require('luxon');
+const { BotClient, IGuild } = require('../typings');
 
 module.exports = {
   /**
@@ -6,7 +8,7 @@ module.exports = {
    * @param {number} seconds The seconds to convert.
    * @return {string} A string in the format of weeks, days, hours, minutes and seconds.
    */
-  formatToTime: (seconds) => {
+  formatToTime(seconds) {
     let sec = Math.trunc(seconds);
 
     const weeks = Math.floor(sec / (3600 * 24 * 7));
@@ -38,7 +40,7 @@ module.exports = {
    * @param {boolean} [showSeconds] Specifies whether to display seconds. Defaults to `false`.
    * @return {string} A string in the format of a localized date and time.
    */
-  formatToDate: (milliseconds, showSeconds) => {
+  formatToDate(milliseconds, showSeconds) {
     const date = new Date(milliseconds);
 
     // Setup options
@@ -53,6 +55,7 @@ module.exports = {
       timeZone: 'Europe/Brussels',
     };
 
+    // @ts-ignore
     return date.toLocaleString('nl-BE', options);
   },
 
@@ -61,24 +64,24 @@ module.exports = {
    * @param {string} time The time to convert.
    * @return {number|undefined} A number in the format of seconds.
    */
-  parseTimeLimit: (time) => {
-    if (!time) return;
-
+  parseTimeLimit(time) {
     // Remove the decimal part of the time
     time = time.replace(/([.,]\d+)/g, '');
 
     // Check if time is a number
+    // @ts-ignore
     if (!isNaN(time)) return parseInt(time);
 
     // Search for the number and string
-    const [int, str] = time.match(/\d+|\w+/g);
+    const int = parseInt(time.match(/\d+/).toString());
+    const str = time.match(/\D+/).toString();
 
     if (!int || !str || isNaN(int)) return;
 
     // Use the first letter of the string to evaluate
-    switch (str[0].toLowerCase()) {
+    switch (str[0].charAt(0).toLowerCase()) {
       case 's':
-        return parseInt(int);
+        return int;
       case 'm':
         return Math.round(int * 60);
       case 'h':
@@ -97,7 +100,7 @@ module.exports = {
    * @param {string} date The date to check.
    * @return {boolean} `True` if the given date is valid; otherwise `false`.
    */
-  isValidDate: (date) => {
+  isValidDate(date) {
     // Checks date with /
     const check1 = DateTime.fromFormat(date, 'd/M').isValid;
     const check2 = DateTime.fromFormat(date, 'd/M/y').isValid;
@@ -114,7 +117,7 @@ module.exports = {
    * @param {string} date The date to parse.
    * @return {string} An ISO 8601-compliant string in UTC.
    */
-  convertToISO: (date) => {
+  convertToISO(date) {
     let tmp;
 
     // Converts date with /
@@ -133,9 +136,9 @@ module.exports = {
    * @param {Guild} guild The guild to search in.
    * @param {string} user The user's id, name, nickname, tag or mention.
    * @param {Array} [context] The array of user id's to search in. Defaults to `guild.members`.
-   * @return {GuildMember|null} A resolved user object or null.
+   * @return {Promise<GuildMember>|null} A resolved user object or null.
    */
-  getUser: async (guild, user, context) => {
+  async getUser(guild, user, context) {
     if (!user) return null;
 
     // If there is a context provided, use it to search for users.
@@ -189,7 +192,7 @@ module.exports = {
    * @param {string} role The role's id, name or mention.
    * @return {Role|null} A resolved role object or null.
    */
-  getRole: (guild, role) => {
+  getRole(guild, role) {
     if (!role) return null;
 
     // Check if we have a mention
@@ -223,7 +226,7 @@ module.exports = {
    * @param {string} channel The channel's id, name or mention.
    * @return {GuildChannel|null} A resolved channel object or null.
    */
-  getChannel: (guild, channel) => {
+  getChannel(guild, channel) {
     if (!channel) return null;
 
     // Check if we have a mention
@@ -253,12 +256,12 @@ module.exports = {
 
   /**
    * The **`setBotStatus()`** function sets the presence of the bot and returns a promise.
-   * @param {Client} client The bot that will have the activity set.
+   * @param {BotClient} client The bot that will have the activity set.
    * @param {string} status The activity to set the bot to.
-   * @param {string} [type] The type of activity for the bot's presence. Defaults to `PLAYING`.
+   * @param {ActivityType} [type] The type of activity for the bot's presence. Defaults to `PLAYING`.
    * @return {Promise<Presence>} The promise of `client.user.setPresence()`.
    */
-  setBotStatus: (client, status, type) => {
+  setBotStatus(client, status, type) {
     return client.user.setPresence({
       status: 'online',
       activity: {
@@ -270,11 +273,11 @@ module.exports = {
 
   /**
    * The **`updateCronjob()`** function initializes the cronjob and updates the cache with the new data.
-   * @param {Client} client The bot that needs to restart cronjob.
+   * @param {BotClient} client The bot that needs to restart cronjob.
    * @param {Snowflake} guildId The guild's id to change the data for.
-   * @param {Object} data The guild's data to change.
+   * @param {IGuild} data The guild's data to change.
    */
-  updateCronjob: (client, guildId, data) => {
+  updateCronjob(client, guildId, data) {
     // If we already have a job running, stop it before we change the data
     try {
       const job = client.guildInfo.get(guildId).job;
