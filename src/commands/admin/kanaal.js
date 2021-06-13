@@ -23,8 +23,8 @@ module.exports = {
 
     if (!newChannel) return ['reply', 'Dat is geen geldig kanaal.'];
     if (!newChannel.isText()) return ['reply', 'Dat is geen geldig tekstkanaal.'];
-    if (!newChannel.permissionsFor(message.guild.me).has('VIEW_CHANNEL')) return ['reply', 'Ik kan dat kanaal niet bekijken.'];
-    if (!newChannel.permissionsFor(client.user).has('SEND_MESSAGES')) return ['reply', 'Ik kan geen berichten sturen in dat kanaal.'];
+    if (!newChannel.permissionsFor(client.user.id).has('VIEW_CHANNEL')) return ['reply', 'Ik kan dat kanaal niet bekijken.'];
+    if (!newChannel.permissionsFor(client.user.id).has('SEND_MESSAGES')) return ['reply', 'Ik kan geen berichten sturen in dat kanaal.'];
     if (data.examChannel === newChannel.id) return ['reply', 'Dat kanaal gebruik ik nu al.'];
 
     try {
