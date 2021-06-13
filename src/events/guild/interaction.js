@@ -11,7 +11,7 @@ module.exports = async (client, interaction) => {
   // Check if the interaction is a slash command
   if (!interaction.isCommand()) return console.log('Not a slash command.');
 
-  // Get slash command
+  // Get the slash command
   const commandName = interaction.commandName;
   const command = client.commands.get(commandName);
 
@@ -29,10 +29,10 @@ module.exports = async (client, interaction) => {
   // Execute the command
   const result = await command.execute(interaction, args, client);
 
-  // Return if the command doesn't return anything (restart)
+  // Return if the command doesn't return anything (ex: restart)
   if (!result) return interaction.reply('Succes');
 
-  // Slash commands can only reply, so 'send' needs to be replied
+  // Slash commands can only reply, so 'send' needs to be replied too
   if (result[0] === 'send' || result[0] === 'reply') return interaction.reply(result[1]);
 
   // Handle embeds

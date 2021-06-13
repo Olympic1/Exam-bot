@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Client, Collection, Intents } = require('discord.js');
 const { readdirSync } = require('fs');
-const { connect } = require('mongoose');
+const { connect, connection } = require('mongoose');
 const { createLogger, format, transports } = require('winston');
 const { BotClient } = require('./typings');
 
@@ -35,6 +35,9 @@ connect(process.env.MONGODB_SRV, {
   useFindAndModify: false,
 }).then(() => client.log.info('Verbonden met database.'))
   .catch(error => client.log.error('Er is een fout opgetreden bij het verbinden met de database.', error));
+
+// Handle mongoose errors
+connection.on('error', error => client.log.error('Er is een fout opgetreden met de database.', error));
 
 // Log the bot in to Discord
 client.login(process.env.DISCORD_TOKEN)

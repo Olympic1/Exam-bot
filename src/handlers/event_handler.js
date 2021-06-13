@@ -1,5 +1,4 @@
 const { readdirSync } = require('fs');
-const { connection } = require('mongoose');
 const { BotClient } = require('../typings');
 
 /** @param {BotClient} client */
@@ -18,7 +17,4 @@ module.exports = (client) => {
       client.on(eventName, event.bind(null, client));
     }
   }
-
-  // Handle mongoose errors
-  connection.on('error', error => client.log.error('Er is een fout opgetreden met de database.', error));
 };

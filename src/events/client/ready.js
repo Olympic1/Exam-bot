@@ -34,19 +34,19 @@ module.exports = async (client) => {
     const { name, description, slash, info } = command[1];
     const { minArgs, expectedArgs } = info;
 
-    // Setup slash command
-    const data = {
-      name: name,
-      description: description,
-      options: [],
-    };
-
     // Check if the command needs to be a slash command
     if (slash) {
-      const options = [];
+      // Setup slash command
+      const data = {
+        name: name,
+        description: description,
+        options: [],
+      };
 
       // Check if the slash command needs arguments
       if (expectedArgs) {
+        const options = [];
+
         // Split the arguments
         const opts = expectedArgs
           .substring(1, expectedArgs.length - 1)

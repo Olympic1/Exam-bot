@@ -63,6 +63,7 @@ module.exports = {
         return ['send', `Cronjob zal worden uitgevoerd op: ${utils.formatToDate(Date.parse(job.nextDate().toString()))}`];
 
       default:
+        // Not a valid action provided
         return ['reply', 'Voer een geldige actie in. Geldige acties zijn: start, stop, status, laatste, volgende.'];
     }
   },

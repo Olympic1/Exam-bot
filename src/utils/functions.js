@@ -11,6 +11,7 @@ module.exports = {
   formatToTime(seconds) {
     let sec = Math.trunc(seconds);
 
+    // Calculate time
     const weeks = Math.floor(sec / (3600 * 24 * 7));
     sec -= weeks * 3600 * 24 * 7;
 
@@ -25,6 +26,7 @@ module.exports = {
 
     const tmp = [];
 
+    // Construct message
     weeks && tmp.push(weeks + (weeks === 1 ? ' week' : ' weken'));
     days && tmp.push(days + (days === 1 ? ' dag' : ' dagen'));
     hrs && tmp.push(hrs + (hrs === 1 ? ' uur' : ' uren'));

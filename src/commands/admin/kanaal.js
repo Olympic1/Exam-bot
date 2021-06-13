@@ -21,6 +21,8 @@ module.exports = {
     let data = client.guildInfo.get(message.guild.id);
     const newChannel = utils.getChannel(message.guild, args[0]);
 
+    // Check if the provided channel is a valid text channel and that the bot has permissions to send messages in it.
+    // Also check if the bot already uses that channel
     if (!newChannel) return ['reply', 'Dat is geen geldig kanaal.'];
     if (!newChannel.isText()) return ['reply', 'Dat is geen geldig tekstkanaal.'];
     if (!newChannel.permissionsFor(client.user.id).has('VIEW_CHANNEL')) return ['reply', 'Ik kan dat kanaal niet bekijken.'];

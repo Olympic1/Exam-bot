@@ -75,10 +75,12 @@ module.exports = async (client, message) => {
     if (invalidBotPerms.length) return message.channel.send(`Ik mis de volgende permissies: \`${invalidBotPerms}\`. Neem contact op met de serverbeheerders.`);
   }
 
+  // Check if the user provided too few arguments
   if (command.info.minArgs !== undefined && args.length < command.info.minArgs) {
     return message.reply(`Je hebt te weinig argumenten ingegeven! ${command.info.syntaxError}`);
   }
 
+  // Check if the user provided too many arguments
   if (command.info.maxArgs !== undefined && command.info.maxArgs !== -1 && args.length > command.info.maxArgs) {
     let msg = 'Je hebt te veel argumenten ingegeven! Dit commando accepteert ';
     msg += command.info.maxArgs === 0 ? 'geen argumenten.' : `maximaal ${command.info.maxArgs} argument${command.info.maxArgs > 1 ? 'en' : ''}.`;

@@ -16,16 +16,20 @@ module.exports = {
     examples: ['info'],
   },
   async execute(message, args, client) {
+    // Get uptime
     const uptime = process.uptime();
     const uptimeText = utils.formatToTime(uptime);
     const footer = `Enceladus | Gehost door Heroku | Uptime: ${uptimeText}`;
 
+    // Get all the guilds the bot is in and its members
     const guildCount = client.guilds.cache.size.toString();
     const memberCount = client.guilds.cache.map(guilds => guilds.memberCount).reduce((a, b) => a + b, 0).toString();
-    const owner = `${await utils.getUser(message.guild, client.application.owner.id)}` || 'Olympic1#6758';
 
+    // Get bot owner if he's in the guild
+    const owner = `${await utils.getUser(message.guild, client.application.owner.id)}` || 'Olympic1#6758';
     const website = 'https://github.com/Olympic1/Exam-bot/';
 
+    // Construct info embed
     const INFO_EMBED = new MessageEmbed()
       .setColor('#117ea6')
       .setAuthor(client.application.name, client.application.iconURL(), website)

@@ -22,6 +22,7 @@ module.exports = {
     let data = client.guildInfo.get(message.guild.id);
     const newTimer = args.join(' ');
 
+    // Check if the provided timing is already used for the bot
     if (data.cronTimer === newTimer) return ['reply', 'Dat tijdschema gebruik ik nu al.'];
 
     // Setup validation
@@ -36,6 +37,7 @@ module.exports = {
     if (!cronResult.isValid()) {
       const errors = cronResult.getError();
 
+      // Return possible errors
       const tmp = [];
       for (const error of errors) {
         tmp.push(error);

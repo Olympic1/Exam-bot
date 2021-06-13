@@ -20,6 +20,7 @@ module.exports = {
     let data = client.guildInfo.get(message.guild.id);
     const newPrefix = args[0];
 
+    // Check if the provided prefix is already used for the bot
     if (data.prefix === newPrefix) return ['reply', 'Die prefix gebruik ik nu al.'];
 
     try {

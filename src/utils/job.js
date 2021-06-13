@@ -10,6 +10,7 @@ const profileModel = require('../models/profileModel');
  */
 module.exports = (client, data) => {
   return new CronJob(data.cronTimer, async function() {
+    // Get the current date
     const date = new Date(DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO());
 
     // Find all users that have at least 1 exam today
@@ -78,9 +79,11 @@ module.exports = (client, data) => {
         // @ts-ignore
         if (canViewChannel && canSendMessages) return channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { split: true });
 
+        // No permissions to send messages in channel
         return guildOwner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
       }
 
+      // No channel set to send messages
       return guildOwner.send(`Ik heb geprobeerd een bericht te sturen in \`${guild.name}\`, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
     }
   }, null, true, 'Europe/Brussels');

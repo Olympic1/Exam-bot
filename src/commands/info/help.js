@@ -15,6 +15,7 @@ module.exports = {
     examples: ['help prefix', 'help examen'],
   },
   async execute(message, args, client) {
+    // Get the current prefix
     const prefix = client.guildInfo.get(message.guild.id).prefix;
 
     // HELP_EMBED will only be sent if the user didn't pass any arguments.
@@ -32,7 +33,7 @@ module.exports = {
       for (const command of client.commands) {
         const { name, description, permissions, ownerOnly } = command[1];
 
-        const commandInfo = `\`${prefix}${name}\`${description ? ` - ${description}` : ''}`;
+        const commandInfo = `\`${prefix}${name}\`` + (description ? ` - ${description}` : '');
 
         // Check if the command is only for the bot owner
         if (ownerOnly) continue;
@@ -52,6 +53,7 @@ module.exports = {
         userCommands.push(commandInfo);
       }
 
+      // Construct help embed
       if (userCommands.length) desc += `\n\n${userCommands.join('\n')}`;
       if (modCommands.length) desc += `\n\n**Moderator commando's:**\n\n${modCommands.join('\n')}`;
       if (adminCommands.length) desc += `\n\n**Administrator commando's:**\n\n${adminCommands.join('\n')}`;
@@ -61,7 +63,7 @@ module.exports = {
       return ['send', { embeds: [HELP_EMBED] }];
     }
 
-    // When a user sends a second argument, this means they require more information on a specific command.
+    // When a user sends an argument, this means they require more information on a specific command.
     // For this we get the command from the 'client.commands' collection.
     const commandName = args[0].toLowerCase();
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
@@ -72,14 +74,13 @@ module.exports = {
     const { name, aliases, description, permissions, info } = command;
     const { expectedArgs, examples } = info;
 
-    // Check if the command has an 'info' object for us to send information about the command
-    if (!description || expectedArgs === null || !examples) return ['send', `**Coding Error**, neem contact op met <@${client.application.owner.id}>.`];
-
+    // Construct help embed
     const isAdmin = permissions.includes('ADMINISTRATOR') ? '(enkel voor administrators)' : '';
     const isMod = permissions.includes('KICK_MEMBERS') || permissions.includes('BAN_MEMBERS') ? '(enkel voor moderators)' : '';
 
-    const aliasList = aliases.length ? aliases.join('`, `') : 'geen';
-    const exampleList = examples.length ? `${prefix}${examples.join(`\`\n\`${prefix}`)}` : 'geen';
+    const aliasList = aliases.length ? aliases.join('`, `') : 'Geen aliassen';
+    const commandUsage = `${prefix}${name}` + (expectedArgs ? ` ${expectedArgs}` : '');
+    const exampleList = examples.length ? `${prefix}${examples.join(`\`\n\`${prefix}`)}` : 'Geen voorbeelden';
 
     const COMMAND_EMBED = new MessageEmbed()
       .setColor('#338333')
@@ -87,7 +88,7 @@ module.exports = {
       .addFields(
         {
           name: 'Beschrijving',
-          value: description,
+          value: description || 'Geen beschrijving',
         },
         {
           name: 'Aliassen',
@@ -95,7 +96,7 @@ module.exports = {
         },
         {
           name: 'Gebruik',
-          value: `\`${prefix}${name} ${expectedArgs}\``,
+          value: `\`${commandUsage}\``,
         },
         {
           name: 'Voorbeelden',

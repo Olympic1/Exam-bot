@@ -8,8 +8,8 @@ const utils = require('../../utils/functions');
  * @param {Guild} guild
  */
 module.exports = async (client, guild) => {
-  // Create a database profile when the bot joins a new guild
   try {
+    // Create a database profile when the bot joins a new guild
     const data = await guildModel.create({ _id: guild.id });
 
     // Start cronjob and cache the guild data
