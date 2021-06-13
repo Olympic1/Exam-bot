@@ -6,24 +6,27 @@ const utils = require('../../utils/functions');
 module.exports = {
   name: 'examen',
   aliases: ['exam', 'ex'],
+  description: 'Voegt een examen toe en wenst u succes op de dag van uw examen.',
   cooldown: 0,
   permissions: [],
+  slash: 'both',
   info: {
-    description: 'Voegt een examen toe en wenst u succes op de dag van uw examen.',
-    usage: 'examen <datum> <examens>',
-    examples: ['examen 12/6 Biologie', 'exam 19-6 Frans', 'ex 17/6 Wiskunde en Nederlands'],
+    minArgs: 2,
+    maxArgs: 25,
+    expectedArgs: '<datum> <examens>',
+    syntaxError: 'Voer de datum en het examen in.',
+    examples: ['examen 11/6 Biologie', 'exam 19-6 Frans', 'ex 17/6 Wiskunde en Nederlands', 'examen 14/6 Chemie 15/6 Aardrijkskunde'],
   },
   async execute(message, args, client) {
-    if (!args.length) return message.reply('Voer de datum en het examen in.');
-    if (!utils.isValidDate(args[0])) return message.reply('Ongeldige datum ingevoerd. Gelieve een geldige datum in te voeren (vb: 12/6 of 12-6).');
-    if (!args[1]) return message.reply('Voer uw examen(s) in.');
+    // Check that the first argument is a valid date
+    if (!utils.isValidDate(args[0])) return ['reply', 'Ongeldige datum ingevoerd. Gelieve een geldige datum in te voeren. (vb: 2/6 of 2-6)'];
 
     // Join all the arguments into a message, so we can search for the exams per day
     const joinArgs = args.join(' ');
     const regex = /(\d+[/-]\d+) (.*?)(?:(?= -ex| \d+[/-])|$)/gm;
 
-    // Check if we found a date and an exam
-    if (!joinArgs.match(regex)) return message.reply('Geen examens ingevoerd. Voer na elke datum minstens één examen in. (vb: `2/6 Frans` of `2/6 Frans 3/6 Engels`)');
+    // Check if we found a date with an exam
+    if (!joinArgs.match(regex)) return ['reply', 'Geen examens ingevoerd. Voer na elke datum minstens één examen in. (vb: `2/6 Frans` of `2/6 Frans 3/6 Engels`)'];
 
     // Searches for the format "12/6 exam" or "12/6 multiple exams"
     const matches = joinArgs.matchAll(regex);
@@ -39,7 +42,7 @@ module.exports = {
       try {
         await profileModel.findOneAndUpdate(
           {
-            _id: message.author.id,
+            _id: message.member.user.id,
           },
           {
             $push: {
@@ -53,10 +56,10 @@ module.exports = {
         );
       } catch (error) {
         client.log.error('Er is een fout opgetreden bij het toevoegen van een examen aan de database.', error);
-        return message.channel.send('Er is een fout opgetreden bij het toevoegen van een examen aan de database.');
+        return ['send', 'Er is een fout opgetreden bij het toevoegen van een examen aan de database.'];
       }
     }
 
-    return message.reply(`Jouw examen${exams > 1 ? 's zijn' : ' is'} succesvol toegevoegd. Veel succes met studeren!`);
+    return ['reply', `Jouw examen${exams > 1 ? 's zijn' : ' is'} succesvol toegevoegd. Veel succes met studeren!`];
   },
 };

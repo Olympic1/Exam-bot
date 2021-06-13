@@ -48,6 +48,9 @@ module.exports = async (client, message) => {
   // Check if the command or alias exist
   if (!command) return message.reply(`Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
 
+  // Check if the command is only a slash command
+  if (command.slash === true) return message.reply(`Dit is enkel een slash-commando. Gebruik \`/${command.name}\` om dit commando uit te voeren.`);
+
   // If the command is only for the bot owner, check if the user is the owner
   const isBotOwner = message.author.id === client.application.owner.id;
   if (command.ownerOnly && !isBotOwner) return message.reply('Dit commando kan enkel worden uitgevoerd door de bot eigenaar.');
@@ -70,6 +73,16 @@ module.exports = async (client, message) => {
 
     // Send a message if the bot lacks a permission
     if (invalidBotPerms.length) return message.channel.send(`Ik mis de volgende permissies: \`${invalidBotPerms}\`. Neem contact op met de serverbeheerders.`);
+  }
+
+  if (command.info.minArgs !== undefined && args.length < command.info.minArgs) {
+    return message.reply(`Je hebt te weinig argumenten ingegeven! ${command.info.syntaxError}`);
+  }
+
+  if (command.info.maxArgs !== undefined && command.info.maxArgs !== -1 && args.length > command.info.maxArgs) {
+    let msg = 'Je hebt te veel argumenten ingegeven! Dit commando accepteert ';
+    msg += command.info.maxArgs === 0 ? 'geen argumenten.' : `maximaal ${command.info.maxArgs} argument${command.info.maxArgs > 1 ? 'en' : ''}.`;
+    return message.reply(msg);
   }
 
   // Check if the command has a cooldown
@@ -120,9 +133,16 @@ module.exports = async (client, message) => {
     );
   }
 
-  // Execute the command
   try {
-    command.execute(message, args, client);
+    // Execute the command
+    const result = await command.execute(message, args, client);
+
+    // Return if the command doesn't return anything (restart)
+    if (!result) return;
+
+    // Check if we need to reply or just send a message
+    if (result[0] === 'reply') return message.reply(result[1]);
+    if (result[0] === 'send') return message.channel.send(result[1]);
   } catch (error) {
     client.log.error(`Er is een fout opgetreden bij het uitvoeren van het commando '${command.name}'.`, error);
     message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.application.owner.id}>.`);

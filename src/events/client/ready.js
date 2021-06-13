@@ -28,4 +28,47 @@ module.exports = async (client) => {
   }
 
   client.log.info(`Cached ${client.guildInfo.size} guilds.`);
+
+  // Set up our slash commands
+  for (const command of client.commands) {
+    const { name, description, slash, info } = command[1];
+    const { minArgs, expectedArgs } = info;
+
+    // Setup slash command
+    const data = {
+      name: name,
+      description: description,
+      options: [],
+    };
+
+    // Check if the command needs to be a slash command
+    if (slash) {
+      const options = [];
+
+      // Check if the slash command needs arguments
+      if (expectedArgs) {
+        // Split the arguments
+        const opts = expectedArgs
+          .substring(1, expectedArgs.length - 1)
+          .split(/[>\]] [<[]/);
+
+        // Set up the options
+        for (let i = 0; i < opts.length; ++i) {
+          const opt = opts[i];
+
+          options.push({
+            name: opt.replace(/ /g, '-'),
+            type: 'STRING',
+            description: opt,
+            required: i < minArgs,
+          });
+        }
+
+        data.options = options;
+      }
+
+      // Create slash command for the bot
+      await client.guilds.cache.get('737211146943332462')?.commands.create(data);
+    }
+  }
 };

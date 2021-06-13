@@ -1,11 +1,12 @@
 const { CronJob } = require('cron');
-const { Client, Collection, Message, PermissionString, Snowflake } = require('discord.js');
+const { Client, Collection, CommandInteraction, Message, PermissionString, Snowflake } = require('discord.js');
 const { Logger } = require('winston');
 
 /**
  * @typedef ICommand
  * @property {string} name
  * @property {string[]} [aliases]
+ * @property {string} [description]
  * @property {number} [cooldown]
  * @property {PermissionString[]} [permissions]
  * @property {boolean} [ownerOnly]
@@ -17,14 +18,16 @@ const { Logger } = require('winston');
 /**
  * @typedef ICommandInfo
  * @property {string} [category]
- * @property {string} [description]
- * @property {string} [usage]
+ * @property {number} [minArgs]
+ * @property {number} [maxArgs]
+ * @property {string} [expectedArgs]
+ * @property {string} [syntaxError]
  * @property {string[]} [examples]
  */
 
 /**
  * @callback execute
- * @param {Message} message
+ * @param {Message | CommandInteraction} message
  * @param {string[]} args
  * @param {BotClient} client
  */

@@ -5,11 +5,13 @@ const { ICommand } = require('../../typings');
 module.exports = {
   name: 'help',
   aliases: ['h'],
+  description: 'Toont al mijn commando\'s met nuttige informatie.',
   cooldown: 0,
   permissions: [],
+  slash: 'both',
   info: {
-    description: 'Toont al mijn commando\'s met nuttige informatie.',
-    usage: 'help [commando]',
+    maxArgs: 1,
+    expectedArgs: '[commando]',
     examples: ['help prefix', 'help examen'],
   },
   async execute(message, args, client) {
@@ -28,8 +30,7 @@ module.exports = {
       const adminCommands = [];
 
       for (const command of client.commands) {
-        const { name, permissions, ownerOnly, info } = command[1];
-        const { description } = info;
+        const { name, description, permissions, ownerOnly } = command[1];
 
         const commandInfo = `\`${prefix}${name}\`${description ? ` - ${description}` : ''}`;
 
@@ -57,7 +58,7 @@ module.exports = {
 
       HELP_EMBED.setDescription(desc);
 
-      return await message.channel.send({ embeds: [HELP_EMBED] });
+      return ['send', { embeds: [HELP_EMBED] }];
     }
 
     // When a user sends a second argument, this means they require more information on a specific command.
@@ -66,13 +67,13 @@ module.exports = {
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     // Check if the command or alias exist
-    if (!command || command.ownerOnly) return message.reply(`Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`);
+    if (!command || command.ownerOnly) return ['reply', `Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`];
 
-    const { name, aliases, permissions, info } = command;
-    const { description, usage, examples } = info;
+    const { name, aliases, description, permissions, info } = command;
+    const { expectedArgs, examples } = info;
 
     // Check if the command has an 'info' object for us to send information about the command
-    if (!description || !usage || !examples) return message.channel.send(`**Coding Error**, neem contact op met <@${client.application.owner.id}>.`);
+    if (!description || expectedArgs === null || !examples) return ['send', `**Coding Error**, neem contact op met <@${client.application.owner.id}>.`];
 
     const isAdmin = permissions.includes('ADMINISTRATOR') ? '(enkel voor administrators)' : '';
     const isMod = permissions.includes('KICK_MEMBERS') || permissions.includes('BAN_MEMBERS') ? '(enkel voor moderators)' : '';
@@ -94,7 +95,7 @@ module.exports = {
         },
         {
           name: 'Gebruik',
-          value: `\`${prefix}${usage}\``,
+          value: `\`${prefix}${name} ${expectedArgs}\``,
         },
         {
           name: 'Voorbeelden',
@@ -102,6 +103,6 @@ module.exports = {
         },
       );
 
-    return await message.channel.send({ embeds: [COMMAND_EMBED] });
+    return ['send', { embeds: [COMMAND_EMBED] }];
   },
 };

@@ -65,6 +65,8 @@ module.exports = {
    * @return {number|undefined} A number in the format of seconds.
    */
   parseTimeLimit(time) {
+    if (!time) return;
+
     // Remove the decimal part of the time
     time = time.replace(/([.,]\d+)/g, '');
 

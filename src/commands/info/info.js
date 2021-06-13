@@ -7,11 +7,12 @@ const utils = require('../../utils/functions');
 module.exports = {
   name: 'info',
   aliases: [],
+  description: 'Toont informatie over de bot.',
   cooldown: 60,
   permissions: [],
+  slash: 'both',
   info: {
-    description: 'Toont informatie over de bot.',
-    usage: 'info',
+    maxArgs: 0,
     examples: ['info'],
   },
   async execute(message, args, client) {
@@ -67,6 +68,6 @@ module.exports = {
       )
       .setFooter(footer);
 
-    return message.channel.send({ embeds: [INFO_EMBED] });
+    return ['send', { embeds: [INFO_EMBED] }];
   },
 };

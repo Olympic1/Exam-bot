@@ -75,15 +75,13 @@ module.exports = (client, data) => {
         const canSendMessages = channel.permissionsFor(client.user.id).has('SEND_MESSAGES');
 
         // Check if we can send messages to the channel
-        if (canViewChannel && canSendMessages) {
-          // @ts-ignore
-          await channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { split: true });
-        } else {
-          await guildOwner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
-        }
-      } else {
-        await guildOwner.send(`Ik heb geprobeerd een bericht te sturen in \`${guild.name}\`, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
+        // @ts-ignore
+        if (canViewChannel && canSendMessages) return channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { split: true });
+
+        return guildOwner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
       }
+
+      return guildOwner.send(`Ik heb geprobeerd een bericht te sturen in \`${guild.name}\`, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
     }
   }, null, true, 'Europe/Brussels');
 };

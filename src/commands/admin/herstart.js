@@ -6,13 +6,15 @@ const utils = require('../../utils/functions');
 module.exports = {
   name: 'herstart',
   aliases: ['restart'],
+  description: 'Herstart de bot.',
   cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   ownerOnly: true,
+  slash: 'both',
   info: {
-    description: 'Herstart de bot.',
-    usage: 'herstart [time]',
-    examples: ['herstart'],
+    maxArgs: 1,
+    expectedArgs: '[tijd]',
+    examples: ['herstart 20s', 'herstart 5m'],
   },
   async execute(message, args, client) {
     // Get the provided time in seconds. Defaults to 1 minute.
@@ -33,7 +35,7 @@ module.exports = {
     }
 
     // Send a request to Heroku to restart the bot
-    setTimeout(async () => {
+    return setTimeout(async () => {
       channel.send('Opnieuw opstarten...');
 
       await fetch('https://api.heroku.com/apps/mnm-exam-bot/dynos', {

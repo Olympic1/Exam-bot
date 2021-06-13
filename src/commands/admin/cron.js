@@ -5,55 +5,65 @@ const utils = require('../../utils/functions');
 module.exports = {
   name: 'cron',
   aliases: [],
+  description: 'Voer allerlei acties uit met betrekking tot cronjob (tijdschema).',
   cooldown: 0,
   permissions: ['ADMINISTRATOR'],
+  slash: 'both',
   info: {
-    description: 'Voer allerlei acties uit met betrekking tot cronjob (tijdschema).',
-    usage: 'cron <actie>',
+    minArgs: 1,
+    maxArgs: 1,
+    expectedArgs: '<actie>',
+    syntaxError: 'Voer de actie in die je wilt uitvoeren. Acties: `start`, `stop`, `status`, `laatste`, `volgende`.',
     examples: ['cron start', 'cron stop', 'cron status', 'cron laatste', 'cron volgende'],
   },
   async execute(message, args, client) {
-    if (!args.length) return message.reply('Voer de actie in die u wilt uitvoeren. Acties: start, stop, status, laatste, volgende.');
-
     const job = client.guildInfo.get(message.guild.id).job;
     const isRunning = job.running;
 
     switch (args[0]) {
       case 'start':
         // Check if cronjob is already running to prevent multiple instances
-        if (isRunning) return message.channel.send('Cronjob is al gestart.');
+        if (isRunning) return ['send', 'Cronjob is al gestart.'];
 
-        message.channel.send('Cronjob starten...');
-        return job.start();
+        job.start();
+
+        // Safety check
+        if (job.running) return ['send', 'Cronjob is gestart.'];
+
+        return ['send', `Er is iets foutgelopen. Neem contact op met <@${client.application.owner.id}>.`];
 
       case 'stop':
         // Check if cronjob is already stopped to prevent unnecessary actions
-        if (!isRunning) return message.channel.send('Cronjob is al gestopt.');
+        if (!isRunning) return ['send', 'Cronjob is al gestopt.'];
 
-        message.channel.send('Cronjob stoppen...');
-        return job.stop();
+        job.stop();
+
+        // Safety check
+        if (!job.running) return ['send', 'Cronjob is gestopt.'];
+
+        return ['send', `Er is iets foutgelopen. Neem contact op met <@${client.application.owner.id}>.`];
 
       case 'status':
-        return message.channel.send(`Cronjob wordt uitgevoerd: ${isRunning ? 'Ja' : 'Nee'}.`);
+        return ['send', `Cronjob wordt uitgevoerd: ${isRunning ? 'Ja' : 'Nee'}.`];
 
       case 'last':
       case 'laatste':
         // Check if cronjob is already running to get the last execution date
-        if (!isRunning) return message.channel.send('Start eerst cronjob.');
-        if (job.lastDate() === undefined) return message.channel.send('Kan de laatste uitvoering niet vinden.');
+        if (!isRunning) return ['send', 'Start eerst cronjob.'];
+        if (job.lastDate() === undefined) return ['send', 'Kan de laatste uitvoering niet vinden.'];
 
-        return message.channel.send(`Cronjob werd laatst uitgevoerd op: ${utils.formatToDate(Date.parse(job.lastDate().toString()))}`);
+        return ['send', `Cronjob werd laatst uitgevoerd op: ${utils.formatToDate(Date.parse(job.lastDate().toString()))}`];
 
       case 'next':
       case 'volgende':
         // Check if cronjob is already running to get the next execution date
-        if (!isRunning) return message.channel.send('Start eerst cronjob.');
-        if (job.nextDate() === undefined) return message.channel.send('Kan de volgende uitvoering niet vinden.');
+        if (!isRunning) return ['send', 'Start eerst cronjob.'];
+        if (job.nextDate() === undefined) return ['send', 'Kan de volgende uitvoering niet vinden.'];
 
-        return message.channel.send(`Cronjob zal worden uitgevoerd op: ${utils.formatToDate(Date.parse(job.nextDate().toString()))}`);
+        return ['send', `Cronjob zal worden uitgevoerd op: ${utils.formatToDate(Date.parse(job.nextDate().toString()))}`];
 
       default:
-        return message.reply('Voer een geldige actie in. Geldige acties zijn: start, stop, status, laatste, volgende.');
+        return ['reply', 'Voer een geldige actie in. Geldige acties zijn: start, stop, status, laatste, volgende.'];
     }
   },
 };
