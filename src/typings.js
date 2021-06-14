@@ -1,5 +1,5 @@
 const { CronJob } = require('cron');
-const { Client, Collection, CommandInteraction, Message, PermissionString, Snowflake } = require('discord.js');
+const { Client, Collection, CommandInteraction, Message, MessageEmbed, PermissionString, Snowflake } = require('discord.js');
 const { Logger } = require('winston');
 
 /**
@@ -30,6 +30,7 @@ const { Logger } = require('winston');
  * @param {Message | CommandInteraction} message
  * @param {string[]} args
  * @param {BotClient} client
+ * @returns {['send' | 'reply', string] | ['embed', MessageEmbed]}
  */
 
 /**

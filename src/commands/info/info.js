@@ -72,6 +72,6 @@ module.exports = {
       )
       .setFooter(footer);
 
-    return ['send', { embeds: [INFO_EMBED] }];
+    return ['embed', INFO_EMBED];
   },
 };

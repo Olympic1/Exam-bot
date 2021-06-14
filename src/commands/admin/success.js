@@ -76,11 +76,11 @@ module.exports = {
       }
 
       // Check if we have a mention
-      if (!mentions) return;
+      if (!mentions) return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
 
       return ['send', `Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`];
     }
 
-    return;
+    return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
   },
 };

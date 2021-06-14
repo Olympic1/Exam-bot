@@ -1,4 +1,4 @@
-const { APIMessage, Interaction, MessageEmbed } = require('discord.js');
+const { Interaction } = require('discord.js');
 const { BotClient } = require('../../typings');
 
 /**
@@ -29,22 +29,36 @@ module.exports = async (client, interaction) => {
   // Execute the command
   const result = await command.execute(interaction, args, client);
 
-  // Return if the command doesn't return anything (ex: restart, success)
-  if (!result) return interaction.reply('Succes');
+  // Check if the command doesn't return anything (ex: restart)
+  if (!result) return interaction.reply({ content: 'Commando uitgevoerd.', ephemeral: true });
 
   // Slash commands can only reply, so 'send' needs to be replied too
-  if (result[0] === 'send' || result[0] === 'reply') return interaction.reply(result[1]);
+  if (result[0] === 'send' || result[0] === 'reply') {
+    // If the message is under 2000 characters, send it
+    if (result[1].length <= 2000) return interaction.reply({ content: result[1] });
 
-  // Handle embeds
-  if (typeof result === 'object') {
-    const embed = new MessageEmbed(result);
-    const msg = await APIMessage.create(interaction.channel, { embeds: [embed] })
-      .resolveData()
-      .resolveFiles();
+    // Split the message
+    const splitArr = result[1].split(', ');
+    let firstMsg = '';
+    let secondMsg = '';
 
-    return interaction.reply(msg);
+    // Construct the message again
+    for (const str of splitArr) {
+      // Check if the next addition will exceed 2000 characters
+      if ((firstMsg + str).length < 2000) {
+        firstMsg += str;
+        continue;
+      }
+
+      secondMsg += str;
+    }
+
+    // Return the messages
+    await interaction.reply({ content: firstMsg });
+    return interaction.followUp({ content: secondMsg });
   }
+  if (result[0] === 'embed') return interaction.reply({ embeds: [result[1]] });
 
-  // Need to return something to prevent errors
-  return interaction.reply('Succes');
+  // No valid return statement
+  return interaction.reply({ content: `Geen geldige return statement. Neem contact op met <@${client.application.owner.id}>.`, ephemeral: true });
 };

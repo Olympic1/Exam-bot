@@ -60,7 +60,7 @@ module.exports = {
 
       HELP_EMBED.setDescription(desc);
 
-      return ['send', { embeds: [HELP_EMBED] }];
+      return ['embed', HELP_EMBED];
     }
 
     // When a user sends an argument, this means they require more information on a specific command.
@@ -104,6 +104,6 @@ module.exports = {
         },
       );
 
-    return ['send', { embeds: [COMMAND_EMBED] }];
+    return ['embed', COMMAND_EMBED];
   },
 };
