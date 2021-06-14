@@ -29,7 +29,7 @@ module.exports = async (client, interaction) => {
   // Execute the command
   const result = await command.execute(interaction, args, client);
 
-  // Return if the command doesn't return anything (ex: restart)
+  // Return if the command doesn't return anything (ex: restart, success)
   if (!result) return interaction.reply('Succes');
 
   // Slash commands can only reply, so 'send' needs to be replied too

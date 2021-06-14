@@ -139,12 +139,12 @@ module.exports = async (client, message) => {
     // Execute the command
     const result = await command.execute(message, args, client);
 
-    // Return if the command doesn't return anything (restart)
+    // Return if the command doesn't return anything (ex: restart, success)
     if (!result) return;
 
     // Check if we need to reply or just send a message
-    if (result[0] === 'reply') return message.reply(result[1]);
-    if (result[0] === 'send') return message.channel.send(result[1]);
+    if (result[0] === 'reply') return message.reply({ content: result[1], split: { char: ', ' } });
+    if (result[0] === 'send') return message.channel.send({ content: result[1], split: { char: ', ' } });
   } catch (error) {
     client.log.error(`Er is een fout opgetreden bij het uitvoeren van het commando '${command.name}'.`, error);
     message.channel.send(`Er is een fout opgetreden bij het uitvoeren van dat commando! Neem contact op met <@${client.application.owner.id}>.`);

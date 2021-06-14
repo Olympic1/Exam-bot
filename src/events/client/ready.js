@@ -57,7 +57,7 @@ module.exports = async (client) => {
           const opt = opts[i];
 
           options.push({
-            name: opt.replace(/ /g, '-'),
+            name: opt.replace(/ /g, '-').toLowerCase(),
             type: 'STRING',
             description: opt,
             required: i < minArgs,
