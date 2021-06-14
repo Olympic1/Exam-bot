@@ -1,5 +1,8 @@
+const { BotClient } = require('../../typings');
 const guildModel = require('../../models/guildModel');
+const utils = require('../../utils/functions');
 
+/** @param {BotClient} client */
 module.exports = async (client) => {
   // Show that the bot is logged in and ready to use
   client.log.info(`Ingelogd als ${client.user.username}.`);
@@ -8,8 +11,7 @@ module.exports = async (client) => {
   const status = process.env.NODE_ENV !== 'production' ? 'Testing' : 'Marathonradio';
   const type = process.env.NODE_ENV !== 'production' ? 'PLAYING' : 'LISTENING';
 
-  client.utils.setBotStatus(client, status, type)
-    .catch(error => client.log.error('Er is een fout opgetreden bij het instellen van de status van de bot.', error));
+  utils.setBotStatus(client, status, type);
 
   // Get all the guilds from our database and cache it, so we don't have to query it each time
   for (const guild of client.guilds.cache) {
@@ -26,4 +28,47 @@ module.exports = async (client) => {
   }
 
   client.log.info(`Cached ${client.guildInfo.size} guilds.`);
+
+  // Set up our slash commands
+  for (const command of client.commands) {
+    const { name, description, slash, info } = command[1];
+    const { minArgs, expectedArgs } = info;
+
+    // Check if the command needs to be a slash command
+    if (slash) {
+      // Setup slash command
+      const data = {
+        name: name,
+        description: description,
+        options: [],
+      };
+
+      // Check if the slash command needs arguments
+      if (expectedArgs) {
+        const options = [];
+
+        // Split the arguments
+        const opts = expectedArgs
+          .substring(1, expectedArgs.length - 1)
+          .split(/[>\]] [<[]/);
+
+        // Set up the options
+        for (let i = 0; i < opts.length; ++i) {
+          const opt = opts[i];
+
+          options.push({
+            name: opt.replace(/ /g, '-').toLowerCase(),
+            type: 'STRING',
+            description: opt,
+            required: i < minArgs,
+          });
+        }
+
+        data.options = options;
+      }
+
+      // Create slash command for the bot
+      await client.guilds.cache.get('737211146943332462')?.commands.create(data);
+    }
+  }
 };

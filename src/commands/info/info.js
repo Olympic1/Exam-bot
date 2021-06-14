@@ -1,34 +1,42 @@
-const discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
+const { ICommand } = require('../../typings');
+const { version, invite } = require('../../config.json');
+const utils = require('../../utils/functions');
 
+/** @type {ICommand} */
 module.exports = {
   name: 'info',
   aliases: [],
+  description: 'Toont informatie over de bot.',
   cooldown: 60,
   permissions: [],
+  slash: 'both',
   info: {
-    description: 'Toont informatie over de bot.',
-    usage: 'info',
+    maxArgs: 0,
     examples: ['info'],
   },
   async execute(message, args, client) {
+    // Get uptime
     const uptime = process.uptime();
-    const uptimeText = client.utils.formatToTime(uptime);
+    const uptimeText = utils.formatToTime(uptime);
     const footer = `Enceladus | Gehost door Heroku | Uptime: ${uptimeText}`;
 
-    const guildCount = client.guilds.cache.size;
-    const memberCount = client.guilds.cache.map(guilds => guilds.memberCount).reduce((a, b) => a + b, 0);
-    const owner = await client.utils.getUser(message.guild, client.config.owner) || 'Olympic1#6758';
+    // Get all the guilds the bot is in and its members
+    const guildCount = client.guilds.cache.size.toString();
+    const memberCount = client.guilds.cache.map(guilds => guilds.memberCount).reduce((a, b) => a + b, 0).toString();
 
-    const avatar = 'https://raw.githubusercontent.com/Olympic1/Exam-bot/master/icoon/ExamenBot.png';
+    // Get bot owner if he's in the guild
+    const owner = `${await utils.getUser(message.guild, client.application.owner.id)}` || 'Olympic1#6758';
     const website = 'https://github.com/Olympic1/Exam-bot/';
 
-    const INFO_EMBED = new discord.MessageEmbed()
+    // Construct info embed
+    const INFO_EMBED = new MessageEmbed()
       .setColor('#117ea6')
-      .setAuthor(client.user.username, avatar, website)
+      .setAuthor(client.application.name, client.application.iconURL(), website)
       .addFields(
         {
           name: 'Versie',
-          value: client.config.version,
+          value: version,
           inline: true,
         },
         {
@@ -58,12 +66,12 @@ module.exports = {
         },
         {
           name: 'Uitnodigen',
-          value: `[examen-bot.gg/invite](${client.config.invite})`,
+          value: `[examen-bot.gg/invite](${invite})`,
           inline: true,
         },
       )
       .setFooter(footer);
 
-    return message.channel.send(INFO_EMBED);
+    return ['embed', INFO_EMBED];
   },
 };

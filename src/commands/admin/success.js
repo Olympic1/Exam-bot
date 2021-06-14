@@ -1,15 +1,27 @@
-const { CronJob } = require('cron');
 const { Collection } = require('discord.js');
 const { DateTime } = require('luxon');
-const { BotClient, IGuild } = require('../typings');
-const profileModel = require('../models/profileModel');
+const { ICommand } = require('../../typings');
+const profileModel = require('../../models/profileModel');
 
-/**
- * @param {BotClient} client
- * @param {IGuild} data
- */
-module.exports = (client, data) => {
-  return new CronJob(data.cronTimer, async function() {
+/** @type {ICommand} */
+module.exports = {
+  name: 'success',
+  aliases: ['succes'],
+  description: 'Verstuurt de succes berichten.',
+  cooldown: 0,
+  permissions: ['ADMINISTRATOR'],
+  ownerOnly: true,
+  slash: 'both',
+  info: {
+    maxArgs: 1,
+    expectedArgs: '[server ID]',
+    examples: ['success'],
+  },
+  async execute(message, args, client) {
+    // @ts-ignore
+    const guildId = args.length ? client.guilds.cache.get(args[0]).id : message.guild.id;
+    const data = client.guildInfo.get(guildId);
+
     // Get the current date
     const date = new Date(DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO());
 
@@ -64,27 +76,11 @@ module.exports = (client, data) => {
       }
 
       // Check if we have a mention
-      if (!mentions) return;
+      if (!mentions) return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
 
-      const guild = client.guilds.cache.get(data._id);
-      const channel = guild.channels.cache.get(data.examChannel);
-      const guildOwner = await guild.fetchOwner();
-
-      // Check if the guild has a channel set
-      if (channel) {
-        const canViewChannel = channel.permissionsFor(client.user.id).has('VIEW_CHANNEL');
-        const canSendMessages = channel.permissionsFor(client.user.id).has('SEND_MESSAGES');
-
-        // Check if we can send messages to the channel
-        // @ts-ignore
-        if (canViewChannel && canSendMessages) return channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { split: true });
-
-        // No permissions to send messages in channel
-        return guildOwner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
-      }
-
-      // No channel set to send messages
-      return guildOwner.send(`Ik heb geprobeerd een bericht te sturen in \`${guild.name}\`, maar ik heb nog geen kanaal toegewezen gekregen. Gelieve het commando \`${data.prefix}kanaal\` uit te voeren om mij een kanaal toe te wijzen.`);
+      return ['send', `Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`];
     }
-  }, null, true, 'Europe/Brussels');
+
+    return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
+  },
 };

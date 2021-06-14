@@ -1,22 +1,27 @@
+const { ICommand } = require('../../typings');
 const guildModel = require('../../models/guildModel');
 
+/** @type {ICommand} */
 module.exports = {
   name: 'prefix',
   aliases: [],
+  description: 'Verander de prefix van de bot.',
   cooldown: 0,
   permissions: ['ADMINISTRATOR'],
+  slash: 'both',
   info: {
-    description: 'Verander de prefix van de bot.',
-    usage: 'prefix <prefix>',
+    minArgs: 1,
+    maxArgs: 1,
+    expectedArgs: '<prefix>',
+    syntaxError: 'Voer de prefix in die je wilt gebruiken.',
     examples: ['prefix ?', 'prefix -'],
   },
   async execute(message, args, client) {
-    if (!args.length) return message.reply('voer de prefix in die u wilt gebruiken.');
-
     let data = client.guildInfo.get(message.guild.id);
     const newPrefix = args[0];
 
-    if (data.prefix === newPrefix) return message.reply('die prefix gebruik ik nu al.');
+    // Check if the provided prefix is already used for the bot
+    if (data.prefix === newPrefix) return ['reply', 'Die prefix gebruik ik nu al.'];
 
     try {
       // Change prefix in the database
@@ -35,10 +40,10 @@ module.exports = {
       // Change prefix in the cache
       client.guildInfo.set(message.guild.id, data);
 
-      return message.channel.send(`De prefix is succesvol veranderd naar \`${newPrefix}\`.`);
+      return ['send', `De prefix is succesvol veranderd naar \`${newPrefix}\`.`];
     } catch (error) {
       client.log.error('Er is een fout opgetreden bij het bewerken van de prefix.', error);
-      return message.channel.send('Er is een fout opgetreden bij het bewerken van de prefix.');
+      return ['send', 'Er is een fout opgetreden bij het bewerken van de prefix.'];
     }
   },
 };

@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
-const config = require('../config.json');
+const { prefix } = require('../config.json');
 
 const guildSchema = new mongoose.Schema({
+  // Guild ID
   _id: {
     type: String,
     required: true,
   },
   prefix: {
     type: String,
-    default: config.prefix,
+    default: prefix,
   },
   examChannel: {
     type: String,
@@ -20,6 +21,4 @@ const guildSchema = new mongoose.Schema({
   },
 });
 
-const model = mongoose.model('Guilds', guildSchema);
-
-module.exports = model;
+module.exports = mongoose.model('guilds', guildSchema);

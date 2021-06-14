@@ -22,6 +22,7 @@ const permissionList = [
   'MANAGE_MESSAGES',
   'READ_MESSAGE_HISTORY',
   'SEND_TTS_MESSAGES',
+  'USE_APPLICATION_COMMANDS',
   'CONNECT',
   'SPEAK',
   'STREAM',
@@ -30,6 +31,7 @@ const permissionList = [
   'MUTE_MEMBERS',
   'DEAFEN_MEMBERS',
   'MOVE_MEMBERS',
+  'REQUEST_TO_SPEAK',
 ];
 
 module.exports = permissionList;
