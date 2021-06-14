@@ -77,7 +77,7 @@ module.exports = (client, data) => {
 
         // Check if we can send messages to the channel
         // @ts-ignore
-        if (canViewChannel && canSendMessages) return channel.send(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { split: true });
+        if (canViewChannel && canSendMessages) return channel.send({ content: `Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, split: { char: ', ' } });
 
         // No permissions to send messages in channel
         return guildOwner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
