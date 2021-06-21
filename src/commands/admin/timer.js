@@ -12,8 +12,8 @@ module.exports = {
   permissions: ['ADMINISTRATOR'],
   slash: 'both',
   info: {
-    minArgs: 1,
-    maxArgs: 1,
+    minArgs: 5,
+    maxArgs: 6,
     expectedArgs: '<timing>',
     syntaxError: 'Voer het tijdschema in wanneer je wilt dat de berichten worden verzonden.',
     examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
