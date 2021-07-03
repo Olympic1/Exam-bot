@@ -3,10 +3,9 @@ updates:
 - package-ecosystem: npm
   directory: "/"
   schedule:
-    interval: daily
-    time: "22:00"
+    interval: weekly
     timezone: Europe/Brussels
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 0
   reviewers:
   - Olympic1
   labels:
