@@ -36,7 +36,7 @@
     "discord.js": "^13.0.0-dev.c850ae10270076c4b2e10b130dd8f88eed4ed201",
     "dotenv": "^10.0.0",
     "luxon": "^1.27.0",
-    "mongoose": "^5.12.14",
+    "mongoose": "^5.13.2",
     "node-fetch": "^2.6.1",
     "winston": "^3.3.3"
   },
