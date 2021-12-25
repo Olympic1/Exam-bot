@@ -16,7 +16,7 @@ const logger = createLogger({
  * Create the bot
  * @type {BotClient}
  */
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES] });
 client.commands = new Collection();
 client.guildInfo = new Collection();
 client.log = logger;
