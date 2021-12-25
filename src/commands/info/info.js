@@ -32,7 +32,13 @@ module.exports = {
     // Construct info embed
     const INFO_EMBED = new MessageEmbed()
       .setColor('#117ea6')
-      .setAuthor(client.application.name, client.application.iconURL(), website)
+      .setAuthor(
+        {
+          name: client.application.name,
+          url: website,
+          iconURL: client.application.iconURL(),
+        },
+      )
       .addFields(
         {
           name: 'Versie',

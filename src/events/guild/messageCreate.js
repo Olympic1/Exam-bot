@@ -1,4 +1,4 @@
-const { Message } = require('discord.js');
+const { Message, Util } = require('discord.js');
 const { BotClient } = require('../../typings');
 const profileModel = require('../../models/profileModel');
 const utils = require('../../utils/functions');
@@ -143,8 +143,18 @@ module.exports = async (client, message) => {
     if (!result) return;
 
     // Check if we need to reply or just send a message
-    if (result[0] === 'reply') return message.reply({ content: result[1], split: { char: ', ' } });
-    if (result[0] === 'send') return message.channel.send({ content: result[1], split: { char: ', ' } });
+    if (result[0] === 'reply') {
+      const msg = Util.splitMessage(result[1], { char: ', ' });
+      msg.forEach(m => message.reply({ content: m }));
+      return;
+    }
+
+    if (result[0] === 'send') {
+      const msg = Util.splitMessage(result[1], { char: ', ' });
+      msg.forEach(m => message.channel.send({ content: m }));
+      return;
+    }
+
     if (result[0] === 'embed') return message.channel.send({ embeds: [result[1]] });
 
     // No valid return statement

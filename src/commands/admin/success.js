@@ -18,7 +18,6 @@ module.exports = {
     examples: ['success'],
   },
   async execute(message, args, client) {
-    // @ts-ignore
     const guildId = args.length ? client.guilds.cache.get(args[0]).id : message.guild.id;
     const data = client.guildInfo.get(guildId);
 

@@ -16,7 +16,7 @@ module.exports = {
   },
   async execute(message, args, client) {
     // Get the current prefix
-    const prefix = client.guildInfo.get(message.guild.id).prefix;
+    const prefix = message.type === 'APPLICATION_COMMAND' ? '/' : client.guildInfo.get(message.guild.id).prefix;
 
     // HELP_EMBED will only be sent if the user didn't pass any arguments.
     // This is the main help embed that displays each command.

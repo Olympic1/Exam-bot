@@ -40,7 +40,6 @@ module.exports = (client) => {
         for (const perm of permissions) {
           if (!permissionList.includes(perm)) {
             client.log.error(`Het commando "${name}" heeft een ongeldige permissie ingesteld: ${perm}. Permissies moeten allemaal hoofdletters zijn en één van de volgende zijn: "${[...permissionList].join('", "')}".`);
-            continue;
           }
         }
       }
@@ -84,7 +83,7 @@ module.exports = (client) => {
       }
 
       // Check if the command allows arguments
-      if (maxArgs !== undefined && maxArgs > 0 && !expectedArgs) {
+      if (maxArgs > 0 && !expectedArgs) {
         client.log.error(`Het commando "${name}" heeft de eigenschap "maxArgs" ingesteld zonder de eigenschap "expectedArgs".`);
         continue;
       }

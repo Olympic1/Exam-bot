@@ -16,7 +16,7 @@ const logger = createLogger({
  * Create the bot
  * @type {BotClient}
  */
-const client = new Client({ partials: ['MESSAGE', 'REACTION'], intents: [Intents.ALL] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 client.commands = new Collection();
 client.guildInfo = new Collection();
 client.log = logger;
@@ -29,10 +29,7 @@ for (const handler of handlerFiles) {
 
 // Connect to our database
 connect(process.env.MONGODB_SRV, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
+  keepAlive: true,
 }).then(() => client.log.info('Verbonden met database.'))
   .catch(error => client.log.error('Er is een fout opgetreden bij het verbinden met de database.', error));
 

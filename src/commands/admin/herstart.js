@@ -7,7 +7,7 @@ module.exports = {
   name: 'herstart',
   aliases: ['restart'],
   description: 'Herstart de bot.',
-  cooldown: 0,
+  cooldown: 60,
   permissions: ['ADMINISTRATOR'],
   ownerOnly: true,
   slash: 'both',
@@ -28,9 +28,8 @@ module.exports = {
       channel = guild.channels.cache.get(info[1].examChannel);
 
       // Check if the guild has a channel set, otherwise message the guild owner
-      if (!channel) channel = await guild.fetchOwner();
+      if (!channel?.isText()) channel = await guild.fetchOwner();
 
-      // @ts-ignore
       await channel.send(`Attentie! Over ${timeText} zal ik mezelf opnieuw opstarten.`);
     }
 

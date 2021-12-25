@@ -1,4 +1,4 @@
-const { ActivityType, Guild, GuildChannel, GuildMember, Role, Snowflake } = require('discord.js');
+const { ActivityType, Guild, GuildChannel, GuildMember, Role, Snowflake, ThreadChannel } = require('discord.js');
 const { DateTime } = require('luxon');
 const { BotClient, IGuild } = require('../typings');
 
@@ -228,7 +228,7 @@ module.exports = {
    * The **`getChannel()`** function parses a string with the channel name, ID or mention and returns a resolved channel object or null.
    * @param {Guild} guild The guild to search in.
    * @param {string} channel The channel's id, name or mention.
-   * @return {GuildChannel|null} A resolved channel object or null.
+   * @return {GuildChannel|ThreadChannel|null} A resolved channel object or null.
    */
   getChannel(guild, channel) {
     if (!channel) return null;
@@ -262,7 +262,7 @@ module.exports = {
    * The **`setBotStatus()`** function sets the presence of the bot and returns a promise.
    * @param {BotClient} client The bot that will have the activity set.
    * @param {string} status The activity to set the bot to.
-   * @param {ActivityType} [type] The type of activity for the bot's presence. Defaults to `PLAYING`.
+   * @param {Exclude<ActivityType, 'CUSTOM'>} [type] The type of activity for the bot's presence. Defaults to `PLAYING`.
    */
   setBotStatus(client, status, type) {
     client.user.setPresence({

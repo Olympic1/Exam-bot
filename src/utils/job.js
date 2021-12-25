@@ -1,5 +1,5 @@
 const { CronJob } = require('cron');
-const { Collection } = require('discord.js');
+const { Collection, Util } = require('discord.js');
 const { DateTime } = require('luxon');
 const { BotClient, IGuild } = require('../typings');
 const profileModel = require('../models/profileModel');
@@ -71,13 +71,16 @@ module.exports = (client, data) => {
       const guildOwner = await guild.fetchOwner();
 
       // Check if the guild has a channel set
-      if (channel) {
+      if (channel?.isText()) {
         const canViewChannel = channel.permissionsFor(client.user.id).has('VIEW_CHANNEL');
         const canSendMessages = channel.permissionsFor(client.user.id).has('SEND_MESSAGES');
 
         // Check if we can send messages to the channel
-        // @ts-ignore
-        if (canViewChannel && canSendMessages) return channel.send({ content: `Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, split: { char: ', ' } });
+        if (canViewChannel && canSendMessages) {
+          const msg = Util.splitMessage(`Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`, { char: ', ' });
+          msg.forEach(m => channel.send({ content: m }));
+          return;
+        }
 
         // No permissions to send messages in channel
         return guildOwner.send(`Ik heb geprobeerd een bericht te sturen in ${channel.toString()}, maar ik heb geen permissies om dit te doen. Gelieve mij de vereiste permissies te geven of mij een nieuw kanaal toe te wijzen.`);
