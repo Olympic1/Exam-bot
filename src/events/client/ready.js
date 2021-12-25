@@ -18,6 +18,22 @@ module.exports = async (client) => {
 
   utils.setBotStatus(client, status, type);
 
+  // Get all the guilds from our database and cache it, so we don't have to query it each time
+  for (const guild of client.guilds.cache) {
+    const guildId = guild[1].id;
+
+    // Search the guild in our database. If we didn't find the guild, create a profile for it.
+    const data = await guildModel.findOne({ _id: guildId }) ?? await guildModel.create({ _id: guildId });
+
+    // Start cronjob
+    data.job = require('../../utils/job')(client, data);
+
+    // Cache the data
+    client.guildInfo.set(guildId, data);
+  }
+
+  client.log.info(`Cached ${client.guildInfo.size} guilds.`);
+
   // Set up our slash commands
   for (const command of client.commands) {
     const { name, description, slash, info, ownerOnly } = command[1];
@@ -93,22 +109,8 @@ module.exports = async (client) => {
     },
   ];
 
-  // Get all the guilds from our database and cache it, so we don't have to query it each time
+  // Set permissions for slash commands
   for (const guild of client.guilds.cache) {
-    const guildId = guild[1].id;
-
-    // Set permissions for slash commands
     await guild[1].commands.permissions.set({ fullPermissions });
-
-    // Search the guild in our database. If we didn't find the guild, create a profile for it.
-    const data = await guildModel.findOne({ _id: guildId }) ?? await guildModel.create({ _id: guildId });
-
-    // Start cronjob
-    data.job = require('../../utils/job')(client, data);
-
-    // Cache the data
-    client.guildInfo.set(guildId, data);
   }
-
-  client.log.info(`Cached ${client.guildInfo.size} guilds.`);
 };
