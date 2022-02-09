@@ -1,5 +1,5 @@
 # Examen-bot
-[![](https://img.shields.io/badge/discord.js-v13.4.0-blue.svg?logo=npm)](https://www.npmjs.com/package/discord.js)
+[![](https://img.shields.io/badge/discord.js-v13.6.0-blue.svg?logo=npm)](https://www.npmjs.com/package/discord.js)
 [![](https://img.shields.io/badge/Powered%20by%20JetBrains-gray.svg?logo=webstorm)](https://www.jetbrains.com/webstorm/)
 [![GitHub](https://img.shields.io/github/license/Olympic1/Exam-bot)](https://github.com/Olympic1/Exam-bot/blob/master/LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/95e821d7e0c044ac851f5bf194a40e68)](https://www.codacy.com/gh/Olympic1/Exam-bot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Olympic1/Exam-bot&amp;utm_campaign=Badge_Grade)
