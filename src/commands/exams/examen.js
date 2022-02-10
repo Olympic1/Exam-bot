@@ -38,6 +38,8 @@ module.exports = {
       // Convert date into an ISO format
       const dateISO = utils.convertToISO(match[1]);
 
+      if (!dateISO) continue;
+
       // Add the exams to the database
       try {
         await profileModel.findOneAndUpdate(

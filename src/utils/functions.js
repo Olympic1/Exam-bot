@@ -1,46 +1,39 @@
-const { ActivityType, Guild, GuildChannel, GuildMember, Role, Snowflake, ThreadChannel } = require('discord.js');
+const { ActivityType, Guild, GuildBasedChannel, GuildMember, Role, Snowflake } = require('discord.js');
 const { DateTime } = require('luxon');
 const { BotClient, IGuild } = require('../typings');
 
 module.exports = {
   /**
-   * The **`formatToTime()`** function converts seconds into a string in the format of weeks, days, hours, minutes and seconds.
+   * Converts seconds into a string in the format of days, hours, minutes and seconds.
    * @param {number} seconds The seconds to convert.
-   * @return {string} A string in the format of weeks, days, hours, minutes and seconds.
+   * @returns {string} A string in the format of days, hours, minutes and seconds.
    */
   formatToTime(seconds) {
-    let sec = Math.trunc(seconds);
+    // Don't allow 0
+    if (seconds <= 0) return '0 sec';
 
     // Calculate time
-    const weeks = Math.floor(sec / (3600 * 24 * 7));
-    sec -= weeks * 3600 * 24 * 7;
+    const days = Math.floor(seconds / (3600 * 24));
+    const hours = Math.floor(seconds % (3600 * 24) / 3600);
+    const minutes = Math.floor(seconds % 3600 / 60);
+    seconds = Math.floor(seconds % 60);
 
-    const days = Math.floor(sec / (3600 * 24));
-    sec -= days * 3600 * 24;
-
-    const hrs = Math.floor(sec / 3600);
-    sec -= hrs * 3600;
-
-    const min = Math.floor(sec / 60);
-    sec -= min * 60;
-
-    const tmp = [];
+    let result = '';
 
     // Construct message
-    weeks && tmp.push(weeks + (weeks === 1 ? ' week' : ' weken'));
-    days && tmp.push(days + (days === 1 ? ' dag' : ' dagen'));
-    hrs && tmp.push(hrs + (hrs === 1 ? ' uur' : ' uren'));
-    min && tmp.push(min + ' min');
-    sec && tmp.push(sec + ' sec');
+    if (days) result += days + (days === 1 ? ' dag ' : ' dagen ');
+    if (hours) result += `${hours} uur `;
+    if (minutes) result += `${minutes} min `;
+    if (seconds) result += `${seconds} sec`;
 
-    return tmp.join(', ');
+    return result;
   },
 
   /**
-   * The **`formatToDate()`** function converts milliseconds into a string in the format of a localized date and time.
+   * Converts milliseconds into a string in the format of a localized date and time.
    * @param {number} milliseconds The milliseconds to convert.
    * @param {boolean} [showSeconds] Specifies whether to display seconds. Defaults to `false`.
-   * @return {string} A string in the format of a localized date and time.
+   * @returns {string} A string in the format of a localized date and time.
    */
   formatToDate(milliseconds, showSeconds) {
     const date = new Date(milliseconds);
@@ -62,85 +55,92 @@ module.exports = {
   },
 
   /**
-   * The **`parseTimeLimit()`** function converts time into a number in the format of seconds.
+   * Tries to parse the provided time into a number in the format of seconds. If the provided time has an invalid format, returns an error message as string.
    * @param {string} time The time to convert.
-   * @return {number|undefined} A number in the format of seconds.
+   * @returns {number | string} A number in the format of seconds; otherwise an error message as string.
    */
   parseTimeLimit(time) {
-    if (!time) return;
+    // Don't allow 0
+    if (!time) return 'Ongeldig formaat. Geef ten minste 1 cijfer en letter, voorbeelden: `10s`, `5m`, etc.';
+    if (+time < 1) return 'Ongeldig formaat. De duur moet minstens 1 zijn.';
 
-    // Remove the decimal part of the time
-    time = time.replace(/([.,]\d+)/g, '');
+    // Check if there is only a number
+    if (!isNaN(+time)) return +time;
 
-    // Check if time is a number
-    // @ts-ignore
-    if (!isNaN(time)) return parseInt(time);
+    // Search for the duration and character
+    const duration = +(time.match(/^\d+/) || '');
+    const character = (time.match(/[a-z]+$/i) || '').toString().charAt(0).toLowerCase();
 
-    // Search for the number and string
-    const int = parseInt(time.match(/\d+/).toString());
-    const str = time.match(/\D+/).toString();
+    // Check if the found values are valid
+    if (!duration || !character) return 'Ongeldig formaat. Geef ten minste 1 cijfer en letter, voorbeelden: `10s`, `5m`, etc.';
+    if (isNaN(duration)) return 'Ongeldig formaat. Het getal is ongeldig.';
+    if (character !== 's' && character !== 'm' && character !== 'h' && character !== 'd') return 'Ongeldig formaat. Onbekend type. Geef `s`, `m`, `h` of `d` op voor respectievelijk seconden, minuten, uren of dagen.';
 
-    if (!int || !str || isNaN(int)) return;
+    // Check if the duration is within the ranges
+    if ((character === 's' || character === 'm') && duration > 60) return 'Ongeldig formaat. Seconden of minuten kunnen niet langer zijn dan 60.';
+    if (character === 'h' && duration > 24) return 'Ongeldig formaat. Uren kunnen niet langer zijn dan 24.';
+    if (character === 'd' && duration > 365) return 'Ongeldig formaat. Dagen kunnen niet langer zijn dan 365.';
 
-    // Use the first letter of the string to evaluate
-    switch (str[0].charAt(0).toLowerCase()) {
+    // Search for the character
+    switch (character) {
       case 's':
-        return int;
+        return duration;
       case 'm':
-        return Math.round(int * 60);
+        return duration * 60;
       case 'h':
-        return Math.round(int * 3600);
+        return duration * 3600;
       case 'd':
-        return Math.round(int * 3600 * 24);
-      case 'w':
-        return Math.round(int * 3600 * 24 * 7);
-      default:
-        return;
+        return duration * 3600 * 24;
     }
   },
 
   /**
-   * The **`isValidDate()`** function checks if the given date has a valid format and returns `true` or `false`.
-   * @param {string} date The date to check.
-   * @return {boolean} `True` if the given date is valid; otherwise `false`.
+   * Checks if the given date has a valid format and returns `true` or `false`.
+   * @param {string | undefined} date The date to check.
+   * @returns {boolean} `True` if the given date is valid; otherwise `false`.
    */
   isValidDate(date) {
+    if (!date) return false;
+
     // Checks date with /
-    const check1 = DateTime.fromFormat(date, 'd/M').isValid;
-    const check2 = DateTime.fromFormat(date, 'd/M/y').isValid;
+    const slash = DateTime.fromFormat(date, 'd/M').isValid;
+    const slashYear = DateTime.fromFormat(date, 'd/M/y').isValid;
 
     // Checks date with -
-    const check3 = DateTime.fromFormat(date, 'd-M').isValid;
-    const check4 = DateTime.fromFormat(date, 'd-M-y').isValid;
+    const hyphen = DateTime.fromFormat(date, 'd-M').isValid;
+    const hyphenYear = DateTime.fromFormat(date, 'd-M-y').isValid;
 
-    return check1 || check2 || check3 || check4;
+    return slash || slashYear || hyphen || hyphenYear;
   },
 
   /**
-   * The **`convertToISO()`** function parses a date and returns an ISO 8601-compliant string.
-   * @param {string} date The date to parse.
-   * @return {string} An ISO 8601-compliant string in UTC.
+   * Checks if the given date has a valid format and returns an ISO 8601-compliant string; otherwise returns null.
+   * @param {string | undefined} date The date to parse.
+   * @returns {string | null} An ISO 8601-compliant string in UTC if valid; otherwise null.
    */
   convertToISO(date) {
-    let tmp;
+    if (!date) return null;
 
-    // Converts date with /
-    if (DateTime.fromFormat(date, 'd/M').isValid) tmp = DateTime.fromFormat(date, 'd/M');
-    if (DateTime.fromFormat(date, 'd/M/y').isValid) tmp = DateTime.fromFormat(date, 'd/M/y');
+    const formats = ['d/M', 'd/M/y', 'd-M', 'd-M-y'];
 
-    // Converts date with -
-    if (DateTime.fromFormat(date, 'd-M').isValid) tmp = DateTime.fromFormat(date, 'd-M');
-    if (DateTime.fromFormat(date, 'd-M-y').isValid) tmp = DateTime.fromFormat(date, 'd-M-y');
+    for (const format of formats) {
+      const result = DateTime.fromFormat(date, format);
 
-    return tmp.setZone('utc', { keepLocalTime: true }).toISO();
+      if (result.isValid) {
+        return result.setZone('utc', { keepLocalTime: true }).toISO();
+      }
+    }
+
+    // Invalid format
+    return null;
   },
 
   /**
-   * The **`getUser()`** function parses a string with the username, nickname, ID, tag or mention and returns a resolved user object or null.
+   * Parses a string with the username, nickname, ID, tag or mention and returns a resolved user object or null.
    * @param {Guild} guild The guild to search in.
-   * @param {string} user The user's id, name, nickname, tag or mention.
-   * @param {Array} [context] The array of user id's to search in. Defaults to `guild.members`.
-   * @return {Promise<GuildMember>|null} A resolved user object or null.
+   * @param {string | undefined} user The user's id, usrname, nickname, tag or mention.
+   * @param {GuildMember[]} [context] The array of user id's to search in. Defaults to `guild.members`.
+   * @returns {Promise<GuildMember | null>} A resolved user object or null.
    */
   async getUser(guild, user, context) {
     if (!user) return null;
@@ -161,7 +161,7 @@ module.exports = {
       if (userViaMention) return userViaMention;
     }
 
-    // Check if we have a user's tag
+    // Check if we have an user's tag
     if (user.indexOf('#') > -1) {
       const [name, discriminator] = user.split('#');
       const userViaDiscriminator = users.find(m => m.user.username === name && m.user.discriminator === discriminator);
@@ -169,19 +169,19 @@ module.exports = {
       if (userViaDiscriminator) return userViaDiscriminator;
     }
 
-    // Check if we have a user's ID
+    // Check if we have an user's ID
     if (user.match(/^(\d+)$/)) {
       const userViaId = users.find(m => m.user.id === user);
 
       if (userViaId) return userViaId;
     }
 
-    // Check if we have a user's name
+    // Check if we have an user's name
     const userViaName = users.find(m => m.user.username === user);
 
     if (userViaName) return userViaName;
 
-    // Check if we have a user's nickname
+    // Check if we have an user's nickname
     const userViaNick = users.find(m => m.nickname === user);
 
     if (userViaNick) return userViaNick;
@@ -191,10 +191,10 @@ module.exports = {
   },
 
   /**
-   * The **`getRole()`** function parses a string with the role name, ID or mention and returns a resolved role object or null.
+   * Parses a string with the role name, ID or mention and returns a resolved role object or null.
    * @param {Guild} guild The guild to search in.
-   * @param {string} role The role's id, name or mention.
-   * @return {Role|null} A resolved role object or null.
+   * @param {string | undefined} role The role's id, name or mention.
+   * @returns {Role | null} A resolved role object or null.
    */
   getRole(guild, role) {
     if (!role) return null;
@@ -225,16 +225,16 @@ module.exports = {
   },
 
   /**
-   * The **`getChannel()`** function parses a string with the channel name, ID or mention and returns a resolved channel object or null.
+   * Parses a string with the channel name, ID or mention and returns a resolved channel object or null.
    * @param {Guild} guild The guild to search in.
-   * @param {string} channel The channel's id, name or mention.
-   * @return {GuildChannel|ThreadChannel|null} A resolved channel object or null.
+   * @param {string | undefined} channel The channel's id, name or mention.
+   * @returns {GuildBasedChannel | null} A resolved channel object or null.
    */
   getChannel(guild, channel) {
     if (!channel) return null;
 
     // Check if we have a mention
-    const mention = new RegExp(/<#(\d+)>/g).exec(channel);
+    const mention = new RegExp(/<#!?(\d+)>/g).exec(channel);
 
     if (mention && mention.length > 1) {
       const channelViaMention = guild.channels.cache.find(c => c.id === mention[1]);
@@ -259,7 +259,7 @@ module.exports = {
   },
 
   /**
-   * The **`setBotStatus()`** function sets the presence of the bot and returns a promise.
+   * Sets the presence of the bot.
    * @param {BotClient} client The bot that will have the activity set.
    * @param {string} status The activity to set the bot to.
    * @param {Exclude<ActivityType, 'CUSTOM'>} [type] The type of activity for the bot's presence. Defaults to `PLAYING`.
@@ -275,7 +275,7 @@ module.exports = {
   },
 
   /**
-   * The **`updateCronjob()`** function initializes the cronjob and updates the cache with the new data.
+   * Stops the current cronjob and starts one with the new data.
    * @param {BotClient} client The bot that needs to restart cronjob.
    * @param {Snowflake} guildId The guild's id to change the data for.
    * @param {IGuild} data The guild's data to change.
@@ -289,7 +289,7 @@ module.exports = {
       // Ignore
     }
 
-    // Start cronjob with the new data
+    // Start a cronjob with the new data
     data.job = require('../utils/job')(client, data);
 
     // Cache the new data

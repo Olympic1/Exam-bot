@@ -19,6 +19,10 @@ module.exports = {
   async execute(message, args, client) {
     // Get the provided time in seconds. Defaults to 1 minute.
     const limit = utils.parseTimeLimit(args[0]) || 60;
+
+    // Check if parseTimeLimit returned an error message
+    if (typeof limit === 'string') return ['reply', limit];
+
     const timeText = utils.formatToTime(limit);
 
     // Message all the possible guilds about restarting the bot
