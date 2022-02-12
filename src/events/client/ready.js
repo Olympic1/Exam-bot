@@ -22,7 +22,7 @@ module.exports = async (client) => {
   // Search for every cached guild in our database. If we didn't find the guild, create a profile for it.
   for (const guild of client.guilds.cache.values()) {
     /** @type {GuildDoc} */
-    const data = await guildModel.findOne({ _id: guild.id }) ?? await guildModel.create({ _id: guild.id });
+    const data = await guildModel.findOne({ _id: guild.id }) ?? await guildModel.create({ _id: guild.id, name: guild.name });
 
     // Start cronjob
     const job = createCronJob(client, data);

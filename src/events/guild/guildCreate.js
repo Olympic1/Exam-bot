@@ -13,7 +13,7 @@ module.exports = async (client, guild) => {
 
     // Create a database profile when the bot joins a new guild
     /** @type {GuildDoc} */
-    const data = await guildModel.create({ _id: guild.id });
+    const data = await guildModel.create({ _id: guild.id, name: guild.name });
 
     // Start cronjob
     const job = createCronJob(client, data);

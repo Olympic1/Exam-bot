@@ -5,6 +5,7 @@ const { Document, Model, model, Schema } = require('mongoose');
 /**
  * @typedef IGuild
  * @property {Snowflake} _id
+ * @property {string} name
  * @property {string} prefix
  * @property {Snowflake} examChannel
  * @property {string} cronTimer
@@ -19,6 +20,10 @@ const { Document, Model, model, Schema } = require('mongoose');
 const guildSchema = new Schema({
   // Guild ID
   _id: {
+    type: String,
+    required: true,
+  },
+  name: {
     type: String,
     required: true,
   },

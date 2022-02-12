@@ -54,7 +54,7 @@ module.exports = {
         if (!isRunning) return ['send', 'Start eerst cronjob.'];
         if (job.lastDate() === undefined) return ['send', 'Kan de laatste uitvoering niet vinden.'];
 
-        return ['send', `Cronjob werd laatst uitgevoerd op: ${formatToDate(Date.parse(job.lastDate().toString()))}`];
+        return ['send', `De laatste uitvoering was op: ${formatToDate(Date.parse(job.lastDate().toString()))}`];
 
       case 'next':
       case 'volgende':
@@ -62,7 +62,7 @@ module.exports = {
         if (!isRunning) return ['send', 'Start eerst cronjob.'];
         if (job.nextDate() === undefined) return ['send', 'Kan de volgende uitvoering niet vinden.'];
 
-        return ['send', `Cronjob zal worden uitgevoerd op: ${formatToDate(Date.parse(job.nextDate().toString()))}`];
+        return ['send', `De volgende uitvoering zal gebeuren op: ${formatToDate(Date.parse(job.nextDate().toString()))}`];
 
       default:
         // Not a valid action provided
