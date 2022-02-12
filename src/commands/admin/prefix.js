@@ -1,12 +1,10 @@
-const { ICommand } = require('../../typings');
-const guildModel = require('../../models/guildModel');
+const { GuildDoc, guildModel } = require('../../models/guildModel');
+const { ICommand } = require('../../structures/ICommand');
 
 /** @type {ICommand} */
 module.exports = {
   name: 'prefix',
-  aliases: [],
   description: 'Verander de prefix van de bot.',
-  cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   slash: 'both',
   info: {
@@ -16,34 +14,27 @@ module.exports = {
     syntaxError: 'Voer de prefix in die je wilt gebruiken.',
     examples: ['prefix ?', 'prefix -'],
   },
-  async execute(message, args, client) {
-    let data = client.guildInfo.get(message.guild.id);
+  async execute(client, message, args) {
+    /** @type {GuildDoc} */
+    const data = await guildModel.findOne({ _id: message.guild.id });
     const newPrefix = args[0];
+
+    // Check null
+    if (!data) return;
+    if (!newPrefix) return ['reply', 'Gelieve een nieuwe prefix in te geven.'];
 
     // Check if the provided prefix is already used for the bot
     if (data.prefix === newPrefix) return ['reply', 'Die prefix gebruik ik nu al.'];
 
     try {
-      // Change prefix in the database
-      data = await guildModel.findOneAndUpdate(
-        {
-          _id: message.guild.id,
-        },
-        {
-          prefix: newPrefix,
-        },
-        {
-          new: true,
-        },
-      );
-
-      // Change prefix in the cache
-      client.guildInfo.set(message.guild.id, data);
+      // Update prefix
+      data.prefix = newPrefix;
+      await data.save();
 
       return ['send', `De prefix is succesvol veranderd naar \`${newPrefix}\`.`];
     } catch (error) {
-      client.log.error('Er is een fout opgetreden bij het bewerken van de prefix.', error);
-      return ['send', 'Er is een fout opgetreden bij het bewerken van de prefix.'];
+      client.log.error('Er is een fout opgetreden bij het bewerken van een prefix in de database.', error);
+      return ['send', 'Er is een fout opgetreden bij het bewerken van een prefix in de database.'];
     }
   },
 };

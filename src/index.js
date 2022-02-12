@@ -1,41 +1,43 @@
 require('dotenv').config();
-const { Client, Collection, Intents } = require('discord.js');
 const { readdirSync } = require('fs');
-const { connect, connection } = require('mongoose');
-const { createLogger, format, transports } = require('winston');
-const { BotClient } = require('./typings');
+const { connect } = require('mongoose');
+const BotClient = require('./structures/BotClient');
+const { handleException, handleRejection, handleWarning } = require('./utils/functions');
 
-// Create logger
-const logger = createLogger({
-  transports: [new transports.Console({ handleExceptions: true })],
-  format: format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
-  exitOnError: false,
-});
+(async () => {
+  // Create the bot
+  const client = new BotClient({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES'] });
 
-/**
- * Create the bot
- * @type {BotClient}
- */
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES] });
-client.commands = new Collection();
-client.guildInfo = new Collection();
-client.log = logger;
+  // Validate environment variables
+  if (!process.env.DISCORD_TOKEN) {
+    return client.log.error('Missing Discord bot token.');
+  }
 
-// Register the handlers
-const handlerFiles = readdirSync('./src/handlers').filter(file => file.endsWith('.js'));
-for (const handler of handlerFiles) {
-  require(`./handlers/${handler}`)(client);
-}
+  if (!process.env.MONGODB_URI) {
+    return client.log.error('Missing MongoDB url.');
+  }
 
-// Connect to our database
-connect(process.env.MONGODB_SRV, {
-  keepAlive: true,
-}).then(() => client.log.info('Verbonden met database.'))
-  .catch(error => client.log.error('Er is een fout opgetreden bij het verbinden met de database.', error));
+  if (!process.env.HEROKU_OAUTH) {
+    return client.log.warn('Missing Heroku authentication token.');
+  }
 
-// Handle mongoose errors
-connection.on('error', error => client.log.error('Er is een fout opgetreden met de database.', error));
+  // Register the handlers
+  const handlerFiles = readdirSync('./src/handlers').filter(file => file.endsWith('.js'));
+  for (const file of handlerFiles) {
+    require(`./handlers/${file}`)(client);
+  }
 
-// Log the bot in to Discord
-client.login(process.env.DISCORD_TOKEN)
-  .catch(error => client.log.error('Er is een fout opgetreden bij het inloggen op Discord.', error));
+  // Connect to our database
+  connect(process.env.MONGODB_URI, { keepAlive: true })
+    .then(() => client.log.info('Verbonden met database.'))
+    .catch(error => client.log.error('Er is een fout opgetreden bij het verbinden met de database.', error));
+
+  // Handle errors
+  process.on('unhandledRejection', handleRejection);
+  process.on('uncaughtExceptionMonitor', handleException);
+  process.on('warning', handleWarning);
+
+  // Log the bot in to Discord
+  return client.login(process.env.DISCORD_TOKEN)
+    .catch(error => client.log.error('Er is een fout opgetreden bij het inloggen op Discord.', error));
+})();

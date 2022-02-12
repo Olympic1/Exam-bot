@@ -1,26 +1,29 @@
 const { default: validate } = require('cron-validate');
-const { ICommand } = require('../../typings');
-const guildModel = require('../../models/guildModel');
-const utils = require('../../utils/functions');
+const { GuildDoc, guildModel } = require('../../models/guildModel');
+const { ICommand } = require('../../structures/ICommand');
+const { updateCronjob } = require('../../utils/functions');
 
 /** @type {ICommand} */
 module.exports = {
   name: 'timer',
-  aliases: [],
   description: 'Verander het tijdschema wanneer de bot de succes-berichten stuurt.',
-  cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   slash: 'both',
   info: {
     minArgs: 5,
     maxArgs: 6,
-    expectedArgs: '<timing>',
+    expectedArgs: '[seconde] <minuut> <uur> <dag> <maand> <dag van de week>',
     syntaxError: 'Voer het tijdschema in wanneer je wilt dat de berichten worden verzonden.',
     examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
   },
-  async execute(message, args, client) {
-    let data = client.guildInfo.get(message.guild.id);
+  async execute(client, message, args) {
+    /** @type {GuildDoc} */
+    const data = await guildModel.findOne({ _id: message.guild.id });
     const newTimer = args.join(' ');
+
+    // Check null
+    if (!data) return;
+    if (!newTimer) return ['reply', 'Gelieve een nieuw tijdschema in te geven.'];
 
     // Check if the provided timing is already used for the bot
     if (data.cronTimer === newTimer) return ['reply', 'Dat tijdschema gebruik ik nu al.'];
@@ -38,6 +41,7 @@ module.exports = {
       const errors = cronResult.getError();
 
       // Return possible errors
+      /** @type {string[]} */
       const tmp = [];
       for (const error of errors) {
         tmp.push(error);
@@ -48,25 +52,16 @@ module.exports = {
 
     try {
       // Change cronTimer in the database
-      data = await guildModel.findOneAndUpdate(
-        {
-          _id: message.guild.id,
-        },
-        {
-          cronTimer: newTimer,
-        },
-        {
-          new: true,
-        },
-      );
+      data.cronTimer = newTimer;
+      data.save();
 
-      // Start cronjob and cache the guild data
-      utils.updateCronjob(client, message.guild.id, data);
+      // Start a new cronjob
+      updateCronjob(client, message.guild.id, data);
 
       return ['send', `Het tijdschema is succesvol veranderd naar \`${newTimer}\`.`];
     } catch (error) {
-      client.log.error('Er is een fout opgetreden bij het bewerken van het tijdschema.', error);
-      return ['send', 'Er is een fout opgetreden bij het bewerken van het tijdschema.'];
+      client.log.error('Er is een fout opgetreden bij het bewerken van een tijdschema in de database.', error);
+      return ['send', 'Er is een fout opgetreden bij het bewerken van een tijdschema in de database.'];
     }
   },
 };

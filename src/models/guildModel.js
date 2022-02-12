@@ -1,7 +1,22 @@
-const mongoose = require('mongoose');
-const { prefix } = require('../config.json');
+const { CronJob } = require('cron');
+const { Snowflake } = require('discord.js');
+const { Document, Model, model, Schema } = require('mongoose');
 
-const guildSchema = new mongoose.Schema({
+/**
+ * @typedef IGuild
+ * @property {Snowflake} _id
+ * @property {string} prefix
+ * @property {Snowflake} examChannel
+ * @property {string} cronTimer
+ * @property {CronJob} job
+ */
+
+/**
+ * @typedef {IGuild & Document} GuildDoc
+ */
+
+/** @type {Schema<GuildDoc>} */
+const guildSchema = new Schema({
   // Guild ID
   _id: {
     type: String,
@@ -9,7 +24,7 @@ const guildSchema = new mongoose.Schema({
   },
   prefix: {
     type: String,
-    default: prefix,
+    default: '$',
   },
   examChannel: {
     type: String,
@@ -21,4 +36,5 @@ const guildSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('guilds', guildSchema);
+/** @type {Model<GuildDoc>} */
+module.exports.guildModel = model('guilds', guildSchema);

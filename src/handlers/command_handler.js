@@ -1,9 +1,10 @@
+const { ApplicationCommandData, ApplicationCommandOptionData } = require('discord.js');
 const { readdirSync } = require('fs');
-const { BotClient } = require('../typings');
-const permissionList = require('../permissions');
+const BotClient = require('../structures/BotClient');
+const { ICommand } = require('../structures/ICommand');
 
 /** @param {BotClient} client */
-module.exports = (client) => {
+module.exports = async (client) => {
   // Get all the folders in 'commands/'
   const commandFolders = readdirSync('./src/commands');
 
@@ -13,21 +14,27 @@ module.exports = (client) => {
 
     // Add all the found commands
     for (const file of commandFiles) {
+      /** @type {ICommand} */
       const command = require(`../commands/${folder}/${file}`);
 
-      const { name, description, permissions, slash, info, execute } = command;
+      // Check if the event exists
+      if (!command) continue;
+
+      const { name, aliases, description, cooldown, ownerOnly, slash, info } = command;
       const { minArgs, maxArgs, expectedArgs, syntaxError, examples } = info;
+
+      let commandError = false;
 
       // Check if the command has a name
       if (!name) {
         client.log.error(`Het commando in "${file}" heeft geen naam ingesteld.`);
-        continue;
+        commandError = true;
       }
 
-      // Check if the name is a string
-      if (typeof name !== 'string') {
-        client.log.error(`Het commando in "${file}" heeft geen naam met het type "string" ingesteld.`);
-        continue;
+      // Check if there is an invalid alias
+      if (aliases?.includes('')) {
+        client.log.error(`Het commando "${name}" heeft een ongeldige alias ingesteld.`);
+        commandError = true;
       }
 
       // Check if the command has a description
@@ -35,72 +42,118 @@ module.exports = (client) => {
         client.log.warn(`Het commando "${name}" heeft geen beschrijving ingesteld.`);
       }
 
-      // Check if there is an invalid permission in the command
-      if (permissions.length) {
-        for (const perm of permissions) {
-          if (!permissionList.includes(perm)) {
-            client.log.error(`Het commando "${name}" heeft een ongeldige permissie ingesteld: ${perm}. Permissies moeten allemaal hoofdletters zijn en één van de volgende zijn: "${[...permissionList].join('", "')}".`);
-          }
+      // Check that the cooldown is not lower than 0
+      if ((cooldown || 0) < 0) {
+        client.log.error(`Het commando "${name}" heeft de cooldown lager ingesteld dan 0.`);
+        commandError = true;
+      }
+
+      // Check if the command has a category
+      // if (!category) {
+      //   client.log.warn(`Het commando "${name}" heeft geen categorie ingesteld.`);
+      // }
+
+      // Check that the minimum arguments are not lower than 0
+      if ((minArgs || 0) < 0) {
+        client.log.error(`Het commando "${name}" heeft het minimum aantal argumenten lager ingesteld dan 0.`);
+        commandError = true;
+      }
+
+      // Check that the maximum arguments are not lower than the minimum arguments or 0
+      if (maxArgs < (minArgs || 0)) {
+        if (maxArgs < 0) {
+          client.log.error(`Het commando "${name}" heeft het maximum aantal argumenten lager ingesteld dan 0.`);
+          commandError = true;
+        } else {
+          client.log.error(`Het commando "${name}" heeft het maximum aantal argumenten lager ingesteld dan het minimum aantal.`);
+          commandError = true;
         }
       }
 
-      // Check if the command has a valid slash property
-      if (slash !== undefined && typeof slash !== 'boolean' && slash !== 'both') {
-        client.log.error(`Het commando "${name}" heeft een slash eigenschap die niet boolean "true" of string "both" is.`);
-        continue;
+      // Check if the command has expectedArgs when it needs them
+      if (maxArgs > 0 && !expectedArgs) {
+        client.log.error(`Het commando "${name}" heeft de eigenschap "maxArgs" ingesteld zonder de eigenschap "expectedArgs".`);
+        commandError = true;
+      }
+
+      // Check if the command has an error message when it needs it
+      if ((minArgs || 0) > 0 && !syntaxError) {
+        client.log.error(`Het commando "${name}" heeft de eigenschap "minArgs" ingesteld zonder de eigenschap "syntaxError".`);
+        commandError = true;
+      }
+
+      // Check if there is an invalid example
+      if (examples?.length) {
+        if (examples.includes('')) {
+          client.log.error(`Het commando "${name}" heeft een ongeldig voorbeeld ingesteld.`);
+          commandError = true;
+        }
+      } else {
+        client.log.warn(`Het commando "${name}" heeft geen voorbeelden ingesteld.`);
       }
 
       if (slash) {
         // Check if the slash command has a description
         if (!description) {
           client.log.error(`Een beschrijving is vereist voor het commando "${name}" omdat het een slash commando is.`);
-          continue;
+          commandError = true;
         }
 
-        // Check if the slash command needs arguments
-        if (minArgs !== undefined && !expectedArgs) {
-          client.log.error(`Het slash commando "${name}" heeft de eigenschap "minArgs" ingesteld zonder de eigenschap "expectedArgs".`);
-          continue;
-        }
-
-        // Check that the maxArgs property is not greater than 25
+        // Check that the maximum arguments are not greater than 25 if it's a slash command
         if (maxArgs > 25) {
-          client.log.error(`Het slash commando "${name}" heeft de eigenschap "maxArgs" ingesteld en is groter dan 25.`);
-          continue;
+          client.log.error(`Het slash commando "${name}" heeft een maximum aantal argumenten groter dan 25 ingesteld.`);
+          commandError = true;
+        }
+
+        // If no errors were encountered, add the slash command to the bot
+        if (!commandError) {
+          /** @type {ApplicationCommandOptionData[]} */
+          const options = [];
+
+          // Set up the options
+          if (expectedArgs) {
+            // Split the arguments
+            const args = expectedArgs
+              .substring(1, expectedArgs.length - 1)
+              .split(/[>\]] [<[]/);
+
+            for (let i = 0; i < args.length; ++i) {
+              const arg = args[i];
+
+              options.push({
+                name: arg.replace(/ +/g, '-').toLowerCase(),
+                description: arg,
+                type: 'STRING',
+                required: i < (minArgs || 0),
+              });
+            }
+          }
+
+          // Setup slash command
+          /** @type {ApplicationCommandData} */
+          const data = {
+            name: name,
+            description: description || 'Geen beschrijving',
+            options: options,
+            defaultPermission: !ownerOnly,
+          };
+
+          // Register slash command
+          const guild = process.env.NODE_ENV !== 'production' ? client.guilds.cache.get('737211146943332462') : client.application;
+          await guild?.commands.create(data);
         }
       }
 
-      // Check if the command has an error message when it needs arguments
-      if (minArgs !== undefined && !syntaxError) {
-        client.log.error(`Het commando "${name}" heeft de eigenschap "minArgs" ingesteld zonder de eigenschap "syntaxError".`);
-        continue;
-      }
+      // If no errors were encountered, add the command to the bot
+      if (!commandError) {
+        client.commands.set(name, command);
 
-      // Check if the command has max arguments set
-      if (maxArgs === undefined) {
-        client.log.error(`Het commando "${name}" heeft de eigenschap "maxArgs" niet ingesteld.`);
-        continue;
+        if (aliases) {
+          for (const alias of aliases) {
+            client.aliases.set(alias, command);
+          }
+        }
       }
-
-      // Check if the command allows arguments
-      if (maxArgs > 0 && !expectedArgs) {
-        client.log.error(`Het commando "${name}" heeft de eigenschap "maxArgs" ingesteld zonder de eigenschap "expectedArgs".`);
-        continue;
-      }
-
-      // Check if the command has an example
-      if (!examples.length) {
-        client.log.warn(`Het commando "${name}" heeft geen voorbeelden ingesteld.`);
-      }
-
-      // Check if the command has an execution
-      if (typeof execute !== 'function') {
-        client.log.error(`Het commando in "${file}" heeft geen "execute" functie ingesteld.`);
-        continue;
-      }
-
-      // Add the command to bot
-      client.commands.set(name, command);
     }
   }
 };

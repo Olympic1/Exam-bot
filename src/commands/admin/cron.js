@@ -1,12 +1,10 @@
-const { ICommand } = require('../../typings');
-const utils = require('../../utils/functions');
+const { ICommand } = require('../../structures/ICommand');
+const { formatToDate } = require('../../utils/functions');
 
 /** @type {ICommand} */
 module.exports = {
   name: 'cron',
-  aliases: [],
   description: 'Voer allerlei acties uit met betrekking tot cronjob (tijdschema).',
-  cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   slash: 'both',
   info: {
@@ -16,8 +14,12 @@ module.exports = {
     syntaxError: 'Voer de actie in die je wilt uitvoeren. Acties: `start`, `stop`, `status`, `laatste`, `volgende`.',
     examples: ['cron start', 'cron stop', 'cron status', 'cron laatste', 'cron volgende'],
   },
-  async execute(message, args, client) {
-    const job = client.guildInfo.get(message.guild.id).job;
+  async execute(client, message, args) {
+    const job = client.cronJobs.get(message.guild.id);
+
+    // Check null
+    if (!job) return;
+
     const isRunning = job.running;
 
     switch (args[0]) {
@@ -30,7 +32,7 @@ module.exports = {
         // Safety check
         if (job.running) return ['send', 'Cronjob is gestart.'];
 
-        return ['send', `Er is iets foutgelopen. Neem contact op met <@${client.application.owner.id}>.`];
+        return ['send', `Er is iets foutgelopen. Neem contact op met <@${client.application?.owner?.id}>.`];
 
       case 'stop':
         // Check if cronjob is already stopped to prevent unnecessary actions
@@ -41,7 +43,7 @@ module.exports = {
         // Safety check
         if (!job.running) return ['send', 'Cronjob is gestopt.'];
 
-        return ['send', `Er is iets foutgelopen. Neem contact op met <@${client.application.owner.id}>.`];
+        return ['send', `Er is iets foutgelopen. Neem contact op met <@${client.application?.owner?.id}>.`];
 
       case 'status':
         return ['send', `Cronjob wordt uitgevoerd: ${isRunning ? 'Ja' : 'Nee'}.`];
@@ -52,7 +54,7 @@ module.exports = {
         if (!isRunning) return ['send', 'Start eerst cronjob.'];
         if (job.lastDate() === undefined) return ['send', 'Kan de laatste uitvoering niet vinden.'];
 
-        return ['send', `Cronjob werd laatst uitgevoerd op: ${utils.formatToDate(Date.parse(job.lastDate().toString()))}`];
+        return ['send', `Cronjob werd laatst uitgevoerd op: ${formatToDate(Date.parse(job.lastDate().toString()))}`];
 
       case 'next':
       case 'volgende':
@@ -60,7 +62,7 @@ module.exports = {
         if (!isRunning) return ['send', 'Start eerst cronjob.'];
         if (job.nextDate() === undefined) return ['send', 'Kan de volgende uitvoering niet vinden.'];
 
-        return ['send', `Cronjob zal worden uitgevoerd op: ${utils.formatToDate(Date.parse(job.nextDate().toString()))}`];
+        return ['send', `Cronjob zal worden uitgevoerd op: ${formatToDate(Date.parse(job.nextDate().toString()))}`];
 
       default:
         // Not a valid action provided

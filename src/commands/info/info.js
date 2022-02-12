@@ -1,58 +1,60 @@
-const { MessageEmbed } = require('discord.js');
-const { ICommand } = require('../../typings');
-const { version, invite } = require('../../config.json');
-const utils = require('../../utils/functions');
+const { MessageEmbed, version } = require('discord.js');
+const { ICommand } = require('../../structures/ICommand');
+const { formatToDuration, getUser } = require('../../utils/functions');
 
 /** @type {ICommand} */
 module.exports = {
   name: 'info',
-  aliases: [],
   description: 'Toont informatie over de bot.',
   cooldown: 60,
-  permissions: [],
   slash: 'both',
   info: {
     maxArgs: 0,
     examples: ['info'],
   },
-  async execute(message, args, client) {
+  async execute(client, message, args) {
     // Get uptime
-    const uptime = process.uptime();
-    const uptimeText = utils.formatToTime(uptime);
-    const footer = `Enceladus | Gehost door Heroku | Uptime: ${uptimeText}`;
+    const uptime = formatToDuration(process.uptime());
+    const footer = `Enceladus | Gehost door Heroku | Uptime: ${uptime}`;
 
     // Get all the guilds the bot is in and its members
     const guildCount = client.guilds.cache.size.toString();
-    const memberCount = client.guilds.cache.map(guilds => guilds.memberCount).reduce((a, b) => a + b, 0).toString();
+    const memberCount = client.guilds.cache.reduce((a, g) => a + g.memberCount, 0).toString();
 
     // Get bot owner if he's in the guild
-    const owner = `${await utils.getUser(message.guild, client.application.owner.id)}` || 'Olympic1#6758';
-    const website = 'https://github.com/Olympic1/Exam-bot/';
+    const owner = `${await getUser(message.guild, client.application?.owner?.id) || 'Olympic1#6758'}`;
+
+    // Generate a bot invite
+    const inviteBot = client.generateInvite({
+      scopes: ['bot', 'applications.commands'],
+      permissions: ['VIEW_CHANNEL', 'CHANGE_NICKNAME', 'SEND_MESSAGES', 'SEND_MESSAGES_IN_THREADS', 'EMBED_LINKS', 'ATTACH_FILES', 'ADD_REACTIONS', 'USE_EXTERNAL_EMOJIS', 'MENTION_EVERYONE', 'MANAGE_MESSAGES', 'READ_MESSAGE_HISTORY'],
+    });
+
+    const inviteGuild = 'https://discord.gg/Ypt9cwsf48';
+    const sourceCode = 'https://github.com/Olympic1/Exam-bot/';
 
     // Construct info embed
     const INFO_EMBED = new MessageEmbed()
       .setColor('#117ea6')
-      .setAuthor(
-        {
-          name: client.application.name,
-          url: website,
-          iconURL: client.application.iconURL(),
-        },
-      )
+      .setAuthor({
+        name: client.application?.name || 'Examen bot',
+        url: sourceCode,
+        iconURL: client.application?.iconURL() || '',
+      })
       .addFields(
         {
           name: 'Versie',
+          value: process.env.npm_package_version || (await require('../../../package.json')).version,
+          inline: true,
+        },
+        {
+          name: 'Discord.js',
           value: version,
           inline: true,
         },
         {
-          name: 'Bibliotheek',
-          value: 'discord.js',
-          inline: true,
-        },
-        {
-          name: 'Maker',
-          value: owner,
+          name: 'Node.js',
+          value: process.versions.node,
           inline: true,
         },
         {
@@ -66,17 +68,27 @@ module.exports = {
           inline: true,
         },
         {
-          name: 'Website',
-          value: `[examen-bot.gg](${website})`,
+          name: 'Maker',
+          value: owner,
           inline: true,
         },
         {
           name: 'Uitnodigen',
-          value: `[examen-bot.gg/invite](${invite})`,
+          value: `[Invite bot](${inviteBot})`,
+          inline: true,
+        },
+        {
+          name: 'Support server',
+          value: `[Get Support](${inviteGuild})`,
+          inline: true,
+        },
+        {
+          name: 'Website',
+          value: `[Source Code](${sourceCode})`,
           inline: true,
         },
       )
-      .setFooter(footer);
+      .setFooter({ text: footer });
 
     return ['embed', INFO_EMBED];
   },

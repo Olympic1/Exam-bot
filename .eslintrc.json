@@ -1,27 +1,37 @@
 {
-	"extends": "eslint:recommended",
 	"env": {
 		"node": true,
 		"mongo": true,
 		"es2021": true
 	},
+	"extends": [
+		"eslint:recommended"
+	],
 	"parserOptions": {
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
 	"rules": {
-		"brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+		"array-bracket-spacing": "error",
+		"arrow-parens": ["error", "as-needed", { "requireForBlockBody": true }],
+		"arrow-spacing": "error",
+		"brace-style": "error",
 		"camelcase": "error",
 		"comma-dangle": ["error", "always-multiline"],
 		"comma-spacing": "error",
 		"comma-style": "error",
+		"computed-property-spacing": "error",
 		"curly": ["error", "multi-line", "consistent"],
 		"dot-location": ["error", "property"],
 		"eol-last": ["error", "never"],
+		"func-call-spacing": "error",
+		"function-paren-newline": ["error", "consistent"],
+		"implicit-arrow-linebreak": "error",
 		"indent": ["error", 2, { "SwitchCase": 1 }],
+		"key-spacing": "error",
+		"keyword-spacing": "error",
 		"max-nested-callbacks": ["error", { "max": 4 }],
 		"max-statements-per-line": ["error", { "max": 2 }],
-		"no-console": "off",
 		"no-empty-function": "error",
 		"no-extra-parens": "error",
 		"no-floating-decimal": "error",
@@ -30,14 +40,20 @@
 		"no-multi-spaces": "error",
 		"no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 1, "maxBOF": 0 }],
 		"no-shadow": ["error", { "allow": ["err", "resolve", "reject"] }],
-		"no-trailing-spaces": ["error"],
+		"no-trailing-spaces": "error",
 		"no-unneeded-ternary": "error",
 		"no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": "off",
+		"no-useless-return": "error",
 		"no-var": "error",
+		"no-whitespace-before-property": "error",
 		"object-curly-spacing": ["error", "always"],
+		"operator-linebreak": ["error", "none"],
 		"prefer-const": "error",
 		"quotes": ["error", "single"],
-		"semi": ["error", "always"],
+		"semi": "error",
+		"semi-spacing": "error",
+		"semi-style": "error",
 		"space-before-blocks": "error",
 		"space-before-function-paren": ["error", {
 			"anonymous": "never",
@@ -48,6 +64,9 @@
 		"space-infix-ops": "error",
 		"space-unary-ops": "error",
 		"spaced-comment": "error",
+		"switch-colon-spacing": "error",
+		"template-curly-spacing": "error",
+		"wrap-regex": "error",
 		"yoda": "error"
 	}
 }

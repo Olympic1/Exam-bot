@@ -1,6 +1,7 @@
-const { BotClient } = require('../../typings');
-const guildModel = require('../../models/guildModel');
-const utils = require('../../utils/functions');
+const { GuildDoc, guildModel } = require('../../models/guildModel');
+const BotClient = require('../../structures/BotClient');
+const { setBotStatus } = require('../../utils/functions');
+const { createCronJob } = require('../../utils/job');
 
 /** @param {BotClient} client */
 module.exports = async (client) => {
@@ -10,75 +11,24 @@ module.exports = async (client) => {
   const testing = process.env.NODE_ENV !== 'production';
 
   // Show that the bot is logged in and ready to use
-  client.log.info(`Ingelogd als ${client.user.username}.`);
+  client.log.info(`Bot is online op ${client.guilds.cache.size} servers.`);
 
   // Set the bot's status
   const status = testing ? 'Testing' : 'Marathonradio';
   const type = testing ? 'PLAYING' : 'LISTENING';
 
-  utils.setBotStatus(client, status, type);
+  setBotStatus(client, status, type);
 
-  // Get all the guilds from our database and cache it, so we don't have to query it each time
-  for (const guild of client.guilds.cache) {
-    const guildId = guild[1].id;
-
-    // Search the guild in our database. If we didn't find the guild, create a profile for it.
-    const data = await guildModel.findOne({ _id: guildId }) ?? await guildModel.create({ _id: guildId });
+  // Search for every cached guild in our database. If we didn't find the guild, create a profile for it.
+  for (const guild of client.guilds.cache.values()) {
+    /** @type {GuildDoc} */
+    const data = await guildModel.findOne({ _id: guild.id }) ?? await guildModel.create({ _id: guild.id });
 
     // Start cronjob
-    data.job = require('../../utils/job')(client, data);
+    const job = createCronJob(client, data);
 
     // Cache the data
-    client.guildInfo.set(guildId, data);
-  }
-
-  client.log.info(`Cached ${client.guildInfo.size} guilds.`);
-
-  // Set up our slash commands
-  for (const command of client.commands) {
-    const { name, description, slash, info, ownerOnly } = command[1];
-    const { minArgs, expectedArgs } = info;
-
-    // Check if the command needs to be a slash command
-    if (slash) {
-      // Setup slash command
-      const data = {
-        name: name,
-        description: description,
-        options: [],
-        defaultPermission: !ownerOnly,
-      };
-
-      // Check if the slash command needs arguments
-      if (expectedArgs) {
-        const options = [];
-
-        // Split the arguments
-        const opts = expectedArgs
-          .substring(1, expectedArgs.length - 1)
-          .split(/[>\]] [<[]/);
-
-        // Set up the options
-        for (let i = 0; i < opts.length; ++i) {
-          const opt = opts[i];
-
-          options.push({
-            name: opt.replace(/ +/, '-').toLowerCase(),
-            type: 'STRING',
-            description: opt,
-            required: i < minArgs,
-          });
-        }
-
-        data.options = options;
-      }
-
-      // Use the guild if we're testing the bot, otherwise set to the client
-      const guild = testing ? client.guilds.cache.get('737211146943332462') : client.application;
-
-      // Create slash command for the bot
-      await guild?.commands.create(data);
-    }
+    client.cronJobs.set(guild.id, job);
   }
 
   // Setup permission for bot owner
@@ -86,7 +36,7 @@ module.exports = async (client) => {
     {
       id: '924397248228524032',
       permissions: [{
-        id: client.application.owner.id,
+        id: client.application?.owner?.id || '130846699953324032',
         type: 2,
         permission: true,
       }],
@@ -94,7 +44,7 @@ module.exports = async (client) => {
     {
       id: '924397251936288778',
       permissions: [{
-        id: client.application.owner.id,
+        id: client.application?.owner?.id || '130846699953324032',
         type: 2,
         permission: true,
       }],
@@ -102,7 +52,7 @@ module.exports = async (client) => {
     {
       id: '924397334006226985',
       permissions: [{
-        id: client.application.owner.id,
+        id: client.application?.owner?.id || '130846699953324032',
         type: 2,
         permission: true,
       }],
@@ -110,7 +60,7 @@ module.exports = async (client) => {
   ];
 
   // Set permissions for slash commands
-  for (const guild of client.guilds.cache) {
-    await guild[1].commands.permissions.set({ fullPermissions });
+  for (const guild of client.guilds.cache.values()) {
+    await guild.commands.permissions.set({ fullPermissions });
   }
 };

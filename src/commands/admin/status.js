@@ -1,12 +1,10 @@
-const { ICommand } = require('../../typings');
-const utils = require('../../utils/functions');
+const { ICommand } = require('../../structures/ICommand');
+const { setBotStatus } = require('../../utils/functions');
 
 /** @type {ICommand} */
 module.exports = {
   name: 'status',
-  aliases: [],
   description: 'Stel de status van de bot in. De status begint altijd met \'Luistert naar\'.',
-  cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   ownerOnly: true,
   slash: 'both',
@@ -14,14 +12,18 @@ module.exports = {
     minArgs: 1,
     maxArgs: 1,
     expectedArgs: '<activiteit>',
-    syntaxError: 'Voer de status in die je wilt instellen voor de bot.',
+    syntaxError: 'Voer de status in die je wil instellen.',
     examples: ['status Marathonradio'],
   },
-  async execute(message, args, client) {
-    // Set the bot's new status
-    const content = args.join(' ');
-    utils.setBotStatus(client, content, 'LISTENING');
+  async execute(client, message, args) {
+    const newStatus = args.join(' ');
 
-    return ['send', `Mijn status is succesvol veranderd naar \`${content}\`.`];
+    // Check null
+    if (!newStatus) return ['reply', 'Gelieve een nieuwe status in te geven.'];
+
+    // Set the bot's new status
+    setBotStatus(client, newStatus, 'LISTENING');
+
+    return ['send', `Mijn status is succesvol veranderd naar \`${newStatus}\`.`];
   },
 };

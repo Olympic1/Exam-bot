@@ -1,14 +1,14 @@
 const { Collection } = require('discord.js');
 const { DateTime } = require('luxon');
-const { ICommand } = require('../../typings');
-const profileModel = require('../../models/profileModel');
+const { GuildDoc, guildModel } = require('../../models/guildModel');
+const { ProfileDoc, profileModel } = require('../../models/profileModel');
+const { ICommand } = require('../../structures/ICommand');
 
 /** @type {ICommand} */
 module.exports = {
   name: 'success',
   aliases: ['succes'],
   description: 'Verstuurt de succes berichten.',
-  cooldown: 0,
   permissions: ['ADMINISTRATOR'],
   ownerOnly: true,
   slash: 'both',
@@ -17,69 +17,76 @@ module.exports = {
     expectedArgs: '[server ID]',
     examples: ['success'],
   },
-  async execute(message, args, client) {
-    const guildId = args.length ? client.guilds.cache.get(args[0]).id : message.guild.id;
-    const data = client.guildInfo.get(guildId);
+  async execute(client, message, args) {
+    const guildId = client.guilds.cache.get(args[0])?.id || message.guild.id;
+    /** @type {GuildDoc} */
+    const data = await guildModel.findOne({ _id: guildId });
+
+    // Check null
+    if (!data) return;
 
     // Get the current date
-    const date = new Date(DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO());
+    const today = new Date(DateTime.now().startOf('day').setZone('utc', { keepLocalTime: true }).toISO());
 
     // Find all users that have at least 1 exam today
+    /** @type {ProfileDoc[]} */
     const profiles = await profileModel.find(
       {
         'exams.date': {
-          '$eq': date,
+          '$eq': today,
         },
       },
     );
 
-    // Check if we found any user(s)
-    if (profiles.length) {
-      const allUsers = new Collection();
+    // Check if we found any user
+    if (!profiles.length) return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
 
-      for (const user of profiles) {
-        const allExams = [];
+    /** @type {Collection<string, string[]>} */
+    const allUsers = new Collection();
 
-        for (const exam of user.exams) {
-          // Check if the exam is registered in this guild. User can have registered exams in other guilds.
-          const examInGuild = exam.guildId === data._id;
+    // Loop through every user that has an exam today
+    for (const user of profiles) {
+      /** @type {string[]} */
+      const allExams = [];
 
-          // Check if the exam is today. User can have registered future exams.
-          const examIsToday = exam.date.toString() === date.toString();
+      // Loop through every exam of the user
+      for (const exam of user.exams) {
+        // Check if the exam is registered in this guild. User can have registered exams in other guilds.
+        if (exam.guildId !== data._id) continue;
 
-          // Check if the exam is already in the list. User can have registered duplicate exams.
-          const examInArray = allExams.includes(exam.name);
+        // Check if the exam is today. User can have registered past/future exams.
+        if (exam.date.toString() !== today.toString()) continue;
 
-          // If all checks pass, add the exam to the list
-          if (examInGuild && examIsToday && !examInArray) allExams.push(exam.name);
-        }
+        // Check if the exam is already in the list. User can have registered duplicate exams.
+        if (allExams.includes(exam.name)) continue;
 
-        // Check if we have at least 1 exam in the list
-        if (allExams.length > 0) allUsers.set(user._id, allExams);
+        // Add the exam to the list
+        allExams.push(exam.name);
       }
 
-      // Construct mentions
-      let mentions = '';
-      if (allUsers) {
-        for (const [id, exam] of allUsers.entries()) {
-          const str = `<@${id}> (${exam.join(', ')})`;
-
-          if (id === allUsers.firstKey()) {
-            mentions = `${str}`;
-          } else if (id === allUsers.lastKey()) {
-            mentions += ` en ${str}`;
-          } else {
-            mentions += `, ${str}`;
-          }
-        }
-      }
-
-      // Check if we have a mention
-      if (!mentions) return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
-
-      return ['send', `Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`];
+      // Check if we have at least 1 exam in the list
+      if (allExams.length > 0) allUsers.set(user._id, allExams);
     }
 
-    return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
+    // Construct mentions
+    let mentions = '';
+    if (allUsers) {
+      for (const [id, exam] of allUsers.entries()) {
+        const str = `<@${id}> (${exam.join(', ')})`;
+
+        if (id === allUsers.firstKey()) {
+          mentions = `${str}`;
+        } else if (id === allUsers.lastKey()) {
+          mentions += ` en ${str}`;
+        } else {
+          mentions += `, ${str}`;
+        }
+      }
+    }
+
+    // Check if we have a mention
+    if (!mentions) return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
+
+    return ['send', `Goeiemorgen, wij wensen de volgende personen veel succes met hun examen(s) vandaag.\n${mentions}`];
   },
 };

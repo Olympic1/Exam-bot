@@ -1,7 +1,7 @@
 const { Guild } = require('discord.js');
-const { BotClient } = require('../../typings');
-const guildModel = require('../../models/guildModel');
-const utils = require('../../utils/functions');
+const { GuildDoc, guildModel } = require('../../models/guildModel');
+const BotClient = require('../../structures/BotClient');
+const { createCronJob } = require('../../utils/job');
 
 /**
  * @param {BotClient} client
@@ -9,12 +9,18 @@ const utils = require('../../utils/functions');
  */
 module.exports = async (client, guild) => {
   try {
+    if (!guild) return;
+
     // Create a database profile when the bot joins a new guild
+    /** @type {GuildDoc} */
     const data = await guildModel.create({ _id: guild.id });
 
-    // Start cronjob and cache the guild data
-    utils.updateCronjob(client, guild.id, data);
+    // Start cronjob
+    const job = createCronJob(client, data);
+
+    // Cache the data
+    client.cronJobs.set(guild.id, job);
   } catch (error) {
-    client.log.error('Er is een fout opgetreden bij het aanmaken van een database profiel voor een nieuwe server.', error);
+    client.log.error('Er is een fout opgetreden bij het toevoegen van een gilde aan de database.', error);
   }
 };

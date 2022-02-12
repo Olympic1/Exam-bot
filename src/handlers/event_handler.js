@@ -1,5 +1,5 @@
 const { readdirSync } = require('fs');
-const { BotClient } = require('../typings');
+const BotClient = require('../structures/BotClient');
 
 /** @param {BotClient} client */
 module.exports = (client) => {
@@ -12,7 +12,12 @@ module.exports = (client) => {
 
     // Add all the found events
     for (const file of eventFiles) {
+      /** @type {Function} */
       const event = require(`../events/${folder}/${file}`);
+
+      // Check if the event exists
+      if (!event) continue;
+
       const eventName = file.split('.')[0];
       client.on(eventName, event.bind(null, client));
     }

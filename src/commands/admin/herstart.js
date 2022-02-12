@@ -1,5 +1,5 @@
 const Heroku = require('heroku-client');
-const { ICommand } = require('../../typings');
+const { ICommand } = require('../../structures/ICommand');
 
 /** @type {ICommand} */
 module.exports = {
@@ -14,7 +14,10 @@ module.exports = {
     maxArgs: 0,
     examples: ['herstart'],
   },
-  async execute(message, args, client) {
+  async execute(client, message, args) {
+    // Validate environment variable
+    if (!process.env.HEROKU_OAUTH) return;
+
     // Logs channel
     const channel = client.channels.cache.get('934494331627253760');
 

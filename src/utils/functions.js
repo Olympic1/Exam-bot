@@ -1,14 +1,57 @@
 const { ActivityType, Guild, GuildBasedChannel, GuildMember, Role, Snowflake } = require('discord.js');
 const { DateTime } = require('luxon');
-const { BotClient, IGuild } = require('../typings');
+const { IGuild } = require('../models/guildModel');
+const BotClient = require('../structures/BotClient');
+const { createCronJob } = require('./job');
 
 module.exports = {
+  /**
+   * Logs an unhandled rejection from a promise.
+   * @param {unknown} reason The rejection that occurred.
+   * @param {Promise<unknown>} promise The promise that got rejected.
+   */
+  handleRejection(reason, promise) {
+    if (reason instanceof Error) {
+      console.error('An unhandled rejection occurred at:', promise, '- reason:', reason.message);
+      return;
+    }
+
+    console.error(reason);
+  },
+
+  /**
+   * Logs an uncaught exception and termimates the bot.
+   * @param {Error} error The error that occurred.
+   */
+  handleException(error) {
+    if (!error) {
+      console.error('An undefined exception occurred, exiting the program to prevent further problems.');
+      process.exit();
+    }
+
+    console.error('An uncaught exception occurred, exiting the program to prevent further problems.\n', error);
+    process.exit();
+  },
+
+  /**
+   * Logs a warning.
+   * @param {Error | string} warning The warning that occurred.
+   */
+  handleWarning(warning) {
+    if (!warning || typeof warning === 'string' && !warning.length) {
+      console.error('An undefined warning occurred.');
+      return;
+    }
+
+    console.warn(`A warning occurred: ${warning}`);
+  },
+
   /**
    * Converts seconds into a string in the format of days, hours, minutes and seconds.
    * @param {number} seconds The seconds to convert.
    * @returns {string} A string in the format of days, hours, minutes and seconds.
    */
-  formatToTime(seconds) {
+  formatToDuration(seconds) {
     // Don't allow 0
     if (seconds <= 0) return '0 sec';
 
@@ -39,6 +82,7 @@ module.exports = {
     const date = new Date(milliseconds);
 
     // Setup options
+    /** @type {Intl.DateTimeFormatOptions} */
     const options = {
       weekday: 'short',
       day: 'numeric',
@@ -50,7 +94,6 @@ module.exports = {
       timeZone: 'Europe/Brussels',
     };
 
-    // @ts-ignore
     return date.toLocaleString('nl-BE', options);
   },
 
@@ -59,7 +102,7 @@ module.exports = {
    * @param {string} time The time to convert.
    * @returns {number | string} A number in the format of seconds; otherwise an error message as string.
    */
-  parseTimeLimit(time) {
+  tryParseTime(time) {
     // Don't allow 0
     if (!time) return 'Ongeldig formaat. Geef ten minste 1 cijfer en letter, voorbeelden: `10s`, `5m`, etc.';
     if (+time < 1) return 'Ongeldig formaat. De duur moet minstens 1 zijn.';
@@ -265,7 +308,7 @@ module.exports = {
    * @param {Exclude<ActivityType, 'CUSTOM'>} [type] The type of activity for the bot's presence. Defaults to `PLAYING`.
    */
   setBotStatus(client, status, type) {
-    client.user.setPresence({
+    client.user?.setPresence({
       status: 'online',
       activities: [{
         name: status,
@@ -283,16 +326,16 @@ module.exports = {
   updateCronjob(client, guildId, data) {
     // If we already have a job running, stop it before we change the data
     try {
-      const job = client.guildInfo.get(guildId).job;
-      job.stop();
+      const job = client.cronJobs.get(guildId);
+      job?.stop();
     } catch (error) {
       // Ignore
     }
 
     // Start a cronjob with the new data
-    data.job = require('../utils/job')(client, data);
+    const newJob = createCronJob(client, data);
 
     // Cache the new data
-    client.guildInfo.set(guildId, data);
+    client.cronJobs.set(guildId, newJob);
   },
 };
