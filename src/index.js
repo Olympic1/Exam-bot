@@ -2,6 +2,7 @@ require('dotenv').config();
 const { readdirSync } = require('fs');
 const { connect } = require('mongoose');
 const BotClient = require('./structures/BotClient');
+const { IHandler } = require('./structures/IHandler');
 const { handleException, handleRejection, handleWarning } = require('./utils/functions');
 
 (async () => {
@@ -24,7 +25,9 @@ const { handleException, handleRejection, handleWarning } = require('./utils/fun
   // Register the handlers
   const handlerFiles = readdirSync('./src/handlers').filter(file => file.endsWith('.js'));
   for (const file of handlerFiles) {
-    require(`./handlers/${file}`)(client);
+    /** @type {IHandler} */
+    const handler = await require(`./handlers/${file}`);
+    handler.execute(client);
   }
 
   // Connect to our database

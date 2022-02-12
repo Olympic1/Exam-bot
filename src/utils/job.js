@@ -82,7 +82,9 @@ module.exports = {
 
       // Check if the guild has a channel set
       if (channel?.isText()) {
+        // @ts-ignore
         const canViewChannel = channel.permissionsFor(client.user)?.has('VIEW_CHANNEL');
+        // @ts-ignore
         const canSendMessages = channel.permissionsFor(client.user)?.has('SEND_MESSAGES');
 
         // Check if we can send messages to the channel

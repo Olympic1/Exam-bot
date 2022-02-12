@@ -25,7 +25,9 @@ module.exports = {
     if (!data) return;
     if (!newChannel) return ['reply', 'Dat is geen geldig kanaal.'];
     if (!newChannel.isText()) return ['reply', 'Dat is geen geldig tekstkanaal.'];
+    // @ts-ignore
     if (!newChannel.permissionsFor(client.user)?.has('VIEW_CHANNEL')) return ['reply', 'Ik kan dat kanaal niet bekijken.'];
+    // @ts-ignore
     if (!newChannel.permissionsFor(client.user)?.has('SEND_MESSAGES')) return ['reply', 'Ik kan geen berichten sturen in dat kanaal.'];
 
     // Check if the bot already uses that channel
