@@ -9,13 +9,12 @@ module.exports = {
   description: 'Verander het kanaal waarin de bot de succes-berichten stuurt.',
   permissions: ['ADMINISTRATOR'],
   slash: 'both',
-  info: {
-    minArgs: 1,
-    maxArgs: 1,
-    expectedArgs: '<kanaal>',
-    syntaxError: 'Voer het ID of naam in van het kanaal waarin je de berichten wilt versturen.',
-    examples: ['kanaal 838084030062264320', 'kanaal #algemeen'],
-  },
+  minArgs: 1,
+  maxArgs: 1,
+  expectedArgs: ['kanaal'],
+  syntaxError: 'Voer het ID of naam in van het kanaal waarin je de berichten wilt versturen.',
+  examples: ['kanaal 838084030062264320', 'kanaal #algemeen'],
+
   async execute(client, message, args) {
     /** @type {GuildDoc} */
     const data = await guildModel.findOne({ _id: message.guild.id });

@@ -7,13 +7,12 @@ module.exports = {
   description: 'Verander de prefix van de bot.',
   permissions: ['ADMINISTRATOR'],
   slash: 'both',
-  info: {
-    minArgs: 1,
-    maxArgs: 1,
-    expectedArgs: '<prefix>',
-    syntaxError: 'Voer de prefix in die je wilt gebruiken.',
-    examples: ['prefix ?', 'prefix -'],
-  },
+  minArgs: 1,
+  maxArgs: 1,
+  expectedArgs: ['prefix'],
+  syntaxError: 'Voer de prefix in die je wilt gebruiken.',
+  examples: ['prefix ?', 'prefix -'],
+
   async execute(client, message, args) {
     /** @type {GuildDoc} */
     const data = await guildModel.findOne({ _id: message.guild.id });

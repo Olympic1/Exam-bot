@@ -8,11 +8,10 @@ module.exports = {
   aliases: ['h'],
   description: 'Toont al mijn commando\'s met nuttige informatie.',
   slash: 'both',
-  info: {
-    maxArgs: 1,
-    expectedArgs: '[commando]',
-    examples: ['help prefix', 'help examen'],
-  },
+  maxArgs: 1,
+  expectedArgs: ['commando'],
+  examples: ['help prefix', 'help examen'],
+
   async execute(client, message, args) {
     /** @type {GuildDoc} */
     const data = await guildModel.findOne({ _id: message.guild.id });
@@ -79,15 +78,24 @@ module.exports = {
     // Check if the command or alias exist
     if (!command || command.ownerOnly) return ['reply', `Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`];
 
-    const { name, aliases, description, permissions, info } = command;
-    const { expectedArgs, examples } = info;
+    const { name, aliases, description, permissions, minArgs, expectedArgs, examples } = command;
 
     // Construct help embed
     const isAdmin = permissions?.includes('ADMINISTRATOR') ? '(enkel voor administrators)' : '';
     const isMod = permissions?.includes('KICK_MEMBERS') || permissions?.includes('BAN_MEMBERS') ? '(enkel voor moderators)' : '';
 
+    let usage = '';
+    if (expectedArgs?.length) {
+      for (let i = 0; i < expectedArgs.length; ++i) {
+        const open = i < (minArgs || 0) ? '<' : '[';
+        const close = i < (minArgs || 0) ? '>' : ']';
+
+        usage += ` ${open}${expectedArgs[i]}${close}`;
+      }
+    }
+
     const aliasList = aliases?.length ? aliases.join('`, `') : 'Geen aliassen';
-    const commandUsage = `${prefix}${name}` + (expectedArgs ? ` ${expectedArgs}` : '');
+    const commandUsage = `${prefix}${name}` + usage;
     const exampleList = examples?.length ? `${prefix}${examples.join(`\`\n\`${prefix}`)}` : 'Geen voorbeelden';
 
     const COMMAND_EMBED = new MessageEmbed()

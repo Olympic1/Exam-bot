@@ -12,11 +12,10 @@ module.exports = {
   permissions: ['ADMINISTRATOR'],
   ownerOnly: true,
   slash: 'both',
-  info: {
-    maxArgs: 1,
-    expectedArgs: '[server ID]',
-    examples: ['success'],
-  },
+  maxArgs: 1,
+  expectedArgs: ['server ID'],
+  examples: ['success'],
+
   async execute(client, message, args) {
     const guildId = client.guilds.cache.get(args[0])?.id || message.guild.id;
     /** @type {GuildDoc} */

@@ -8,13 +8,12 @@ module.exports = {
   permissions: ['ADMINISTRATOR'],
   ownerOnly: true,
   slash: 'both',
-  info: {
-    minArgs: 1,
-    maxArgs: 1,
-    expectedArgs: '<activiteit>',
-    syntaxError: 'Voer de status in die je wil instellen.',
-    examples: ['status Marathonradio'],
-  },
+  minArgs: 1,
+  maxArgs: 1,
+  expectedArgs: ['activiteit'],
+  syntaxError: 'Voer de status in die je wil instellen.',
+  examples: ['status Marathonradio'],
+
   async execute(client, message, args) {
     const newStatus = args.join(' ');
 

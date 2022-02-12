@@ -8,10 +8,9 @@ module.exports = {
   description: 'Toont informatie over de bot.',
   cooldown: 60,
   slash: 'both',
-  info: {
-    maxArgs: 0,
-    examples: ['info'],
-  },
+  maxArgs: 0,
+  examples: ['info'],
+
   async execute(client, message, args) {
     // Get uptime
     const uptime = formatToDuration(process.uptime());

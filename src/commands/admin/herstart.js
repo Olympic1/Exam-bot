@@ -10,10 +10,9 @@ module.exports = {
   permissions: ['ADMINISTRATOR'],
   ownerOnly: true,
   slash: 'both',
-  info: {
-    maxArgs: 0,
-    examples: ['herstart'],
-  },
+  maxArgs: 0,
+  examples: ['herstart'],
+
   async execute(client, message, args) {
     // Validate environment variable
     if (!process.env.HEROKU_OAUTH) return;

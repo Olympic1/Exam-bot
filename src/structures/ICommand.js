@@ -10,18 +10,13 @@ const BotClient = require('./BotClient');
  * @property {PermissionString[]} [permissions]
  * @property {boolean} [ownerOnly]
  * @property {boolean | 'both'} [slash]
- * @property {ICommandInfo} info
- * @property {ICallback} execute
- */
-
-/**
- * @typedef ICommandInfo
  * @property {string} [category]
  * @property {number} [minArgs]
  * @property {number} maxArgs
- * @property {string} [expectedArgs]
+ * @property {string[]} [expectedArgs]
  * @property {string} [syntaxError]
  * @property {string[]} [examples]
+ * @property {ICallback} execute
  */
 
 /**

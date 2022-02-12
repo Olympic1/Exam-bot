@@ -8,13 +8,12 @@ module.exports = {
   aliases: ['exam', 'ex'],
   description: 'Voegt een examen toe en wenst u succes op de dag van uw examen.',
   slash: 'both',
-  info: {
-    minArgs: 2,
-    maxArgs: 10,
-    expectedArgs: '<datum> <examens> [datum2] [examens2] [datum3] [examens3] [datum4] [examens4] [datum5] [examens5]',
-    syntaxError: 'Voer de datum en het examen in.',
-    examples: ['examen 11/6 Biologie', 'exam 19-6 Frans', 'ex 17/6 Wiskunde en Nederlands', 'examen 14/6 Chemie 15/6 Aardrijkskunde'],
-  },
+  minArgs: 2,
+  maxArgs: 10,
+  expectedArgs: ['datum', 'examens', 'datum2', 'examens2', 'datum3', 'examens3', 'datum4', 'examens4', 'datum5', 'examens5'],
+  syntaxError: 'Voer de datum en het examen in.',
+  examples: ['examen 11/6 Biologie', 'exam 19-6 Frans', 'ex 17/6 Wiskunde en Nederlands', 'examen 14/6 Chemie 15/6 Aardrijkskunde'],
+
   async execute(client, message, args) {
     /** @type {ProfileDoc} */
     const data = await profileModel.findOne({ _id: message.member?.user.id });

@@ -7,13 +7,12 @@ module.exports = {
   description: 'Voer allerlei acties uit met betrekking tot cronjob (tijdschema).',
   permissions: ['ADMINISTRATOR'],
   slash: 'both',
-  info: {
-    minArgs: 1,
-    maxArgs: 1,
-    expectedArgs: '<actie>',
-    syntaxError: 'Voer de actie in die je wilt uitvoeren. Acties: `start`, `stop`, `status`, `laatste`, `volgende`.',
-    examples: ['cron start', 'cron stop', 'cron status', 'cron laatste', 'cron volgende'],
-  },
+  minArgs: 1,
+  maxArgs: 1,
+  expectedArgs: ['actie'],
+  syntaxError: 'Voer de actie in die je wilt uitvoeren. Acties: `start`, `stop`, `status`, `laatste`, `volgende`.',
+  examples: ['cron start', 'cron stop', 'cron status', 'cron laatste', 'cron volgende'],
+
   async execute(client, message, args) {
     const job = client.cronJobs.get(message.guild.id);
 

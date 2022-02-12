@@ -79,14 +79,14 @@ module.exports = {
     }
 
     // Check if the user provided too few arguments
-    if (command.info.minArgs !== undefined && args.length < command.info.minArgs) {
-      return message.reply(`Je hebt te weinig argumenten ingegeven! ${command.info.syntaxError}`);
+    if (command.minArgs !== undefined && args.length < command.minArgs) {
+      return message.reply(`Je hebt te weinig argumenten ingegeven! ${command.syntaxError}`);
     }
 
     // Check if the user provided too many arguments
-    if (args.length > command.info.maxArgs) {
+    if (args.length > command.maxArgs) {
       let msg = 'Je hebt te veel argumenten ingegeven! Dit commando accepteert ';
-      msg += command.info.maxArgs === 0 ? 'geen argumenten.' : `maximaal ${command.info.maxArgs} argument${command.info.maxArgs > 1 ? 'en' : ''}.`;
+      msg += command.maxArgs === 0 ? 'geen argumenten.' : `maximaal ${command.maxArgs} argument${command.maxArgs > 1 ? 'en' : ''}.`;
       return message.reply(msg);
     }
 

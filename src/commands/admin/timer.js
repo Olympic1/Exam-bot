@@ -9,13 +9,12 @@ module.exports = {
   description: 'Verander het tijdschema wanneer de bot de succes-berichten stuurt.',
   permissions: ['ADMINISTRATOR'],
   slash: 'both',
-  info: {
-    minArgs: 5,
-    maxArgs: 6,
-    expectedArgs: '[seconde] <minuut> <uur> <dag> <maand> <dag van de week>',
-    syntaxError: 'Voer het tijdschema in wanneer je wilt dat de berichten worden verzonden.',
-    examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
-  },
+  minArgs: 5,
+  maxArgs: 6,
+  expectedArgs: ['seconde', 'minuut', 'uur', 'dag', 'maand', 'dag van de week'],
+  syntaxError: 'Voer het tijdschema in wanneer je wilt dat de berichten worden verzonden.',
+  examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
+
   async execute(client, message, args) {
     /** @type {GuildDoc} */
     const data = await guildModel.findOne({ _id: message.guild.id });

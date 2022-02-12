@@ -21,8 +21,7 @@ module.exports = {
         // Check if the event exists
         if (!command) continue;
 
-        const { name, aliases, description, cooldown, ownerOnly, slash, info } = command;
-        const { minArgs, maxArgs, expectedArgs, syntaxError, examples } = info;
+        const { name, aliases, description, cooldown, ownerOnly, slash, minArgs, maxArgs, expectedArgs, syntaxError, examples } = command;
         let commandError = false;
 
         // Check if the command has a name
@@ -70,9 +69,20 @@ module.exports = {
           }
         }
 
-        // Check if the command has expectedArgs when it needs them
-        if (maxArgs > 0 && !expectedArgs) {
-          client.log.error(`Het commando "${name}" heeft de eigenschap "maxArgs" ingesteld zonder de eigenschap "expectedArgs".`);
+        // Check if the command has expectedArgs when it needs them and if they are equal to the amount of maximum arguments
+        if (maxArgs > 0) {
+          if (!expectedArgs?.length) {
+            client.log.error(`Het commando "${name}" heeft de eigenschap "maxArgs" ingesteld zonder de eigenschap "expectedArgs".`);
+            commandError = true;
+          } else if (maxArgs !== expectedArgs?.length) {
+            client.log.error(`Het commando "${name}" heeft een incorrect aantal "expectedArgs" ingesteld ten opzichte van "maxArgs". Er werden ${expectedArgs?.length} argumenten ingesteld, maar verwachte er ${maxArgs}.`);
+            commandError = true;
+          }
+        }
+
+        // Check if there is an invalid string in expectedArgs
+        if (expectedArgs?.includes('')) {
+          client.log.error(`Het commando "${name}" heeft een ongeldige "expectedArgs" ingesteld.`);
           commandError = true;
         }
 
@@ -112,13 +122,8 @@ module.exports = {
 
             // Set up the options
             if (expectedArgs) {
-              // Split the arguments
-              const args = expectedArgs
-                .substring(1, expectedArgs.length - 1)
-                .split(/[>\]] [<[]/);
-
-              for (let i = 0; i < args.length; ++i) {
-                const arg = args[i];
+              for (let i = 0; i < expectedArgs.length; ++i) {
+                const arg = expectedArgs[i];
 
                 options.push({
                   name: arg.replace(/ +/g, '-').toLowerCase(),
