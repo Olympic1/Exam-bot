@@ -27,8 +27,10 @@ module.exports = class BotClient extends Client {
 
   /** @param {ClientOptions} options */
   constructor(options) {
+    // Pass options over to Client
     super(options);
 
+    // Initialize properties
     this.commands = new Collection();
     this.aliases = new Collection();
     this.cronJobs = new Collection();

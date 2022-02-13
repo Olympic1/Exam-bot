@@ -17,7 +17,7 @@ module.exports = {
   examples: ['success'],
 
   async execute(client, message, args) {
-    const guildId = client.guilds.cache.get(args[0])?.id || message.guild.id;
+    const guildId = args[0] ? client.guilds.cache.get(args[0])?.id : message.guild.id;
     /** @type {GuildDoc} */
     const data = await guildModel.findOne({ _id: guildId });
 

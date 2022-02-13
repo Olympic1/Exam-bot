@@ -181,7 +181,7 @@ module.exports = {
   /**
    * Parses a string with the username, nickname, ID, tag or mention and returns a resolved user object or null.
    * @param {Guild} guild The guild to search in.
-   * @param {string | undefined} user The user's id, usrname, nickname, tag or mention.
+   * @param {string | undefined} user The user's id, username, nickname, tag or mention.
    * @param {GuildMember[]} [context] The array of user id's to search in. Defaults to `guild.members`.
    * @returns {Promise<GuildMember | null>} A resolved user object or null.
    */
@@ -319,9 +319,9 @@ module.exports = {
 
   /**
    * Stops the current cronjob and starts one with the new data.
-   * @param {BotClient} client The bot that needs to restart cronjob.
+   * @param {BotClient} client The bot that needs to update a cronjob.
    * @param {Snowflake} guildId The guild's id to change the data for.
-   * @param {IGuild} data The guild's data to change.
+   * @param {IGuild} data The guild's new data to change to.
    */
   updateCronjob(client, guildId, data) {
     // If we already have a job running, stop it before we change the data

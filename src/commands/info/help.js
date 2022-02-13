@@ -24,7 +24,7 @@ module.exports = {
 
     // HELP_EMBED will only be sent if the user didn't pass any arguments.
     // This is the main help embed that displays each command.
-    if (!args.length) {
+    if (!args[0]) {
       const HELP_EMBED = new MessageEmbed()
         .setColor('#338333')
         .setTitle('Help');
