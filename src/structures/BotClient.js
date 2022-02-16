@@ -1,6 +1,6 @@
 const { CronJob } = require('cron');
 const { Client, ClientOptions, Collection } = require('discord.js');
-const { createLogger, format, Logger, transports } = require('winston');
+const { logger } = require('../utils/logger');
 const { ICommand } = require('./ICommand');
 
 /**
@@ -8,7 +8,7 @@ const { ICommand } = require('./ICommand');
  * @property {Collection<string, ICommand>} commands
  * @property {Collection<string, ICommand>} aliases
  * @property {Collection<string, CronJob>} cronJobs
- * @property {Logger} log
+ * @property {typeof logger} log
  */
 
 /**
@@ -22,7 +22,7 @@ module.exports = class BotClient extends Client {
   aliases;
   /** @type {Collection<string, CronJob>} */
   cronJobs;
-  /** @type {Logger} */
+  /** @type {typeof logger} */
   log;
 
   /** @param {ClientOptions} options */
@@ -35,13 +35,6 @@ module.exports = class BotClient extends Client {
     this.aliases = new Collection();
     this.cronJobs = new Collection();
 
-    this.log = createLogger({
-      transports: [new transports.Console({
-        handleExceptions: true,
-        handleRejections: true,
-      })],
-      format: format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
-      exitOnError: false,
-    });
+    this.log = logger;
   }
 };

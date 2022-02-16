@@ -7,10 +7,10 @@ const BotClient = require('../structures/BotClient');
 
 module.exports = {
   /**
-   * Creates a new CronJob
-   * @param {BotClient} client
-   * @param {IGuild} data
-   * @returns {CronJob}
+   * Creates a new CronJob.
+   * @param {BotClient} client The bot that needs to create a cronjob.
+   * @param {IGuild} data The guild's data to apply to the cronjob.
+   * @returns {CronJob} A cronjob.
    */
   createCronJob(client, data) {
     return new CronJob(data.cronTimer, async function() {
@@ -19,7 +19,7 @@ module.exports = {
 
       // Find all users that have at least 1 exam today
       /** @type {ProfileDoc[]} */
-      const profiles = await profileModel.find(
+      const users = await profileModel.find(
         {
           'exams.date': {
             '$eq': today,
@@ -28,13 +28,13 @@ module.exports = {
       );
 
       // Check if we found any user
-      if (!profiles.length) return;
+      if (!users.length) return;
 
       /** @type {Collection<string, string[]>} */
       const allUsers = new Collection();
 
       // Loop through every user that has an exam today
-      for (const user of profiles) {
+      for (const user of users) {
         /** @type {string[]} */
         const allExams = [];
 

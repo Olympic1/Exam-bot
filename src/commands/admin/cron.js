@@ -24,7 +24,7 @@ module.exports = {
     switch (args[0]) {
       case 'start':
         // Check if cronjob is already running to prevent multiple instances
-        if (isRunning) return ['send', 'Cronjob is al gestart.'];
+        if (isRunning) return ['reply', 'Cronjob is al gestart.'];
 
         job.start();
 
@@ -35,7 +35,7 @@ module.exports = {
 
       case 'stop':
         // Check if cronjob is already stopped to prevent unnecessary actions
-        if (!isRunning) return ['send', 'Cronjob is al gestopt.'];
+        if (!isRunning) return ['reply', 'Cronjob is al gestopt.'];
 
         job.stop();
 
@@ -50,16 +50,16 @@ module.exports = {
       case 'last':
       case 'laatste':
         // Check if cronjob is already running to get the last execution date
-        if (!isRunning) return ['send', 'Start eerst cronjob.'];
-        if (job.lastDate() === undefined) return ['send', 'Kan de laatste uitvoering niet vinden.'];
+        if (!isRunning) return ['reply', 'Start eerst cronjob.'];
+        if (job.lastDate() === undefined) return ['reply', 'Kan de laatste uitvoering niet vinden.'];
 
         return ['send', `De laatste uitvoering was op: ${formatToDate(Date.parse(job.lastDate().toString()))}`];
 
       case 'next':
       case 'volgende':
         // Check if cronjob is already running to get the next execution date
-        if (!isRunning) return ['send', 'Start eerst cronjob.'];
-        if (job.nextDate() === undefined) return ['send', 'Kan de volgende uitvoering niet vinden.'];
+        if (!isRunning) return ['reply', 'Start eerst cronjob.'];
+        if (job.nextDate() === undefined) return ['reply', 'Kan de volgende uitvoering niet vinden.'];
 
         return ['send', `De volgende uitvoering zal gebeuren op: ${formatToDate(Date.parse(job.nextDate().toString()))}`];
 

@@ -106,36 +106,18 @@ module.exports = {
         }
 
         // Remove the expired cooldown for the user
-        await profileModel.findOneAndUpdate(
-          {
-            _id: message.author.id,
-          },
-          {
-            $pull: {
-              cooldowns: {
-                guildId: message.guild.id,
-                name: command.name,
-              },
-            },
-          },
-        );
+        profileData.cooldowns = profileData.cooldowns.filter(cd => cd.guildId !== message.guild.id || cd.name !== command.name);
+        await profileData.save();
       }
 
       // Add a cooldown for the user
-      await profileModel.findOneAndUpdate(
-        {
-          _id: message.author.id,
-        },
-        {
-          $push: {
-            cooldowns: {
-              guildId: message.guild.id,
-              name: command.name,
-              date: Date.now(),
-            },
-          },
-        },
-      );
+      profileData.cooldowns.push({
+        guildId: message.guild.id,
+        name: command.name,
+        date: new Date(Date.now()),
+      });
+
+      await profileData.save();
     }
 
     try {

@@ -3,6 +3,7 @@ const { DateTime } = require('luxon');
 const { IGuild } = require('../models/guildModel');
 const BotClient = require('../structures/BotClient');
 const { createCronJob } = require('./job');
+const { logger } = require('./logger');
 
 module.exports = {
   /**
@@ -12,11 +13,11 @@ module.exports = {
    */
   handleRejection(reason, promise) {
     if (reason instanceof Error) {
-      console.error('An unhandled rejection occurred at:', promise, '- reason:', reason.message);
+      logger.error('Er is een niet afgehandelde afwijzing opgetreden bij:', promise, '- reden:', reason.message);
       return;
     }
 
-    console.error(reason);
+    logger.error(reason);
   },
 
   /**
@@ -25,11 +26,11 @@ module.exports = {
    */
   handleException(error) {
     if (!error) {
-      console.error('An undefined exception occurred, exiting the program to prevent further problems.');
+      logger.error('Er is een ongedefinieerde uitzondering opgetreden, het programma wordt afgesloten om verdere problemen te voorkomen.');
       process.exit();
     }
 
-    console.error('An uncaught exception occurred, exiting the program to prevent further problems.\n', error);
+    logger.error('Er is een niet afhandelde uitzondering opgetreden, het programma wordt afgesloten om verdere problemen te voorkomen.\n', error);
     process.exit();
   },
 
@@ -39,11 +40,11 @@ module.exports = {
    */
   handleWarning(warning) {
     if (!warning || typeof warning === 'string' && !warning.length) {
-      console.error('An undefined warning occurred.');
+      logger.error('Er is een ongedefinieerde waarschuwing opgetreden.');
       return;
     }
 
-    console.warn(`A warning occurred: ${warning}`);
+    logger.warn(`Er is een waarschuwing opgetreden: ${warning}`);
   },
 
   /**
@@ -98,9 +99,9 @@ module.exports = {
   },
 
   /**
-   * Tries to parse the provided time into a number in the format of seconds. If the provided time has an invalid format, returns an error message as string.
+   * Tries to parse the provided time into a number in the format of seconds. If the provided time has an invalid format, returns an error message.
    * @param {string} time The time to convert.
-   * @returns {number | string} A number in the format of seconds; otherwise an error message as string.
+   * @returns {number | string} A number in the format of seconds; otherwise an error message.
    */
   tryParseTime(time) {
     // Don't allow 0
@@ -138,9 +139,9 @@ module.exports = {
   },
 
   /**
-   * Checks if the given date has a valid format and returns `true` or `false`.
+   * Checks if the provided date has a valid format and returns `true` or `false`.
    * @param {string | undefined} date The date to check.
-   * @returns {boolean} `True` if the given date is valid; otherwise `false`.
+   * @returns {boolean} `True` if the provided date is valid; otherwise `false`.
    */
   isValidDate(date) {
     if (!date) return false;
@@ -157,7 +158,7 @@ module.exports = {
   },
 
   /**
-   * Checks if the given date has a valid format and returns an ISO 8601-compliant string; otherwise returns null.
+   * Checks if the provided date has a valid format and returns an ISO 8601-compliant string; otherwise returns null.
    * @param {string | undefined} date The date to parse.
    * @returns {string | null} An ISO 8601-compliant string in UTC if valid; otherwise null.
    */
@@ -179,9 +180,9 @@ module.exports = {
   },
 
   /**
-   * Parses a string with the username, nickname, ID, tag or mention and returns a resolved user object or null.
+   * Tries to find an user via the provided user's name, nickname, ID, tag or mention and returns a resolved user object. If no user was found, returns null.
    * @param {Guild} guild The guild to search in.
-   * @param {string | undefined} user The user's id, username, nickname, tag or mention.
+   * @param {string | undefined} user The user's name, nickname, ID, tag or mention.
    * @param {GuildMember[]} [context] The array of user id's to search in. Defaults to `guild.members`.
    * @returns {Promise<GuildMember | null>} A resolved user object or null.
    */
@@ -234,9 +235,9 @@ module.exports = {
   },
 
   /**
-   * Parses a string with the role name, ID or mention and returns a resolved role object or null.
+   * Tries to find a role via the provided role's name, ID or mention and returns a resolved role object. If no role was found, returns null.
    * @param {Guild} guild The guild to search in.
-   * @param {string | undefined} role The role's id, name or mention.
+   * @param {string | undefined} role The role's name, ID or mention.
    * @returns {Role | null} A resolved role object or null.
    */
   getRole(guild, role) {
@@ -268,9 +269,9 @@ module.exports = {
   },
 
   /**
-   * Parses a string with the channel name, ID or mention and returns a resolved channel object or null.
+   * Tries to find a channel via the provided channel's name, ID or mention and returns a resolved channel object. If no channel was found, returns null.
    * @param {Guild} guild The guild to search in.
-   * @param {string | undefined} channel The channel's id, name or mention.
+   * @param {string | undefined} channel The channel's name, ID or mention.
    * @returns {GuildBasedChannel | null} A resolved channel object or null.
    */
   getChannel(guild, channel) {
@@ -324,8 +325,8 @@ module.exports = {
    * @param {IGuild} data The guild's new data to change to.
    */
   updateCronjob(client, guildId, data) {
-    // If we already have a job running, stop it before we change the data
     try {
+      // If we already have a job running, stop it before we change the data
       const job = client.cronJobs.get(guildId);
       job?.stop();
     } catch (error) {

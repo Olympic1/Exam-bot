@@ -52,7 +52,7 @@ module.exports = {
     try {
       // Change cronTimer in the database
       data.cronTimer = newTimer;
-      data.save();
+      await data.save();
 
       // Start a new cronjob
       updateCronjob(client, message.guild.id, data);

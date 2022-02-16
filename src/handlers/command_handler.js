@@ -16,7 +16,7 @@ module.exports = {
       // Add all the found commands
       for (const file of commandFiles) {
         /** @type {ICommand} */
-        const command = require(`../commands/${folder}/${file}`);
+        const command = await require(`../commands/${folder}/${file}`);
 
         // Check if the event exists
         if (!command) continue;

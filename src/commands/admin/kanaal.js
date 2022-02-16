@@ -35,7 +35,7 @@ module.exports = {
     try {
       // Change examChannel in the database
       data.examChannel = newChannel.id;
-      data.save();
+      await data.save();
 
       // Start a new cronjob
       updateCronjob(client, message.guild.id, data);

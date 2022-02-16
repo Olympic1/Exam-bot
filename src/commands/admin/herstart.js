@@ -15,7 +15,7 @@ module.exports = {
 
   async execute(client, message, args) {
     // Validate environment variable
-    if (!process.env.HEROKU_OAUTH) return;
+    if (!process.env.HEROKU_OAUTH) return ['reply', 'De Heroku authenticatie token ontbreekt.'];
 
     // Logs channel
     const channel = client.channels.cache.get('934494331627253760');
@@ -27,7 +27,7 @@ module.exports = {
 
     // Restart the dyno's on Heroku
     const heroku = new Heroku({ token: process.env.HEROKU_OAUTH });
-    heroku.delete('/apps/mnm-examen-bot/dynos');
+    await heroku.delete('/apps/mnm-examen-bot/dynos');
 
     return ['reply', 'Commando uitgevoerd.'];
   },

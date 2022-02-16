@@ -29,7 +29,7 @@ module.exports = {
 
     // Find all users that have at least 1 exam today
     /** @type {ProfileDoc[]} */
-    const profiles = await profileModel.find(
+    const users = await profileModel.find(
       {
         'exams.date': {
           '$eq': today,
@@ -38,13 +38,13 @@ module.exports = {
     );
 
     // Check if we found any user
-    if (!profiles.length) return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
+    if (!users.length) return ['send', 'Ik heb niemand gevonden die vandaag examens heeft.'];
 
     /** @type {Collection<string, string[]>} */
     const allUsers = new Collection();
 
     // Loop through every user that has an exam today
-    for (const user of profiles) {
+    for (const user of users) {
       /** @type {string[]} */
       const allExams = [];
 

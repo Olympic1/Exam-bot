@@ -15,7 +15,7 @@ module.exports = {
       // Add all the found events
       for (const file of eventFiles) {
         /** @type {IEvent} */
-        const event = require(`../events/${folder}/${file}`);
+        const event = await require(`../events/${folder}/${file}`);
 
         // Check if the event exists
         if (!event) continue;

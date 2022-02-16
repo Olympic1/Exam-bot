@@ -53,7 +53,7 @@ module.exports = {
           date: new Date(dateISO),
         });
 
-        data.save();
+        await data.save();
       } catch (error) {
         client.log.error('Er is een fout opgetreden bij het toevoegen van een examen aan de database.', error);
         return ['send', 'Er is een fout opgetreden bij het toevoegen van een examen aan de database.'];

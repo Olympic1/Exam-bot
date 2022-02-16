@@ -22,7 +22,7 @@ module.exports = {
       if (!data || oldGuild.name === newGuild.name) return;
 
       data.name = newGuild.name;
-      data.save();
+      await data.save();
     } catch (error) {
       client.log.error('Er is een fout opgetreden bij het bewerken van een gilde in de database.', error);
     }
