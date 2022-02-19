@@ -12,6 +12,14 @@ module.exports = {
   expectedArgs: ['prefix'],
   syntaxError: 'Voer de prefix in die je wilt gebruiken.',
   examples: ['prefix ?', 'prefix -'],
+  options: [
+    {
+      name: 'prefix',
+      description: 'De nieuwe prefix voor de commando\'s',
+      type: 'STRING',
+      required: true,
+    },
+  ],
 
   async execute(client, message, args) {
     /** @type {GuildDoc} */

@@ -1,4 +1,4 @@
-const { CommandInteraction, Message, MessageEmbed, PermissionString } = require('discord.js');
+const { ApplicationCommandOptionData, CommandInteraction, Message, MessageEmbed, PermissionString } = require('discord.js');
 const BotClient = require('./BotClient');
 
 /**
@@ -16,6 +16,7 @@ const BotClient = require('./BotClient');
  * @property {string[]} [expectedArgs]
  * @property {string} [syntaxError]
  * @property {string[]} [examples]
+ * @property {ApplicationCommandOptionData[]} [options]
  * @property {ICallback} execute
  */
 

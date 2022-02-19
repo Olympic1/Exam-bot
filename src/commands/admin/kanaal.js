@@ -14,6 +14,15 @@ module.exports = {
   expectedArgs: ['kanaal'],
   syntaxError: 'Voer het ID of naam in van het kanaal waarin je de berichten wilt versturen.',
   examples: ['kanaal 838084030062264320', 'kanaal #algemeen'],
+  options: [
+    {
+      name: 'kanaal',
+      description: 'Het nieuwe kanaal voor de succes berichten',
+      type: 'CHANNEL',
+      required: true,
+      channelTypes: ['GUILD_TEXT'],
+    },
+  ],
 
   async execute(client, message, args) {
     /** @type {GuildDoc} */

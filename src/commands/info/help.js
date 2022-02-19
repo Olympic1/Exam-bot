@@ -11,6 +11,14 @@ module.exports = {
   maxArgs: 1,
   expectedArgs: ['commando'],
   examples: ['help prefix', 'help examen'],
+  options: [
+    {
+      name: 'commando',
+      description: 'Het commando waarover je info wilt',
+      type: 'STRING',
+      required: false,
+    },
+  ],
 
   async execute(client, message, args) {
     /** @type {GuildDoc} */
@@ -78,14 +86,18 @@ module.exports = {
     // Check if the command or alias exist
     if (!command || command.ownerOnly) return ['reply', `Er is geen commando met de naam of alias \`${commandName}\`. Typ \`${prefix}help\` voor meer informatie over mijn commando's.`];
 
-    const { name, aliases, description, permissions, minArgs, expectedArgs, examples } = command;
+    const { name, aliases, description, permissions, minArgs, expectedArgs, examples, options } = command;
 
     // Construct help embed
     const isAdmin = permissions?.includes('ADMINISTRATOR') ? '(enkel voor administrators)' : '';
     const isMod = permissions?.includes('KICK_MEMBERS') || permissions?.includes('BAN_MEMBERS') ? '(enkel voor moderators)' : '';
 
     let usage = '';
-    if (expectedArgs?.length) {
+    if (options?.length) {
+      for (const option of options) {
+        usage += ` \`${option.name}\``;
+      }
+    } else if (expectedArgs?.length) {
       for (let i = 0; i < expectedArgs.length; ++i) {
         const open = i < (minArgs || 0) ? '<' : '[';
         const close = i < (minArgs || 0) ? '>' : ']';
@@ -112,7 +124,7 @@ module.exports = {
         },
         {
           name: 'Gebruik',
-          value: `\`${commandUsage}\``,
+          value: commandUsage,
         },
         {
           name: 'Voorbeelden',

@@ -15,6 +15,14 @@ module.exports = {
   maxArgs: 1,
   expectedArgs: ['server ID'],
   examples: ['success'],
+  options: [
+    {
+      name: 'server ID',
+      description: 'De server ID waarvan ik de berichten moet tonen',
+      type: 'STRING',
+      required: false,
+    },
+  ],
 
   async execute(client, message, args) {
     const guildId = args[0] ? client.guilds.cache.get(args[0])?.id : message.guild.id;

@@ -11,13 +11,56 @@ module.exports = {
   slash: 'both',
   minArgs: 5,
   maxArgs: 6,
-  expectedArgs: ['seconde', 'minuut', 'uur', 'dag', 'maand', 'dag van de week'],
+  expectedArgs: ['minuut', 'uur', 'dag', 'maand', 'dag van de week', 'seconde'],
   syntaxError: 'Voer het tijdschema in wanneer je wilt dat de berichten worden verzonden.',
   examples: ['timer 0 8 * * *', 'timer 30 6 * * *'],
+  options: [
+    {
+      name: 'minuut',
+      description: 'De minuten',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'uur',
+      description: 'De uren',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'dag',
+      description: 'De dagen',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'maand',
+      description: 'De maanden',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'dag van de week',
+      description: 'De dag van de week',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'seconde',
+      description: 'De seconden',
+      type: 'STRING',
+      required: false,
+    },
+  ],
 
   async execute(client, message, args) {
     /** @type {GuildDoc} */
     const data = await guildModel.findOne({ _id: message.guild.id });
+
+    // Move the last optional argument to the first element
+    // @ts-ignore
+    if (args.length === 6) args.unshift(args.pop());
+
     const newTimer = args.join(' ');
 
     // Check null

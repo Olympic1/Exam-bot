@@ -10,9 +10,17 @@ module.exports = {
   slash: 'both',
   minArgs: 1,
   maxArgs: 1,
-  expectedArgs: ['activiteit'],
+  expectedArgs: ['status'],
   syntaxError: 'Voer de status in die je wil instellen.',
   examples: ['status Marathonradio'],
+  options: [
+    {
+      name: 'status',
+      description: 'De nieuwe status voor de bot',
+      type: 'STRING',
+      required: true,
+    },
+  ],
 
   async execute(client, message, args) {
     const newStatus = args.join(' ');

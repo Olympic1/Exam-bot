@@ -13,6 +13,68 @@ module.exports = {
   expectedArgs: ['datum', 'examens', 'datum2', 'examens2', 'datum3', 'examens3', 'datum4', 'examens4', 'datum5', 'examens5'],
   syntaxError: 'Voer de datum en het examen in.',
   examples: ['examen 11/6 Biologie', 'exam 19-6 Frans', 'ex 17/6 Wiskunde en Nederlands', 'examen 14/6 Chemie 15/6 Aardrijkskunde'],
+  options: [
+    {
+      name: 'datum1',
+      description: 'De datum van het examen',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'examens1',
+      description: 'De examens',
+      type: 'STRING',
+      required: true,
+    },
+    {
+      name: 'datum2',
+      description: 'De datum van het examen',
+      type: 'STRING',
+      required: false,
+    },
+    {
+      name: 'examens2',
+      description: 'De examens',
+      type: 'STRING',
+      required: false,
+    },
+    {
+      name: 'datum3',
+      description: 'De datum van het examen',
+      type: 'STRING',
+      required: false,
+    },
+    {
+      name: 'examens3',
+      description: 'De examens',
+      type: 'STRING',
+      required: false,
+    },
+    {
+      name: 'datum4',
+      description: 'De datum van het examen',
+      type: 'STRING',
+      required: false,
+    },
+    {
+      name: 'examens4',
+      description: 'De examens',
+      type: 'STRING',
+      required: false,
+    },
+    {
+      name: 'datum5',
+      description: 'De datum van het examen',
+      type: 'STRING',
+      required: false,
+    },
+    {
+      name: 'examens5',
+      description: 'De examens',
+      type: 'STRING',
+      required: false,
+    },
+  ],
 
   async execute(client, message, args) {
     /** @type {ProfileDoc} */

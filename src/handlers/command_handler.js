@@ -1,4 +1,4 @@
-const { ApplicationCommandData, ApplicationCommandOptionData } = require('discord.js');
+const { ApplicationCommandData } = require('discord.js');
 const { readdirSync } = require('fs');
 const { ICommand } = require('../structures/ICommand');
 const { IHandler } = require('../structures/IHandler');
@@ -21,7 +21,8 @@ module.exports = {
         // Check if the event exists
         if (!command) continue;
 
-        const { name, aliases, description, cooldown, ownerOnly, slash, minArgs, maxArgs, expectedArgs, syntaxError, examples } = command;
+        const { name, aliases, description, cooldown, slash, minArgs, maxArgs, expectedArgs, syntaxError, examples } = command;
+        let { options } = command;
         let commandError = false;
 
         // Check if the command has a name
@@ -102,6 +103,12 @@ module.exports = {
           client.log.warn(`Het commando "${name}" heeft geen voorbeelden ingesteld.`);
         }
 
+        // If the command isn't a slash command, don't allow options
+        if (!slash && options) {
+          client.log.error(`Het commando "${name}" heeft de eigenschap "options" ingesteld terwijl het geen slash commando is.`);
+          commandError = true;
+        }
+
         if (slash) {
           // Check if the slash command has a description
           if (!description) {
@@ -117,11 +124,15 @@ module.exports = {
 
           // If no errors were encountered, add the slash command to the bot
           if (!commandError) {
-            /** @type {ApplicationCommandOptionData[]} */
-            const options = [];
-
             // Set up the options
-            if (expectedArgs) {
+            if (options?.length) {
+              for (const option of options) {
+                const newName = option.name;
+                option.name = newName.replace(/ +/g, '-').toLowerCase();
+              }
+            } else if (expectedArgs) {
+              options = [];
+
               for (let i = 0; i < expectedArgs.length; ++i) {
                 const arg = expectedArgs[i];
 
@@ -139,8 +150,7 @@ module.exports = {
             const data = {
               name: name,
               description: description || 'Geen beschrijving',
-              options: options,
-              defaultPermission: !ownerOnly,
+              options: options || [],
             };
 
             // Register slash command

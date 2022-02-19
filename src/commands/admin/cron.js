@@ -12,6 +12,21 @@ module.exports = {
   expectedArgs: ['actie'],
   syntaxError: 'Voer de actie in die je wilt uitvoeren. Acties: `start`, `stop`, `status`, `laatste`, `volgende`.',
   examples: ['cron start', 'cron stop', 'cron status', 'cron laatste', 'cron volgende'],
+  options: [
+    {
+      name: 'actie',
+      description: 'De uit te voeren actie voor de cronjob',
+      type: 'STRING',
+      required: true,
+      choices: [
+        { name: 'start', value: 'start' },
+        { name: 'stop', value: 'stop' },
+        { name: 'status', value: 'status' },
+        { name: 'laatste', value: 'laatste' },
+        { name: 'volgende', value: 'volgende' },
+      ],
+    },
+  ],
 
   async execute(client, message, args) {
     const job = client.cronJobs.get(message.guild.id);
