@@ -43,7 +43,7 @@ module.exports = {
       .addFields(
         {
           name: 'Versie',
-          value: process.env.npm_package_version || (await require('../../../package.json')).version,
+          value: process.env['npm_package_version'] || (await require('../../../package.json')).version,
           inline: true,
         },
         {

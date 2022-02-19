@@ -13,7 +13,10 @@ module.exports = {
    */
   handleRejection(reason, promise) {
     if (reason instanceof Error) {
-      logger.error('Er is een niet afgehandelde afwijzing opgetreden bij:', promise, '- reden:', reason.message);
+      // Ignore 'Missing Access' errors
+      if (reason.message.includes('Missing Access')) return;
+
+      logger.error(`Er is een niet afgehandelde afwijzing opgetreden: ${reason}`);
       return;
     }
 
@@ -27,11 +30,10 @@ module.exports = {
   handleException(error) {
     if (!error) {
       logger.error('Er is een ongedefinieerde uitzondering opgetreden, het programma wordt afgesloten om verdere problemen te voorkomen.');
-      process.exit();
+      return;
     }
 
     logger.error('Er is een niet afhandelde uitzondering opgetreden, het programma wordt afgesloten om verdere problemen te voorkomen.\n', error);
-    process.exit();
   },
 
   /**
@@ -170,9 +172,7 @@ module.exports = {
     for (const format of formats) {
       const result = DateTime.fromFormat(date, format);
 
-      if (result.isValid) {
-        return result.setZone('utc', { keepLocalTime: true }).toISO();
-      }
+      if (result.isValid) return result.setZone('utc', { keepLocalTime: true }).toISO();
     }
 
     // Invalid format
