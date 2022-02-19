@@ -1,5 +1,4 @@
 require('dotenv').config();
-const { readdirSync } = require('fs');
 const { connect } = require('mongoose');
 const BotClient = require('./structures/BotClient');
 const { IHandler } = require('./structures/IHandler');
@@ -22,13 +21,10 @@ const { handleException, handleRejection, handleWarning } = require('./utils/fun
     return client.log.warn('Missing Heroku authentication token.');
   }
 
-  // Register the handlers
-  const handlerFiles = readdirSync('./src/handlers').filter(file => file.endsWith('.js'));
-  for (const file of handlerFiles) {
-    /** @type {IHandler} */
-    const handler = await require(`./handlers/${file}`);
-    handler.execute(client);
-  }
+  // Register the events
+  /** @type {IHandler} */
+  const handler = await require('./handlers/event_handler');
+  await handler.execute(client);
 
   // Connect to our database
   connect(process.env.MONGODB_URI, { keepAlive: true })

@@ -1,5 +1,6 @@
 const { GuildDoc, guildModel } = require('../../models/guildModel');
 const { IEvent } = require('../../structures/IEvent');
+const { IHandler } = require('../../structures/IHandler');
 const { setBotStatus } = require('../../utils/functions');
 const { createCronJob } = require('../../utils/job');
 
@@ -11,11 +12,13 @@ module.exports = {
   async execute(client) {
     if (!client.application?.owner) await client.application?.fetch();
 
+    // Register the commands
+    /** @type {IHandler} */
+    const handler = await require('../../handlers/command_handler');
+    await handler.execute(client);
+
     // Are we testing the bot
     const testing = process.env.NODE_ENV !== 'production';
-
-    // Show that the bot is logged in and ready to use
-    client.log.info(`Bot is online op ${client.guilds.cache.size} servers.`);
 
     // Set the bot's status
     const status = testing ? 'Testing' : 'Marathonradio';
@@ -35,37 +38,7 @@ module.exports = {
       client.cronJobs.set(guild.id, job);
     }
 
-    // Setup permission for bot owner
-    const fullPermissions = [
-      {
-        id: '924397248228524032',
-        permissions: [{
-          id: client.application?.owner?.id || '130846699953324032',
-          type: 2,
-          permission: true,
-        }],
-      },
-      {
-        id: '924397251936288778',
-        permissions: [{
-          id: client.application?.owner?.id || '130846699953324032',
-          type: 2,
-          permission: true,
-        }],
-      },
-      {
-        id: '924397334006226985',
-        permissions: [{
-          id: client.application?.owner?.id || '130846699953324032',
-          type: 2,
-          permission: true,
-        }],
-      },
-    ];
-
-    // Set permissions for slash commands
-    for (const guild of client.guilds.cache.values()) {
-      await guild.commands.permissions.set({ fullPermissions });
-    }
+    // Show that the bot is logged in and ready to use
+    client.log.info(`Bot is online op ${client.guilds.cache.size} servers.`);
   },
 };

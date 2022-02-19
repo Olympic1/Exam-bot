@@ -29,11 +29,11 @@ module.exports = {
    */
   handleException(error) {
     if (!error) {
-      logger.error('Er is een ongedefinieerde uitzondering opgetreden, het programma wordt afgesloten om verdere problemen te voorkomen.');
+      logger.error('Er is een ongedefinieerde uitzondering opgetreden.');
       return;
     }
 
-    logger.error('Er is een niet afhandelde uitzondering opgetreden, het programma wordt afgesloten om verdere problemen te voorkomen.\n', error);
+    logger.error(`Er is een niet afhandelde uitzondering opgetreden: ${error}`);
   },
 
   /**
